@@ -1,0 +1,170 @@
+
+body {
+background-color: black;
+color: white;
+font-family: 'Verdana';
+}
+
+a {
+font-weight: bold;
+font-size: 30px;
+}
+
+button {
+font-family: 'Verdana';
+background-color: gray;
+font-size: 20px;
+width:200px;
+height:100px;
+font-weight: bold;
+float: center;
+}
+
+select {
+font-size: 30px;
+width: 450px;
+height: 75px;
+}
+
+.tselect{
+width: 100%;
+}
+
+.single {
+width: 150px;
+}
+
+.selgoal {
+font-size: 25px;
+width: 700px;
+}
+
+#selIssue {
+font-size: 25px;
+width: 650px;
+}
+
+#IStatus {
+width: 150px;
+}
+
+input {
+font-size: 30px;
+height: 75px;
+}
+
+h1 {
+font-size: 50px;
+}
+
+th {
+font-size:30px;
+}
+
+td {
+height: 50px;
+font-size: 25px;
+vertical-align: top;
+}
+
+input[type=submit] {
+    width: 150px;
+    height: 75px;
+    font-size: 30px;
+}
+
+textarea {
+font-size: 30px;
+}
+
+.datecol {
+text-align: center;
+}
+
+.longcol {
+width: 250px;
+}
+
+.medcol {
+width: 150px;
+}
+
+table {
+border-spacing: 10px;
+}
+
+.tutable {
+border-spacing: 0px;
+}
+
+.link {
+width: 100%;
+height: 50px;
+background-color: lightgreen;
+font-size: 20px;
+font-weight: bold;
+}
+
+.doublecol {
+    width: 75px;
+    text-align: center;
+}
+
+.dtcol1 {
+    width: 50px;
+    text-align: center;
+}
+
+.xlcol{
+    width: 400px;
+}
+
+.mtblcell{
+	width: 25%;
+	text-align: center;
+	vertical-align: center;
+}
+
+.mtblcell2{
+	width: 22%;
+	text-align: left;
+	vertical-align: center;
+}
+
+.mtblcell3{
+	width: 20%;
+	text-align: center;
+	vertical-align: center;
+}
+
+.smselect {
+font-size: 30px;
+width: 300px;
+height: 75px;
+}
+
+.ssmselect {
+font-size: 30px;
+width: 225px;
+height: 75px;
+}
+
+
+.gbutton {
+font-family: 'Verdana';
+font-size: 20px;
+width:300px;
+height:100px;
+font-weight: bold;
+float: center;
+}
+
+.lbutton {
+font-family: 'Verdana';
+background-color: gray;
+font-size: 16px;
+width:150px;
+height:75px;
+font-weight: bold;
+float: center;
+}

@@ -1,0 +1,376 @@
+<head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script>
+$( function() {
+	$( ".dpick" ).datepicker();
+} );
+</script>
+</head>
+
+<body>
+<h1>Date List</h1>
+
+<table>
+<tr><td align="middle">Years</td> <td align="middle">Months</td> <td align="middle">Days</td> <td align="middle">Hrs</td> <td align="middle">Mins</td></tr>
+
+<tr>
+<td> <input style="width: 18vw; text-align: center;" type="number" value=0 id="inpAY"></td> 
+
+<td> <input text-align="middle" style="width: 18vw; text-align: center;" type="number" value=0 id="AM"></td>
+
+<td><input text-align="middle" style="width: 18vw; text-align: center;" type="number" value=0 id="AD"></td>
+
+<td> <input text-align="middle" style="width: 18vw; text-align: center;" type="number" value=0 id="AH"> </td> 
+
+<td> <input text-align="middle" style="width: 18vw; text-align: center;" type="number" value=0 id="AMn"> </td></tr>
+
+
+<tr><td>
+	<input type="button" class = "link" onclick="ShowTime()" value="Time" />
+</td><td>
+	<input type="button" class = "link" onclick="btnTD()" value="Diff" />
+</td><td>
+	<input type="button" class = "link" onclick="ListTime2()" value="List" />
+</td><td>
+	<input type="button" class = "link" onclick="MakeTime(GD());" value="Make" />
+</td>
+</tr>
+</table>
+<p>Start Date: <input type="text" value="09/05/2018" class="dpick" id="SDate"></p>
+ <p>End Date: <input type="text" value="09/12/2018" class="dpick" id="EDate"></p>
+ <p>Range: <input type="range" min="0" max="10"></p>
+<p>Month: <input type="month"> </p>
+<p>Time: <input type="time"> </p>
+<div id="div2">
+</div>
+<script>
+function GD()
+{
+var SD = $( "#SDate" ) . val();
+return(SD);
+}
+
+function ListTime2()
+{
+	var SD = $( "#SDate" ) . val();
+	var ED = $( "#EDate" ) . val();
+	var D = TimeDiff(SD, ED, "d");
+	
+	var i=0;
+	
+	var CD = AddTime2(SD, 0, 0, 0, 0, 0);
+	
+	D2Ap("CD Pre: "+CD);
+	
+	CD1 = convMSec(CD);
+	
+	D2Ap("CD Set: "+CD1);
+	
+	while(i<=D){
+		
+		CD = AddTime2(CD, 0, 0, 0, 0, 0);
+		
+		D2Ap(CD);
+		
+		D2Ap(i);
+		
+		//CD = CD.substring(0,10);
+		
+		i++;
+		
+	}
+}
+
+function btnTD()
+{
+	var SD = $( "#SDate" ) . val();
+	var ED = $( "#EDate" ) . val();
+	var D = TimeDiff(SD, ED, "d");
+
+	D2Ap(SD+" to "+ED+" is "+D);
+}
+
+function MakeTime(time)
+{
+	var CTime = time+'T00:00';
+
+	D2Ap(CTime);
+
+	var Y = CTime.substring(6,10);
+	var M = CTime.substring(0,2);
+	var D = CTime.substring(3,5);
+	var H = CTime.substring(11,13);
+	var Mn = CTime.substring(14,16);
+	 
+	var MTime = new Date(Y,(M-1),D,H,Mn);
+	
+	D2Ap(MTime);
+	
+	return(MTime);
+}
+
+
+function TimeDiff(stime, etime, unit)
+{
+var S = MakeTime(stime);
+var E = MakeTime(etime);
+
+var sms = S.getTime();
+var ems = E.getTime();
+
+var msd = ems-sms;
+
+var sd = (msd/1000);
+
+var mnd = (sd/60);
+
+var hd = (mnd/60);
+
+var dd = (hd/24);
+
+var yd = (dd/365.25);
+
+var md = (yd*12);
+
+var qd = (yd*4);
+
+switch(unit) {
+
+	case "s":
+		
+		var diff = sd;
+		
+		break;
+		
+	case "mn":
+	
+		var diff = mnd;
+		
+		break;
+		
+	case "h":
+	
+		var diff = hd;
+		
+		break;
+
+	case "d":
+	
+		var diff = dd;
+		
+		break;
+		
+	case "m":
+	
+		var diff = md;
+		
+		break;
+		
+	case "q":
+	
+		var diff = qd;
+		
+		break;
+		
+	case "y":
+	
+		var diff = yd;
+		
+		break;
+}
+
+return (diff);
+
+}
+
+
+function ShowTime()
+{
+	var SD = $( "#SDate" ) . val();
+
+	var AY = $( "#inpAY" ) . val();
+
+	var AM = $( "#AM" ) . val();
+
+	var AD = $( "#AD" ) . val();
+
+	var AH = $( "#AH" ) . val();
+
+	var AMn = $( "#AMn" ) . val();
+
+	var SD2 = SD+'T00:00';
+
+	var SD3 = AddTime(SD,AY,AM,AD,AH,AMn);
+
+	$('#div2').append("<p>"+SD3+"</p>");
+}
+
+
+function D2Ap(a)
+{
+	var D2 = "<p>"+a+"</p>";
+	$('#div2').append(D2);
+}
+
+function AddTime(time, yrs, mths, days, hrs, min)
+{
+	var MTime = MakeTime(time);
+	
+	var m =  new Date(MTime.getTime());
+	
+	var OY = m.getFullYear();
+	var NY = OY + parseInt(yrs);
+	m.setFullYear(NY);
+	var Y = m.getFullYear();
+	
+	var OM = m.getMonth();
+	var NM = OM + parseInt(mths);
+	m.setMonth(NM);
+	var M = m.getMonth();
+	
+	var OD = m.getDate();
+	var ND = OD + parseInt(days);
+	m.setDate(ND);
+	var D = m.getDate();
+	
+	var OH = m.getHours();
+	var NH = OH + parseInt(hrs);
+	m.setHours(NH);
+	var H = m.getHours();
+	
+	var OMn = m.getMinutes();
+	var NMn = OMn + parseInt(min);
+	m.setMinutes(NMn);
+	var Mn = m.getMinutes();
+	
+	if(M<10){
+		M="0"+M;
+		}
+	
+	if(D<10){
+		D="0"+D;
+		}
+	
+	if(H<10){
+		H="0"+H;
+		}
+	
+	if(Mn<10){
+		Mn="0"+Mn;
+		}
+
+	var NDTime = Y+'-'+M +'-'+ D +'T'+ H +':'+ Mn;
+	
+	return (NDTime);
+	
+}
+
+function AddTime2(time, yrs, mths, days, hrs, min)
+{
+	
+	var MTime = MakeTime(time);
+	
+	var MSecs = MTime.getTime();
+	
+	D2Ap("MSecs: "+MSecs);
+	
+	var m =  new Date(MTime.getTime());
+	
+	var yms = yrs*365.25*24*60*60*1000;
+	var mms = mths*(365.25/12)*24*60*60*1000;
+	var dms = days*24*60*60*1000;
+	var hms = hrs*60*60*1000;
+	var nms = min*60*1000;
+
+	var addtime = yms+mms+dms+hms+nms;
+	
+	RT = MSecs + addtime;
+	
+	RTime = new Date(RT);
+	
+	D2Ap("RT: "+ RT);
+	
+	var ny = RTime.getFullYear();
+	var nm = RTime.getMonth();
+	var nd = RTime.getDate();
+	var nh = RTime.getHours();
+	var nn = RTime.getMinutes();
+	
+	var RDate = new Date(ny, (nm-1), nd, nh, nn);
+	
+	if(nm<10){
+		nm="0"+nm;
+		}
+	
+	if(nd<10){
+		nd="0"+nd;
+		}
+	
+	if(nh<10){
+		nh="0"+nh;
+		}
+	
+	if(nn<10){
+		nn="0"+nn;
+		}
+		
+	var NDTime = ny+'-'+nm +'-'+ nd +'T'+ nh +':'+ nn;
+	
+	//return (NDTime);
+	
+	//D2Ap(RDate);
+	
+	return(RT);
+}
+
+
+convMSec(msec)
+{
+	D2Ap("msec pre: ");
+	
+	/*
+	
+	var ND = new Date(msec);
+	
+	D2Ap("ND: "+ ND);
+	
+
+	var ny = ND.getFullYear();
+	var nm = ND.getMonth();
+	var nd = ND.getDate();
+	var nh = ND.getHours();
+	var nn = ND.getMinutes();
+	
+	var RDate = new Date(ny, (nm-1), nd, nh, nn);
+	
+	if(nm<10){
+		nm="0"+nm;
+		}
+	
+	if(nd<10){
+		nd="0"+nd;
+		}
+	
+	if(nh<10){
+		nh="0"+nh;
+		}
+	
+	if(nn<10){
+		nn="0"+nn;
+		}
+
+	var NDTime = ny+'-'+nm +'-'+ nd +'T'+ nh +':'+ nn;
+	
+	return(NDTime);
+	*/
+}
+
+</script>
+</body>
+</html>

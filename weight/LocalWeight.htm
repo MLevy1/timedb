@@ -1,0 +1,917 @@
+<html>
+
+<title>Local Weight</title>
+
+<link href='https://fonts.googleapis.com/css?family=Homenaje' rel='stylesheet'>
+
+<style>
+
+body {
+background-color: black;
+color: white;
+font-family: 'Homenaje';
+}
+
+a {
+font-weight: bold;
+font-size: 30px;
+}
+
+button {
+font-family: 'Homenaje';
+background-color: Navy;
+color: yellow;
+font-size: 32px;
+width:135px;
+height:125px;
+font-weight: bold;
+float: center;
+border-radius: 6px;
+padding: 2px;
+}
+
+select {
+font-size: 30px;
+}
+
+input {
+font-size: 30px;
+height: 75px;
+}
+
+h1 {
+font-size: 50px;
+}
+
+th {
+font-size:30px;
+}
+
+td {
+font-size: 30px;
+vertical-align: center;
+}
+
+textarea {
+font-size: 30px;
+}
+
+table {
+border-spacing: 10px;
+}
+
+.link {
+width: 100%;
+height: 50px;
+color: white;
+background-color: black;
+font-size: 20px;
+font-weight: bold;
+}
+
+.slnk{
+
+font-size: 16px;
+background-color: black;
+color: yellow;
+font-weight: bold;
+float: center;
+}
+
+</style>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+
+<body onoffline="bclr('SandyBrown')">
+
+<h1>Local Weight</h1>
+
+<table>
+	<tr>
+	<td>
+		<input type="button" class = "link" onclick="setTime()" value="Reset" />
+	</td>
+	
+	<td colspan=3><p id="selDT"></p></td>
+	
+	<td colspan=3>
+	<select id="selTZ" class="single">
+	<option value=0>EST</option>
+	<option value=1>CST</option>
+	<option value=2>MST</option>
+	<option value=3>PST</option>
+	<option value=6>HST</option>
+	</select>
+	</td>
+		<td>
+		<select id="selPost">
+			<option>Y</option>
+			<option>N</option>
+		</select>
+	</td>
+	</tr>
+<tr>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(-1)" value="-1m" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(-5)" value="-5m" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(-15)" value="-15m" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(-60)" value="-1h" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(-180)" value="-3h" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(-360)" value="-6h" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(-1440)" value="-1d" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(-1440*7)" value="-7d" />
+		</td>
+	</tr><tr>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(1)" value="+1m" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(5)" value="+5m" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(15)" value="+15m" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(60)" value="+1h" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(180)" value="+3h" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(360)" value="+6h" />
+		</td>
+		<td>
+		<input type="button" class = "link" onclick="AddTime(1440)" value="+1d" />
+		</td>
+			<td>
+		<input type="button" class = "link" onclick="AddTime(1440*7)" value="+7d" />
+		</td>
+	</tr>
+	
+		<tr>
+		<td>
+			<input type="button" class = "link" onclick="btnLWgt(-1)" value="-1" />
+		</td>
+		
+		 <td>
+			<input type="button" class = "link" onclick="btnLWgt(-0.2)" value="-0.2" />
+		</td> 
+		
+		<td>
+			<input type="button" class = "link" onclick="btnLWgt(0.2)" value="+0.2" />
+		</td>
+		<td>
+			<input type="button" class = "link" onclick="btnLWgt(1)" value="+1" />
+		</td> 
+		</tr><tr>
+		<td colspan=3>
+		<b><p id="pw" style="font-size:50px; text-align:center;" ></p>
+		</td><td>
+		
+			<input type="button" class = "link" onclick="btnAddWgt()" value="Add" />
+		</td><td>
+		<b><p id="pm" ></p>
+		</td>
+		<p id="pu"></p>
+		</td>
+	</tr>
+</table>
+
+<p id="chg"></p>
+<p id="selP"></p>
+<p id="selFT"></p>
+<p id="pmEvent"></p>
+
+<table>
+
+	<tr>
+
+	<td>
+	<input type="button" class="link" onclick="btnClearAll()" value="Reset All" />
+	</td>
+
+	<td>
+	<input type="button" class="link" onclick="GPost()" value="Post All" />
+	</td>
+	
+		<td>
+	<input type="button" class="link" onclick="drawChart()" value="Test" />
+	</td>
+	
+	</tr>
+</table>
+
+<div id="chart" style="width: 900px; height: 500px"></div>
+
+<table>
+
+	<tr>
+	
+	<td>
+	
+	<p><input type="date" id='selE' name='selE'></p>
+	
+	</td>
+	
+		<td>
+		
+			<select id="selA" class="ssmselect">
+				<option value="A">All
+				</option>
+				
+				<option value="L">Low
+				</option>
+				
+				<option value="M">Avg
+				</option>
+				
+				<option value="H">High
+				</option>
+			</select>
+		
+		</td>
+		
+		<td>
+			<select id="selI" class="ssmselect">
+				<option value="A">All
+				</option>
+				<option value=1>1d
+				</option>
+				<option value=2>2d
+				</option>
+				<option value=3>3d
+				</option>
+				<option value=4>4d
+				</option>
+				<option value=7>1w
+				</option>
+				<option value=14>2w
+				</option>
+				<option value=21>3w
+				</option>
+				<option value=30>1m
+				</option>
+				<option value=60>2m
+				</option>
+				<option value=90>3m
+				</option>
+				<option value=180>6m
+				</option>
+				<option value=275>9m
+				</option>
+				<option value=365>1y
+				</option>
+			</select>
+		</td>
+		
+		<td>
+				<input type="button" class = "link" onclick="btnChart()" value="Chart" />
+		</td>
+	
+	</tr>
+
+</table>
+
+<div id="test"></div>
+
+<p id="wgttbl"></p>
+
+<script>
+
+var text, ELen, MLen, i, tmv, tmt, ft, etmv, etmt, eft, eid;
+
+//sets variables to the hold contents of locally stored weights
+
+var LWgt = JSON.parse(localStorage.getItem("LSWgt"));
+
+setTime();
+
+displayLWgts();
+
+function btnClearAll(){
+
+	var c = confirm("Clear all local data?");
+	
+	if (c == true){
+		
+		localStorage.removeItem("LSWgt");
+
+		LWgt = [];
+
+document.getElementById("wgttbl").innerHTML = LWgt;
+		
+	}
+	
+}
+
+function resetTime(){
+
+	var P = $("#selP").val();
+	
+	if(P!="Y"){
+	
+		setTime();
+	
+	}
+}
+
+
+function btnAddWgt(){
+	
+	//sets the time for the new record
+	setETime();
+	
+	var newWgt = $( "#pw" ).text();
+	
+	//adds record to local array
+	LWgt[0].splice(0,0,tmt);
+	LWgt[1].splice(0,0,Number(newWgt));
+	LWgt[2].splice(0,0,tmv);
+	
+	WPost(newWgt, tmv);
+	
+	resetLWgt();
+	
+	//resets the page clock
+	resetTime();
+}
+
+//changes the value of the current weight
+function btnLWgt(chg){
+
+	//pulls the most recent value in the weight array
+	var lastWgt = $( "#pw" ).text();
+	
+	//adds a specified amount to the last weight
+	var newWgt = Math.round((chg + Number(lastWgt))*10)/10;
+	
+	//updates the new weight on the page
+	$( "#pw" ).text(newWgt);
+	
+}
+
+
+
+function displayLWgts(){
+
+	WLen = LWgt[0].length;
+	
+	var dArr = [];
+	
+	for (i = 0; i < WLen; i++) {
+	
+		//dfmt(st, n);
+		
+		//var arrD = [Yr, M, D, H, N, S, FT];
+		
+		dArr.push([LWgt[0][i], LWgt[1][i]]);
+	
+	}
+	
+	//alert(dArr);
+	
+	WList = "<table>";
+	
+	WList += "<th>Date</th><th>Weight</th>";
+		
+	for (i = 0; i < WLen; i++) {
+		
+		WList += "<tr>";
+		
+		for(a = 0; a < 2; a++){
+		
+			WList += "<td>"
+		
+			+ LWgt[a][i]
+			
+			+ "</td>";
+
+		}
+		
+		WList += "<td>"
+		
+		+ "<input type=button  value=- class=slnk onclick=delWgt("+i+") + />"
+		  
+		+ "</td>"
+		
+		+ "</tr>";
+		
+	}
+	
+	WList += "</table>";
+	
+	$("#pw").text(LWgt[1][0]);
+	
+document.getElementById("wgttbl").innerHTML = WList;
+
+}
+
+//deletes weight record
+
+function delWgt(i){
+	
+	var c = confirm("Delete weight?");
+	
+	if (c == true){
+	
+		var a = LWgt[0].splice(i, 1);
+		var a = LWgt[1].splice(i, 1);
+		var a = LWgt[2].splice(i, 1);
+	
+		resetLWgt();
+		
+		resetTime();
+	
+	}
+}
+
+//posts the weight to the server
+
+function WPost(wgt, dtime){
+
+	var WD = $( "#selDT" ) . val();
+	
+	var selPost = $( "#selPost" ) . val();
+	
+	if(selPost=="Y"){
+	
+	$.post("../add/AddJQ.php",
+	{
+		v1: dtime,
+		
+		v2: wgt,
+		
+		selTbl: 'tblWeight'
+	});
+    
+    resetLWgt();
+    
+    }
+    
+}
+
+//resets the local array to show the contents of the local storage object
+
+function resetLWgt(){
+
+	localStorage.setItem("LSWgt", JSON.stringify(LWgt));
+	
+	displayLWgts();
+	
+	drawChart();
+}
+
+//creates an array containing various formats of the current time
+
+function TimeArr(dateval){
+	
+	if(dateval!=null){
+		
+		var MTime = new Date(dateval);
+		
+	}else{
+	
+	//creates a new date object
+	var MTime = new Date();
+	
+	}
+	
+	//sets MTine to the number of millisecs
+	MTime = MTime.getTime();
+	
+	//gets the selected timezone
+	var vTZ = $( "#selTZ" ).val();
+	
+	//calculates the number of millisecs to add to the time to adjust to EST
+	var AM = parseInt(vTZ)*60*60*1000;
+	
+	//adds the ms calcuated above to the current time
+	MTime = MTime+AM;
+	
+	//creates a new date object using the updated time
+	var m =  new Date(MTime);
+	
+	//gets the ms of the new date object (FT => Full Time)
+	var FT = m.getTime();
+	
+	//gets the year and month from new date object
+	var Y = m.getFullYear();
+	
+	var yr = m.getYear();
+	
+	var M = m.getMonth()+1;
+	
+	//gets the number of the date from the date object
+	
+	var D = m.getDate();
+	
+		//gets the day name from the date object
+	
+	var dayN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+	
+	var Dn = dayN[m.getDay()];
+	
+	//gets the hours from the date object
+	var H = m.getHours();
+	
+		//gets the minutes from the date object
+	var Mn = m.getMinutes();
+	
+	var Sec = m.getSeconds();
+	
+	//adds a trailing 0 if month is less than 10
+	if(M<10){
+	
+		M="0"+M;
+		
+	}
+	
+	//adds trailing 0 if minutes less than 10
+	if(Mn<10){
+	
+		Mn="0"+Mn;
+		
+		}
+	
+	//subtracts day if hours is below 0
+	if(H<0){
+	
+		H=24+H;
+	
+		D=(D-1);
+	
+	}
+	
+	//adds trailing 0 if hours is below 10
+	if(H<10){
+	
+		H="0"+H;
+		
+		}
+		
+	//adds day if hours is above 24
+	if(H>=24){
+	
+		H=(H-24);
+
+		D=(D+1);
+		
+	}
+	
+	//determines if time is AM or PM
+	if(H<12){
+	
+		var AP = "AM";
+		
+	}else{
+	
+		AP = "PM";
+		
+	}
+	
+	//changes midnight from 0 to 12
+	if(H==0){
+	
+		var hr = 12;
+	
+	}else if(H<13){
+	
+		hr = H;
+		
+	}else{
+	
+		hr = H-12;
+		
+	}
+	
+	//adds trailing 0 if day below 10
+	if(D<10){
+	
+		D="0"+D;
+		
+		}
+	
+	//adds trailing 0 if secs below 10
+	if(Sec<10){
+	
+		Sec="0"+Sec;
+		
+		}
+
+	//creates a variable containing the php readable time
+	var NDTime = Y+'-'+M +'-'+ D +'T'+ H +':'+ Mn + ':' + Sec;
+	
+	//creates a variable containing user friendly time format
+	var ShTime = M +'-'+ D +' '+ hr +':'+ Mn + ':' + Sec + ' ' + AP;
+	
+	//creates a variable containing the weight user friendly time format
+	var WgtTime = Dn + ' ' + Y + '-' + M + '-' + D + ' ' + hr + ':' + Mn + ' ' + AP;
+	
+	//sql readable time
+	var PHTime = Y+'-'+M +'-'+ D +' '+ H +':'+ Mn + ':' + Sec;
+	
+	//creates array containing all 3 time formats
+	var arrTime = [NDTime, FT, ShTime, WgtTime, PHTime];
+
+	return arrTime;
+}
+
+//sets the time values for the page
+
+function setTime(){
+	
+	//creates a variable holding the time array [php time, millisecs, user friendly]
+	var T = TimeArr();
+	
+	//sets the value of the past event indicator (selP) to N REDUNDANT
+	$( "#selP" ) . val("N");
+	
+	//clears the text of the other past event indicador REDUNDANT
+	$( "#pm" ) . text("");
+	
+	//sets the value of the page date/time to the php time in the time array
+	$( "#selDT" ) . val(T[0]);
+	
+	//sets the text of the page date/time to the user friendly time
+	$( "#selDT" ) . text(T[3]);
+	
+	//resets background color
+	bclr("black");
+}
+
+//Adds a number of minutes to the date/time utilized by the page
+
+function AddTime(min){
+
+	//indicators changed to indictate non current date
+	$( "#selP" ) . val("Y");
+	$( "#pm" ) . text("P!");
+	bclr("red");
+	
+	//CTime taken from the value of the date time, which is php formatted
+	var CTime = $( "#selDT" ) . val();
+	
+	//date parts are parsed out
+	var Y = CTime.substring(0,4);
+	var M = CTime.substring(5,7);
+	var D = CTime.substring(8,10);
+	var H = CTime.substring(11,13);
+	var Mn = CTime.substring(14,16);
+	
+	//a new JS date is set using the date parts
+	
+	var m = new Date(Y,(M-1),D,H,Mn);
+	
+	//get minutes from the date
+	var OM = m.getMinutes();
+	
+	//add mins to old mins
+	var NM = OM + min;
+	
+	//set the mins of the date to the new value
+	m.setMinutes(NM);
+	
+	//get the year from the new date
+	var Y = m.getFullYear();
+	
+	//get the month from the new date
+	var M = m.getMonth();
+	
+	M++;
+	
+	if(M===0){
+		
+		M=12;
+		Y=(Y-1);
+		
+	}
+	
+	
+	if(M<10){
+	
+		M="0"+M;
+	
+	}
+	
+	var D = m.getDate();
+	
+	if(D<10){
+	
+		D="0"+D;
+		
+	}
+	
+	var H = m.getHours();
+
+	if(H<10){
+	
+		H="0"+H;
+		
+	}
+	
+	var Mn = m.getMinutes();
+	
+	if(Mn<10){
+	
+		Mn="0"+Mn;
+		
+	}
+
+	if(H<12){
+	
+		var AP = "AM";
+		
+	}else{
+	
+		AP = "PM";
+		
+	}
+	
+	if(H===0){
+	
+		var hr = 12;
+		
+	}else if(H<13){
+	
+		hr = H;
+		
+	}else{
+	
+		hr = H-12;
+		
+	}
+	
+	//gets full time (millisecs) from adjusted date
+	var FT = m.getTime();
+	
+		//gets the day name from the corrected date object
+	var dayN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+	
+	var Dn = dayN[m.getDay()];
+
+	//creates a php formatted time from the original time object
+	var NDTime = Y+'-'+M +'-'+ D +'T'+ H +':'+ Mn;
+	
+	//creates a user friendly time from the original time object
+	var ShTime = M +'-'+ D +' '+ hr +':'+ Mn + ':' + "00" + ' ' + AP;
+	
+	//weight time
+	var WgtTime = Dn + ' ' + Y + '-' + M + '-' + D + ' ' + hr + ':' + Mn + ' ' + AP;
+	
+	//SQLTime
+	var PHTime = Y+'-'+M +'-'+ D +' '+ H +':'+ Mn;
+	
+	$( "#selFT" ) . val(FT);
+	$( "#selDT" ) . val(NDTime);
+	$( "#selDT" ) . text(WgtTime);	
+}
+
+//sets the time for new records
+
+function setETime(){
+
+	//uses the time array function to pull the current time in several formats
+
+	var T = TimeArr();
+	
+	//pulls the value from the prior event indicator
+	
+	var PE = $( "#selP" ) . val();
+	
+	//if the event is a prior event (a time other than the current time has been designated
+	
+	if(PE=="Y"){
+	
+		//sets a variable to the value of the Date/Time displayed [tmv => time value]
+		
+		tmv = $( "#selDT" ) . val();
+		
+		//sets a variable to the text of the Date/Time displayed [tmt => time text]
+		
+		//var wtm = $( "#selDT" ) . text();
+		var p1 = tmv.substr(0, 10);
+		var p2 = tmv.substr(11);
+		tmt = p1+" "+p2;
+		
+		//sets a variable to the value of the full milisecond time of the displayed date/time [ft => full time]
+		
+		ft = $( "#selFT" ) . val();
+		
+	}else{
+	
+		//if the event is not a prior event, the time array values created above are used
+	
+		tmv = T[0];
+		ft = T[1];
+		tmt = T[4];
+		
+	}
+}
+
+//sets the background color
+
+function bclr(clr){
+
+	$("body").css("background-color", clr);
+	
+}
+
+function dfmt(st, n){
+
+	var Yr = st.substr(0, 4);
+	var M = st.substr(5, 2);
+	var D = st.substr(8, 2);
+	var H = st.substr(11, 2);
+	var N = st.substr(14, 2);
+	var S = st.substr(17, 2);
+
+	var m = new Date(Yr, M-1, D, H, N, S);
+
+	var FT = m.getTime();
+
+	var arrD = [Yr, M, D, H, N, S, FT];
+
+	return (arrD[n]);
+
+}
+
+</script>
+<script>
+google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+      
+function drawChart(arr) {
+     
+     if(arr===undefined){
+     
+     	var arr = LWgt;
+     
+     }
+     
+	var rows = arr[0].length;
+	
+	var data = new google.visualization.DataTable();
+      
+	data.addColumn('date', 'Date');
+
+	data.addColumn('number', 'Wgt');
+
+	for(i=0; i < rows; i++){
+
+		data.addRows([
+
+			[
+	
+				new Date(
+	
+					dfmt(arr[0][i],0),
+					dfmt(arr[0][i],1)-1,
+					dfmt(arr[0][i],2),
+					dfmt(arr[0][i],3),
+					dfmt(arr[0][i],4),
+					dfmt(arr[0][i],5)
+	
+				)
+	
+				, 
+				
+				arr[1][i]]
+	
+				]);
+ 
+	}
+
+var options = {
+          legend: 
+          	{position: 'none'},
+          chartArea: 
+          	{width:'85%', height:'85%'},
+       	hAxis: 
+       		{format:'yy-MM-dd'}
+};
+
+	var chart = new google.visualization.AreaChart(document.getElementById('chart'));
+	
+	chart.draw(data, options);
+	
+}
+
+</script>
+</body>
+</html>

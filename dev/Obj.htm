@@ -1,0 +1,121 @@
+<html>
+<head>
+</head>
+<body>
+<div id="bdiv"></div>
+</body>
+</html>
+<script>
+function EventBtn(act, cont, bname){
+	
+  this.act = act;
+  
+  this.cont = cont;
+  
+  this.bname = bname;
+	
+  let tbl = document.getElementById("bdiv");
+	
+  let bid = "b"+tbl.childElementCount;
+	
+  let btn= 
+document.createElement("BUTTON");
+
+  btn.id = bid;
+	
+  let tnode = document.createTextNode(bname);
+
+  btn.appendChild(tnode);
+
+  tbl.appendChild(btn);
+	
+  btn.addEventListener("click", function(){
+
+  alert(act+cont);
+
+  });
+
+}
+
+function ebtnjql(act, cont, bname, tbl, vrow, vcol){
+	
+	let tname = tbl;
+	
+	let elpTime = findLast(act, cont);
+	
+	var bc = $( "button" ).length;
+	
+	var btnid = "btn"+bc;
+	
+    var btn = document.createElement("BUTTON");
+	
+    btn.id = btnid;
+	
+	btn.setAttribute('data-act', act);
+	
+	btn.setAttribute('data-cont', cont);
+	
+    var t = document.createTextNode(bname);
+    
+    var u = document.createTextNode(elpTime);
+    
+    btn.appendChild(t);
+    btn.appendChild(document.createElement("br"));
+    s
+    btn.appendChild(u);
+    
+    var tbl = document.getElementById(tbl);
+    
+    let trlen = tbl.rows.length;
+    
+    let cprow = 6;
+    
+    if(vrow == "n"){
+    		
+    		if(trlen==0){
+    
+    			vrow = tbl.insertRow();
+    		
+    		}else{
+    		
+    			trlen--;
+    		
+    			vrow = tbl.rows[trlen];
+    			
+    			let rlen =vrow.cells.length;
+    			
+    			if(rlen>=cprow){
+    			
+    				vrow = tbl.insertRow();
+    				
+    			}
+    			
+    		}
+    		
+    		vcol = vrow.insertCell();
+    		
+    		vcol.appendChild(btn);
+    
+    }else{
+    
+    		tbl = tbl.rows[vrow].cells;
+    
+    		tbl[vcol].appendChild(btn);
+    
+    }
+    
+    document.getElementById(btnid). addEventListener("click", function(){
+    
+    	btnJQL(act, cont, btnid, bname);
+  
+  	resetbtn();
+});
+}
+
+let b1 = new EventBtn("B01", "Routine", "BR");
+
+let b2 = new EventBtn("A01", "Email", "Admin");
+
+
+alert("Done.");
+</script>

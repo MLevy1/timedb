@@ -1,0 +1,239 @@
+<head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script>
+$( function() {
+	$( ".dpick" ).datepicker();
+} );
+</script>
+</head>
+
+<body>
+<h1>Date List</h1>
+
+<table>
+</td><td>
+	<input type="button" class = "link" onclick="ListTime()" value="List Days" />
+</td><td>
+	<input type="button" class = "link" onclick="ListMonths()" value="List Mths" />
+</td>
+</tr>
+</table>
+<p>Start Date: <input type="text" value="09/05/2018" class="dpick" id="SDate"></p>
+ <p>End Date: <input type="text" value="09/12/2018" class="dpick" id="EDate"></p>
+<p>Interval: <input type="number" value=1 id="inpInt"></p>
+<p>Weekday: <select id="selW">
+	<option value="A">ALL</option>
+	<option value=0>Sun</option>
+	<option value=1>Mon</option>
+	<option value=2>Tue</option>
+	<option value=3>Wed</option>
+	<option value=4>Thu</option>
+	<option value=5>Fri</option>
+	<option value=6>Sat</option>
+
+</select></p>
+<p>Start Month: <input id="SMth" type="month"> </p>
+<p>End Month: <input id="EMth" type="month"> </p>
+<div id="div2">
+</div>
+<script>
+function getAlert(id)
+{
+var aval = $( "#"+id ) . val();
+alert(id+"="+aval);
+}
+
+function D2(a)
+{
+	var D2 = "<p>"+a+"</p>";
+	$('#div2').append(D2);
+}
+
+function D3(id, val)
+{
+	var D2 = "<p>"+id+"="+val+"</p>";
+	$('#div2').append(D2);
+}
+
+function MakeTime(time)
+{
+	var CTime = time+'T00:00';
+
+	var Y = CTime.substring(6,10);
+	var M = CTime.substring(0,2);
+	var D = CTime.substring(3,5);
+	var H = CTime.substring(11,13);
+	var Mn = CTime.substring(14,16);
+	 
+	var MTime = new Date(Y,(M-1),D,H,Mn);
+	
+	return(MTime);
+}
+
+function JSDatetoISO(JSDate, format)
+{
+	if(format=='ms'){
+		var JSDate = new Date(JSDate);
+	}
+	
+	var Y = JSDate.getFullYear();
+	var M = 1+JSDate.getMonth();
+	var D = JSDate.getDate();
+	var H = JSDate.getHours();
+	var Mn = JSDate.getMinutes();
+	var MSec = JSDate.getTime();
+	var W = JSDate.getDay();
+	
+	var WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+	
+	if(M<10){
+		M="0"+M;
+		}
+	
+	if(D<10){
+		D="0"+D;
+		}
+	
+	if(H<10){
+		H="0"+H;
+		}
+	
+	if(Mn<10){
+		Mn="0"+Mn;
+		}
+
+	var ISOTime = Y+'-'+M +'-'+ D +'T'+ H +':'+ Mn;
+	
+	var ISODate = Y+'-'+M +'-'+D;
+	
+	var WDDate = WD[W]+'-'+Y+'-'+M +'-'+D;
+	
+	return[JSDate, ISOTime, ISODate, MSec, WDDate];
+}
+
+function DayDiff(stime, etime)
+{
+	var S = MakeTime(stime);
+	var E = MakeTime(etime);
+	
+	var sms = S.getTime();
+	var ems = E.getTime();
+	
+	return (ems-sms)/(1000*60*60*24);
+}
+
+function MthDiff()
+{
+	var sm = $("#SMth") . val();
+	var em = $("#EMth") . val();
+	
+	var sy = sm.substring(0,4);
+	var smth = sm.substring(5,7);
+	
+	var SM = (sy*12)+parseInt(smth);
+	
+	var ey = em.substring(0,4);
+	var emth = em.substring(5,7);
+	
+	var EM = (ey*12)+parseInt(emth);
+	
+	return (EM-SM);
+	
+}
+
+function AddDays(time, days, m)
+{
+	if(m!='n'){
+		var MTime = MakeTime(time);
+		var MSecs = MTime.getTime();
+	}
+	else{
+		var MSecs = parseInt(time);
+	}
+	var dms = days*24*60*60*1000;
+	
+	RT = MSecs + dms;
+	
+	return JSDatetoISO(RT, 'ms');
+}
+
+function AddMths(time, mths)
+{
+	var m = MakeTime(time);
+	var OM = m.getMonth();
+	var NM = OM + parseInt(mths);
+	m.setMonth(NM);
+	
+	return JSDatetoISO(m);
+}
+
+function ListTime()
+{
+	var SD = $( "#SDate" ) . val();
+	var ED = $( "#EDate" ) . val();
+	var I = $( "#inpInt" ) . val();
+	var W = $( "#selW" ) . val();
+	var D = Math.floor(DayDiff(SD, ED)/I);
+	
+	var i=0;
+	
+	//Make JS Date from Start Date
+	var CD = MakeTime(SD);
+	
+	//Convert Start Date to ISO Format
+	var arrCD = JSDatetoISO(CD, 'ms');
+	
+	//Get MSecs from the JS Date format of the ISO output
+	CD = CD.getTime();
+
+	//Display the Date only format of the ISO output
+	D2(arrCD[4]);
+	
+	//run loop once for each day in range
+	while(i<D){
+		
+		//Add interval to the current value of the date
+		arrCD0 = AddDays(CD, I, 'n');
+		
+		//select the MSecs format of the AddDays output
+		CD = arrCD0[3];
+		
+		//Convert current date to ISO
+		arrCD = JSDatetoISO(CD, 'ms');
+		
+		//display the date only format of ISO output
+		D2(arrCD[4]);
+		
+		i++;
+	}
+}
+
+function ListMonths()
+{
+	var S = $("#SMth") . val();
+	var E = $("#EMth") . val();
+	var D = MthDiff();
+
+	var SY = S.substring(0,4);
+	var SM = S.substring(5,7);
+	var SDate = SM+"/"+"01/"+SY;
+
+	var i=0;
+
+	while(i<=D){
+		
+		arrCD0 = AddMths(SDate, i);
+		CD = arrCD0[2];
+		D2(CD);
+		i++;
+	}
+}
+</script>
+</body>
+</html>

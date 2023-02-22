@@ -1,0 +1,668 @@
+<head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+<script>
+$( function() {
+	$( ".dpick" ).datepicker();
+} );
+</script>
+</head>
+
+<body>
+<h1>New Recurring Cash Flow</h1>
+
+<table>
+<tr><td>
+
+<!--What does this button do?
+
+Runs the ListTime function.
+
+-->
+
+	<input type="button" class = "link" onclick="ListTime()" value="Daily Interval" />
+</td><td>
+
+<!--What does this button do?-->
+
+	<input type="button" class = "link" onclick="ListMonths()" value="Monthly Interval" />
+</td></tr>
+<tr><td>
+
+<!--What does this button clear?-->
+
+	<input type="button" class = "link" onclick="btnClearLS()" value="Clear CF List" />
+</td> </tr>
+</table>
+
+<!--What is this the start date for?-->
+
+<p>Start Date: <input type="text" value="11/1/2019" class="dpick" id="SDate"></p>
+
+<!--What is this the end date for?-->
+
+ <p>End Date: <input type="text" value="11/30/2019" class="dpick" id="EDate"></p>
+ 
+ <!--What is this the interval for?-->
+ 
+<p>Interval: <input type="number" value=1 id="inpInt"></p>
+
+<!--What happens when you select a weekday?-->
+
+<p>Weekday: <select id="selW">
+	<option value="A">ALL</option>
+	<option value=0>Sun</option>
+	<option value=1>Mon</option>
+	<option value=2>Tue</option>
+	<option value=3>Wed</option>
+	<option value=4>Thu</option>
+	<option value=5>Fri</option>
+	<option value=6>Sat</option>
+</select></p>
+
+<!--What happens when you select a month?-->
+
+<p>Start Month: <input id="SMth" type="month"> </p>
+<p>End Month: <input id="EMth" type="month"> </p>
+
+
+<h3>New CF</h3>
+
+<!--How and where is cash flow information stored ?-->
+
+<p>Desc: <input id="inpDes" type="text"></p>
+
+<!--How does the frequency work (i.e. does selecting 7 mean a cash flow wil occur once every 7 days)?-->
+
+<p>Freq(Days): <input id="inpDays" type="number"></p>
+
+<p>Amt: <input id="inpAmt" type="number"></p>
+
+<!-- How does the type work? (i.e. what happens when you pick interval as compared fixed day?)-->
+
+<p>Type: <select id="selType">
+	<option value="I">Interval</option>
+	<option value="F">Fixed Day</option>
+</select></p>
+
+
+<p>
+	<input type="button" onclick="btnAddCF()" value="Add CF" />
+</p>
+
+
+<h3>Edit Cash Flow</h3>
+
+<!-- 
+How do you select a cash flow to be edited?
+
+Is there any way to have this part only visible when a cash flow is selected for editing?
+-->
+
+<p>Num: <input id="eNum" type="number"></p>
+
+<p>Desc: <input id="eDes" type="text"></p>
+
+<p>Freq(Days): <input id="eDays" type="number"></p>
+
+<p>Amt: <input id="eAmt" type="number"></p>
+
+<p>Type: <select id="seleType">
+	<option value="I">Interval</option>
+	<option value="F">Fixed Day</option>
+</select></p>
+
+<p>
+	<input type="button" onclick="btnUpdateCF()" value="Update CF" />
+</p>
+
+<h3>Show Projection</h3>
+
+<!-- Needs to be modified so that intervals other Than days can be used (preferably buttons four month, quarter, year, etc) -->
+
+<table>
+<tr>
+
+<td>Days</td>
+
+<td> <input id="inpLen" type="number"> </td>
+
+<td><input type="button" class = "link" onclick="TestCF()" value="Test CF" />
+</td>
+
+</tr>
+</table>
+
+<h3>Chart</h3>
+
+    <div id="chart_div" style="width:400; height:300"></div>
+
+<div id="demo">
+</div>
+
+<!-- What is this div used for?-->
+
+<div id="div2">
+</div>
+</body>
+<script>
+var Reporting = [];
+
+// What is this used for?
+
+function getAlert(id)
+{
+	var aval = $( "#"+id ) . val();
+	alert(id+"="+aval);
+}
+
+// What is this used for?
+// Needs more specific name 
+
+function D2(a)
+{
+	var D2 = "<p>"+a+"</p>";
+	$('#div2').append(D2);
+}
+
+// What is this used for?
+// Needs more specific name 
+
+
+function D3(id, val)
+{
+	var D2 = "<p>"+id+"="+val+"</p>";
+	$('#div2').append(D2);
+}
+
+// What format dooes a time need to be in for this formula to work?
+
+function MakeTime(time)
+{
+	var CTime = time+'T00:00';
+
+	var Y = CTime.substring(6,10);
+	var M = CTime.substring(0,2);
+	var D = CTime.substring(3,5);
+	var H = CTime.substring(11,13);
+	var Mn = CTime.substring(14,16);
+	 
+	var MTime = new Date(Y,(M-1),D,H,Mn);
+	
+	return(MTime);
+}
+
+//What format does a date need to be in for this formulas to work?
+
+function JSDatetoISO(JSDate, format)
+{
+	if(format=='ms'){
+		var JSDate = new Date(JSDate);
+	}
+	
+	var Y = JSDate.getFullYear();
+	var M = 1+JSDate.getMonth();
+	var D = JSDate.getDate();
+	var H = JSDate.getHours();
+	var Mn = JSDate.getMinutes();
+	var MSec = JSDate.getTime();
+	var W = JSDate.getDay();
+	
+	var WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+	
+	var ND = D;
+	
+	if(M<10){
+		M="0"+M;
+		}
+	
+	if(D<10){
+		D="0"+D;
+		}
+	
+	if(H<10){
+		H="0"+H;
+		}
+	
+	if(Mn<10){
+		Mn="0"+Mn;
+		}
+
+	var ISOTime = Y+'-'+M +'-'+ D +'T'+ H +':'+ Mn;
+	
+	var ISODate = Y+'-'+M +'-'+D;
+	
+	var WDDate = WD[W]+'-'+Y+'-'+M +'-'+D;
+	
+	return[JSDate, ISOTime, ISODate, MSec, WDDate, ND];
+}
+
+// What format do the arguments need to be in?
+
+// What is this used for?
+
+
+function DayDiff(stime, etime)
+{
+	var S = MakeTime(stime);
+	var E = MakeTime(etime);
+	
+	var sms = S.getTime();
+	var ems = E.getTime();
+	
+	return (ems-sms)/(1000*60*60*24);
+}
+
+// What is this used for?
+
+function MthDiff()
+{
+	var sm = $("#SMth") . val();
+	var em = $("#EMth") . val();
+	
+	var sy = sm.substring(0,4);
+	var smth = sm.substring(5,7);
+	
+	var SM = (sy*12)+parseInt(smth);
+	
+	var ey = em.substring(0,4);
+	var emth = em.substring(5,7);
+	
+	var EM = (ey*12)+parseInt(emth);
+	
+	return (EM-SM);
+	
+}
+
+function AddDays(time, days, m)
+{
+	if(m!='n'){
+		var MTime = MakeTime(time);
+		var MSecs = MTime.getTime();
+	}
+	else{
+		var MSecs = parseInt(time);
+	}
+	var dms = days*24*60*60*1000;
+	
+	RT = MSecs + dms;
+	
+	return JSDatetoISO(RT, 'ms');
+}
+
+function AddMths(time, mths)
+{
+	var m = MakeTime(time);
+	var OM = m.getMonth();
+	var NM = OM + parseInt(mths);
+	m.setMonth(NM);
+	
+	return JSDatetoISO(m);
+}
+
+function ListTime()
+{
+
+	//Pulls values from html form above
+	
+	var SD = $( "#SDate" ) . val();
+	var ED = $( "#EDate" ) . val();
+	
+	//Interval
+	
+	var I = $( "#inpInt" ) . val();
+	
+	//Weekday
+	
+	var W = $( "#selW" ) . val();
+	
+	//Days between start and end date
+	
+	var D = Math.floor(DayDiff(SD, ED)/I);
+	
+	var i=0;
+	
+	//Make JS Date from Start Date
+	var CD = MakeTime(SD);
+	
+	//Convert Start Date to ISO Format
+	var arrCD = JSDatetoISO(CD, 'ms');
+	
+	//Get MSecs from the JS Date format of the ISO output
+	CD = CD.getTime();
+
+	//Display the Date only format of the ISO output
+	D2(arrCD[4]);
+	
+	//run loop once for each day in range
+	while(i<D){
+		
+		//Add interval to the current value of the date
+		arrCD0 = AddDays(CD, I, 'n');
+		
+		//select the MSecs format of the AddDays output
+		CD = arrCD0[3];
+		
+		//Convert current date to ISO
+		arrCD = JSDatetoISO(CD, 'ms');
+		
+		//display the date only format of ISO output
+		D2(arrCD[4]);
+		
+		i++;
+	}
+}
+
+function ListMonths()
+{
+	var S = $("#SMth") . val();
+	var E = $("#EMth") . val();
+	var D = MthDiff();
+
+	var SY = S.substring(0,4);
+	var SM = S.substring(5,7);
+	var SDate = SM+"/"+"01/"+SY;
+
+	var i=0;
+
+	while(i<=D){
+		
+		arrCD0 = AddMths(SDate, i);
+		CD = arrCD0[2];
+		D2(CD);
+		i++;
+	}
+}
+
+function TestCF()
+{
+	var SD = $( "#SDate" ) . val();
+	
+	//Make JS Date from Start Date
+	var CD = MakeTime(SD);
+	
+	//Convert Start Date to ISO Format
+	var arrCD = JSDatetoISO(CD, 'ms');
+	
+	//Get MSecs from the JS Date format of the ISO output
+	CD = CD.getTime();
+	
+	$('#div2').empty();
+	
+	var c=0;
+			
+	var i=0;
+
+	var t=0;
+
+	var cf=0;
+	
+	var dur = $("#inpLen") . val();
+	
+	D3("ELen", ELen);
+	
+	var arrCNT=[];
+	
+	//loop runs based on number of cashflows listed.
+	
+	while(c<ELen){
+		
+		arrCNT[c]=0;
+		
+		c++;
+	}
+	
+	var c=0;
+	
+	while(i<=dur){
+	
+		//Add interval to the current value of the date
+		arrCD0 = AddDays(CD, 1, 'n');
+		
+		//select the MSecs format of the AddDays output
+		CD = arrCD0[3];
+		
+		//Convert current date to ISO
+		arrCD = JSDatetoISO(CD, 'ms');
+		
+		//display the date only format of ISO output
+		D2(arrCD[4]+'=>'+arrCD[5]);
+		
+		while(c<ELen){
+		
+			//identify if a cash flow occurs on a fixed date
+			
+			if(CFList[c][3]==="F"){
+			
+				//identify if the cash flow occurs on the current date
+				
+				if(CFList[c][1]==arrCD[5]){
+				
+				t=(Number(CFList[c][2])+t);
+		
+				cf=cf+Number(CFList[c][2]);
+				
+				D2(CFList[c][0] + " " + CFList[c][2]);
+				
+				}
+				
+				
+				
+				
+			}else{
+			
+			//compares the number of days since a cash flow (arrCNT[c]) to the assigned frequency of the cash flow (CFList[c][1]).  If the given number of days has passed, the assigned amount CFList[c][2] will be added to the total [t] and daily cash flow [cf]  variables and the day count is reset.
+			
+			if(arrCNT[c]===parseInt(CFList[c][1])){
+				
+				t=(Number(CFList[c][2])+t);
+		
+				cf=cf+Number(CFList[c][2]);
+	
+				arrCNT[c]=0;
+				
+			}
+			
+			}
+			
+			c++;
+			
+		}
+		
+		var T = t.toLocaleString('en-US', {
+  			style: 'currency',
+  			currency: 'USD',
+		});
+		
+		var CF = cf.toLocaleString('en-US', {
+			style: 'currency',
+			currency: 'USD',
+		});
+	
+		Reporting.push([i, Number(t)]);
+	
+		D2(i+' CF='+CF+' total='+T);
+
+		cf=0;
+		
+		i++;
+		
+		c=0;
+		
+		while(c<ELen){
+			
+			arrCNT[c]++;
+			
+			c++;
+			
+		}
+		
+		c=0;
+		
+	}
+	
+	D2(Reporting);
+	
+	drawChart();
+	
+
+}
+
+//LOCAL STORE
+
+var CFList = JSON.parse(localStorage.getItem("LSCFList"));
+
+var text, ELen, i;
+
+displayCFList();
+
+
+function btnClearLS()
+{
+
+	localStorage.removeItem("LSCFList");
+
+	CFList = [];
+
+document.getElementById("demo").innerHTML = CFList;
+
+}
+
+
+function btnAddCF()
+{	
+
+	var CFName = $("#inpDes") . val();
+	var CFFreq = $("#inpDays") . val();
+	var CFAmt = $("#inpAmt") . val();
+	var CFType = $("#selType") . val();
+	
+	CFList.push([CFName, CFFreq, CFAmt, CFType]);
+	
+	$("#inpDes") . val("");
+	$("#inpDays") . val("");
+	$("#inpAmt") . val("");
+	$("#selType") . val("");
+	
+	resetCFList();
+}
+
+function removeCF(i)
+{
+	var a = CFList.splice(i, 1);
+	
+	resetCFList();
+	
+	alert(a);
+	
+}
+
+function EditCF(i)
+{
+	$("#eNum") . val(i);
+	$("#eDes") . val(CFList[i][0]);
+	$("#eDays") . val(CFList[i][1]);
+	$("#eAmt") . val(CFList[i][2]);
+	$("#seleType") . val(CFList[i][3]);
+}
+
+function btnUpdateCF(i)
+{
+	var eNum = $("#eNum") . val();
+	var eDes = $("#eDes") . val();
+	var eDays = $("#eDays") . val();
+	var eAmt = $("#eAmt") . val();
+	var eType = $("#seleType") . val();
+
+	var r = [eDes, eDays, eAmt, eType];
+	
+	var a = CFList.splice(eNum, 1, r);
+	
+	resetCFList();
+	
+	$("#eNum") . val("");
+	$("#eDes") . val("");
+	$("#eDays") . val("");
+	$("#eAmt") . val("");
+}
+
+
+
+function displayCFList()
+{
+	ELen = CFList.length;
+		
+	text = "<table>";
+	
+	for (i = 0; i < ELen; i++) {
+		
+		text += "<tr><td>" + CFList[i][0] + "</td><td>" + CFList[i][1] + "</td><td>" + CFList[i][2] + "</td><td>" + CFList[i][3] + "</td><td><input type='button' value='-' onclick='removeCF("+i+")'/>"+ "</td> <td><input type='button' value='E' onclick='EditCF("+i+")'/>"+ "</td></tr>";
+	
+	}
+	
+	text += "</table>";
+
+document.getElementById("demo").innerHTML = text;
+}
+
+function resetCFList()
+{
+	localStorage.setItem("LSCFList", 			JSON.stringify(CFList));
+		
+	displayCFList();
+}
+</script>
+</html>
+
+<script>
+
+// Load the Visualization API and the piechart package.
+
+google.charts.load('current', {'packages':['corechart']});
+
+// Set a callback to run when the Google Visualization API is loaded.
+
+/*
+google.charts.setOnLoadCallback(drawChart);
+
+*/
+ 
+function drawChart() {
+
+// Create the data table.
+
+var data = new google.visualization.DataTable();
+
+data.addColumn('number', 'Date');
+
+data.addColumn('number', 'Total');
+
+data.addRows(Reporting);
+
+	//Set chart options
+	var options = {
+
+		'width':400,
+		'height':300
+
+	};
+
+	//Instantiate and draw our chart, passing in some options.
+
+	var chart = new 					google.visualization.AreaChart(document.getElementById('chart_div'));
+
+	chart.draw(data, options);
+	
+}
+
+</script>
+

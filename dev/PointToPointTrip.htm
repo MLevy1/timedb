@@ -1,0 +1,110 @@
+<body>
+<h1>Point to Point Trip</h1>
+<h2>Start - Home</h2>
+<p> (34.9715869, -80.7461476)</p>
+<h2>Interval</h2>
+<p> 0.000007 (2.55 ft)</p>
+<h2>End</h2>
+<p>(69.4557963, -133.0364816)</p>
+
+<button id=btnGo onclick=rWalk()>Go</button>
+
+<h2>End</h2>
+<p id=pEnd></p>
+
+<div id=dList></div>
+</body>
+<script>
+var int = 0.000007;
+
+var c=100000;
+
+var lat = 34.9715869;
+
+var lon = -80.7461476;
+
+function rWalk(){
+
+lat = 34.9715869;
+
+lon = -80.7461476;
+
+var con = Math.random();
+
+for(i=0; i<=c; i++){
+
+	var r = Math.random();
+	
+	var r1 = Math.random();
+
+	var r2 = Math.random();
+
+	var x;
+
+	var y;
+
+	if(r>con){
+
+		if(r1>con){
+	
+			x=1;
+	
+		}else{
+
+			x=-1;
+	
+		}	
+	
+		lat+=(x*int);
+	
+	}else{
+
+		if(r2>con){
+	
+			y=1;
+	
+		}else{
+
+			y=-1;
+	
+		}	
+
+		lon+=(y*int);
+
+	}
+
+}
+
+addLink();
+
+document.getElementById("pEnd").innerHTML = lat+", "+lon;
+}
+
+
+
+
+function addCoord(t){
+	var node = document.createElement("P");
+	
+	var textnode = 	     document.createTextNode(t);
+	
+	node.appendChild(textnode);
+	
+document.getElementById("dList").appendChild(node);
+
+}
+
+
+function addLink(){
+
+var a = document.createElement('a');
+var linkText = document.createTextNode("End Map");
+a.appendChild(linkText);
+a.title = "maps";
+
+a.href = "https://www.google.com/maps/search/?api=1&query="+lat+","+lon;
+
+document.getElementById("dList").appendChild(a);
+
+}
+</script>

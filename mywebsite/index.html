@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Database</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>My Database</h1>
+  <div id="table-container"></div>
+  <br>
+  <form action="/add" method="GET">
+    <label for="id">ID:</label><br>
+    <input type="text" id="id" name="id"><br>
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name"><br><br>
+    <input type="submit" value="Add Row">
+  </form> 
+  <br>
+  <form action="/update" method="GET">
+    <label for="id">ID:</label><br>
+    <input type="text" id="id" name="id"><br>
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name"><br><br>
+    <input type="submit" value="Update Row">
+  </form> 
+  <br>
+  <form action="/delete" method
+<form action="/delete" method="GET">
+    <label for="id">ID:</label><br>
+    <input type="text" id="id" name="id"><br><br>
+    <input type="submit" value="Delete Row">
+  </form> 
+  <script>
+    // Send an HTTP GET request to the /query route
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "/query");
+    xhr.onload = function() {
+      // Insert the response into the table container
+      document.getElementById("table-container").innerHTML = this.responseText;
+    };
+    xhr.send();
+  </script>
+</body>
+</html>
