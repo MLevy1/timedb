@@ -15,8 +15,7 @@ if (!function_exists('pconn')) {
 		//$conn = mysqli_connect('localhost', 'mltimed2', '1234567a', 'mltimed2_events');
 
 		//Home
-		$conn = mysqli_connect('localhost:3306', 'root', '1234567a', 'tdb');
-
+		$conn = mysqli_connect('localhost', 'root', '1234567a', 'tdb');
 	}
 }
 

@@ -1,5 +1,4 @@
 <?php
-header("Cache-Control: no-cache, must-revalidate");
 include("../function/Functions.php");
 formid();
 $link=1;

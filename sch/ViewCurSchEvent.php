@@ -1,6 +1,4 @@
 <?php
-header("Cache-Control: no-cache, must-revalidate");
-
 include('../function/Functions.php');
 
 pconn();
