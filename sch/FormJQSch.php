@@ -113,20 +113,20 @@ $(function () {
 </table>
 
 <?php
-include ("./sch/btnSetJQSch.php");
+include ("./btnSetJQSch.php");
 ?>
 
 <h1>Dynamic</h1>
 <div id ="buttons">
 <?php
-include ("./sch/btnSetJQDSch.php");
+include ("./btnSetJQDSch.php");
 ?>
 </div>
 <h1>Manual</h1>
 <table>
 <tr><td>
 <?php
-include("./function/DBConn.php");
+include("../function/DBConn.php");
 
 $sql = "SELECT * FROM tblAct WHERE Status != 'Inactive' ORDER BY ActDesc";
 $result = $conn->query($sql);
@@ -143,7 +143,7 @@ $conn->close();
 ?>
 </td></tr><tr><td>
 <?php
-include("./function/DBConn.php");
+include("../function/DBConn.php");
 
 $sql = "SELECT tblCont.ContID, tblCont.ContDesc FROM tblCont INNER JOIN tblProj ON tblCont.ProjID = tblProj.ProjID WHERE tblProj.Projstatus != 'Closed' AND tblCont.Active!='N' ORDER BY ContID";
 $result = $conn->query($sql);
@@ -175,7 +175,7 @@ $conn->close();
 </div>
 
 <div id="sched">
-<?php include("./sch/SFooterEventQueries.php"); ?>
+<?php include("./SFooterEventQueries.php"); ?>
 </div>
 
 
