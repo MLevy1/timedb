@@ -1,13 +1,13 @@
 <head>
-<link href="../styles.css" rel="stylesheet"/>
+<link href="styles.css" rel="stylesheet"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
-<link rel="stylesheet" href="../css/jquery-ui.css" />
+<link rel="stylesheet" href="./css/jquery-ui.css" />
 
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <?php
-include("../function/Functions.php");
+include("./function/Functions.php");
 
 pconn();
 
@@ -63,7 +63,7 @@ $(function () {
 
 <body>
 
-<script src="../sch/schScripts.js"></script>
+<script src="./sch/schScripts.js"></script>
 
 <h1>Schedule</h1>
 
@@ -113,20 +113,20 @@ $(function () {
 </table>
 
 <?php
-include ("../sch/btnSetJQSch.php");
+include ("./sch/btnSetJQSch.php");
 ?>
 
 <h1>Dynamic</h1>
 <div id ="buttons">
 <?php
-//include ("../sch/btnSetJQDSch.php");
+include ("./sch/btnSetJQDSch.php");
 ?>
 </div>
 <h1>Manual</h1>
 <table>
 <tr><td>
 <?php
-include("../function/DBConn.php");
+include("./function/DBConn.php");
 
 $sql = "SELECT * FROM tblAct WHERE Status != 'Inactive' ORDER BY ActDesc";
 $result = $conn->query($sql);
@@ -143,7 +143,7 @@ $conn->close();
 ?>
 </td></tr><tr><td>
 <?php
-include("../function/DBConn.php");
+include("./function/DBConn.php");
 
 $sql = "SELECT tblCont.ContID, tblCont.ContDesc FROM tblCont INNER JOIN tblProj ON tblCont.ProjID = tblProj.ProjID WHERE tblProj.Projstatus != 'Closed' AND tblCont.Active!='N' ORDER BY ContID";
 $result = $conn->query($sql);
@@ -175,7 +175,7 @@ $conn->close();
 </div>
 
 <div id="sched">
-<?php //include("../sch/SFooterEventQueries.php"); ?>
+<?php include("./sch/SFooterEventQueries.php"); ?>
 </div>
 
 
