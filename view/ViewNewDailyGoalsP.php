@@ -98,7 +98,7 @@ function btnJQGrade(a, b)
 
 function btnJQDel(a, b, c)
 {
-	$.post("../del/DelJQ.php",
+	$.post("./timedb/del/DelJQ.php",
 	{
 		v1: a,
 		c1: b,

@@ -8,7 +8,7 @@ formid();
 <html>
 <head>
 	<title>Mobile Entry Form</title>
-	<link rel="stylesheet" href="../css/MobileStyle.css" />
+	<link rel="stylesheet" href="../../styles.css" />
 </head>
 <h1>Mobile</h1>
 

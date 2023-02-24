@@ -1,7 +1,7 @@
 <?php header("Cache-Control: no-cache, must-revalidate"); ?>
 <h1>Daily Duration - Selected Activity</h1>
 <a href="../menu/MenuEventLists.htm">Events Menu</a>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 

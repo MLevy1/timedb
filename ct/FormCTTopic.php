@@ -5,7 +5,7 @@ header("Cache-Control: no-cache, must-revalidate");
 <head>
     <title>New Convo Topic</title>
 <?php include("../function/Functions.php"); ?>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script>

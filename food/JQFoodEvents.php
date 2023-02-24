@@ -8,7 +8,7 @@ $T1 = $QDate.'T'.$QTime;
 ?>
 
 <head>
-<link href="../css/MobileStyle.css" rel="stylesheet"/>
+<link href="../../styles.css" rel="stylesheet"/>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 
@@ -164,7 +164,7 @@ function btnJQDelE(a, b, c)
 var result = confirm("Delete record?");
 
 if (result == true) {
-  	$.post("../del/DelJQ.php",
+  	$.post("./timedb/del/DelJQ.php",
 	{
 		v1: a,
 		c1: b,

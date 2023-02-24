@@ -3,6 +3,10 @@ include('../function/Functions.php');
 
 setQTime();
 
+//set global variables [2/23/23]
+global $selCont;
+global $selAct;
+
 //set sql query to list all events ordered by STime
 $sqlAllEvents = "SELECT * FROM tblEvents
     INNER JOIN tblAct ON tblEvents.ActID = tblAct.ActID

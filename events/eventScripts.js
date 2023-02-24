@@ -1,321 +1,9 @@
-<html>
-<head>
-<title>Local</title>
-</head>
-<link href='https://fonts.googleapis.com/css?family=Homenaje' rel='stylesheet'>
+var lastuse = <?php echo json_encode( $lastuse ) ?>;
 
-<style>
+var srvevents = <?php echo json_encode( $events ) ?>;
 
-body {
-background-color: black;
-color: white;
-font-family: 'Homenaje';
-}
+//alert("time: " + srvevents[0][0] + " act: " + srvevents[1][0] + " cont: " + srvevents[2][0]);
 
-a {
-font-weight: bold;
-font-size: 30px;
-}
-
-button {
-font-family: 'Homenaje';
-background-color: Navy;
-color: yellow;
-font-size: 32px;
-width:135px;
-height:125px;
-font-weight: bold;
-float: center;
-border-radius: 6px;
-padding: 2px;
-}
-
-
-select {
-font-size: 30px;
-}
-
-input {
-font-size: 30px;
-height: 55px;
-float: center;
-}
-
-h1 {
-font-size: 50px;
-}
-
-h2 {
-font-size: 30px;
-}
-
-th {
-font-size:30px;
-}
-
-td {
-font-size: 30px;
-vertical-align: center;
-}
-
-textarea {
-font-size: 30px;
-}
-
-table {
-border-spacing: 10px;
-}
-
-.link {
-width: 100%;
-height: 50px;
-color: white;
-background-color: black;
-font-size: 20px;
-font-weight: bold;
-}
-
-.slnk{
-
-font-size: 16px;
-background-color: black;
-color: yellow;
-font-weight: bold;
-float: center;
-}
-
-</style>
-
-<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-
-<body onoffline="bclr('SandyBrown')">
-
-<h1>Local</h1>
-<p>2021-10-02</p>
-
-<span id="testres"></span>
-
-<table width=35%>
-	<tr>
-	
-	<td>
-		<input type="button" class = "link" onclick="clearForm()" value="Reset" />
-			
-	</td>
-	
-	<td colspan=3><p id="selDT"></p></td>
-	
-	<td colspan=3>
-	<select id="selTZ" class="ssmselect">
-	<option value=0>Eastern</option>
-	<option value=1>Central</option>
-	<option value=2>Mountain</option>
-	<option value=3>Pacific</option>
-	<option value=6>Hawaii</option>
-	</select>
-	</td>
-	<td>
-		<select id="selPost">
-			<option>Y</option>
-			<option>N</option>
-		</select>
-	</td>
-	</tr>
-		<td>
-			<input type="button" class = "link" onclick="btnLMood(-1)" value="-1" />
-		</td>
-		
-		 <td>
-			<input type="button" class = "link" onclick="btnLMood(-0.5)" value="-0.5" />
-		</td>
-		  
-		    <td>
-			<input type="button" class = "link" onclick="btnLMood(0)" value="0" />
-		</td> 
-		
-		<td>
-			<input type="button" class = "link" onclick="btnLMood(0.5)" value="0.5" />
-		</td>
-		
-		<td>
-			<input type="button" class = "link" onclick="btnLMood(1)" value="1" />
-		</td> 
-		
-		</td>
-		
-		<td colspan=3>
-		
-		<b><p id="dm"></p>
-		<b><p id="pm"></p>
-		<b><p id="pu"></p>
-		
-		</td>
-	</tr><tr>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(-1)" value="-1m" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(-5)" value="-5m" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(-15)" value="-15m" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(-60)" value="-1h" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(-180)" value="-3h" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(-360)" value="-6h" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(-1440)" value="-1d" />
-		</td>
-	</tr><tr>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(1)" value="+1m" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(5)" value="+5m" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(15)" value="+15m" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(60)" value="+1h" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(180)" value="+3h" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(360)" value="+6h" />
-		</td>
-		<td>
-		<input type="button" class = "link" onclick="AddTime(1440)" value="+1d" />
-	</td>
-	</tr>
-</table>
-<p id="chg"></p>
-<p id="selP"></p>
-<p id="selFT"></p>
-<h2 id="pmEvent"></h2>
-<table>
-	<tr>
-		<td><input type="button" class="link" onclick="runaddCells()" value="Manual" /></td>
-		
-		<td><input type="button" class="link" onclick="PriorEvent()" value="Prior" /></td>
-		
-				<td><input type="button" class="link" onclick="findLast('S01', 'DC')" value="Test" /></td>
-		
-	</tr>
-</table>
-
-<!--BUTTONS-->
-
-<table id="etbl" width=100%></table>
-
-<h2>Routine</h2>
-
-<input type="button" value=+ onclick="exsec('btnR')"/>
-
-<table class="btnR" id="tblRoutine"></table>
-
-<h2>Childcare</h2>
-
-<input type="button" value=+ onclick="exsec('btnC')"/>
-
-<table class="btnC" id="tblccare"></table>
-
-<h2>Social</h2>
-
-<input type="button" value=+ onclick="exsec('btnS')"/>
-
-
-<table id="tblsocial" class="btnS"></table>
-
-<h2>Work</h2>
-
-<input type="button" value=+ onclick="exsec('btnW')"/>
-
-<table id="tblwork" class="btnW"></table>
-	
-<h2>Family</h2>
-
-<input type="button" value=+ onclick="exsec('btnF')"/>
-
-
-<table id="tblfam" class="btnF"></table>
-	
-<h2>Transport</h2>
-
-<input type="button" value=+ onclick="exsec('btnT')"/>
-
-<table id="tbltrans" class="btnT"></table>
-	
-<h2>Health</h2>
-
-<input type="button" value=+ onclick="exsec('btnH')"/>
-
-
-<table id="tblhealth" class="btnH"></table>
-	
-<h2>Food & Drink</h2>
-
-<input type="button" value=+ onclick="exsec('btnFD')"/>
-
-<table id="tblfood" class="btnFD"></table>
-	
-<h2>Chores</h2>
-
-<input type="button" value=+ onclick="exsec('btnCh')"/>
-
-
-<table id="tblchores" class="btnCh"></table>
-	
-<h2>Personal</h2>
-
-<input type="button" value=+ onclick="exsec('btnP')"/>
-
-<table id="tblpersonal" class="btnP"></table>
-
-<!--END BUTTONS-->
-
-<table>
-	<tr>
-
-	<td>
-	<input type="button" class="link" onclick="btnClearAll()" value="Reset All" />
-	</td>
-
-	<td>
-	<input type="button" class="link" onclick="GPost()" value="Post All" />
-	</td>
-	</tr>
-</table>
-
-<svg id="echt" width="960" height="50"></svg>
-
-<svg id="mcht" width="960" height="50"></svg>
-
-<p id="demo"></p>
-
-<p id="moodtbl"></p>
-
-<p id="olist"></p>
-
-<p id="csel"></p>
-
-<p id="psel"></p>
-
-<p id="spsel"></p>
-
-<p id="asel"></p>
-
-<div id='elog'></div>
-
-
-<script>
 var text, ELen, MLen, i, tmv, tmt, ft, etmv, etmt, eft, eid;
 
 //sets variables to the hold contents of locally stored events, moods, activites, sub-activites, projects and use codes
@@ -354,7 +42,6 @@ if(LMoods===null){
 
 }
 
-
 ebtnjql('N04', 'NA', 'Bed', "tblRoutine", "n", "n", "n");
 
 ebtnjql('B01', 'PERSONAL.2', 'BR', "tblRoutine", "n", "n", "n");
@@ -375,11 +62,13 @@ ebtnjql('P32', 'PERSONAL.2', 'Pack', "tblRoutine", "n", "n", "n");
 
 ebtnjql('P16', 'Dog', 'Dog', "tblRoutine", "n", "n", "n");
 
-ebtnjql('P30', 'Dog', 'Walk (D)', "tblRoutine", "n", "n", (2*60*60*24));
+ebtnjql('P30', 'Dog', 'Walk (D)', "tblRoutine", "n", "n", "n");
 
 ebtnjql('P12', 'PERSONAL.2', 'Fingernails', "tblRoutine", "n", "n", (10*60*60*24));
 
 ebtnjql('P29', 'Dog', 'Shower (D)', "tblRoutine", "n", "n", (30*60*60*24));
+
+ebtnjql('N01', 'NA', 'Untracked', "tblRoutine", "n", "n", "n");
 
 ebtnjql('C03', 'CHC.R', 'Feeding', "tblccare", "n", "n", "n");
 
@@ -401,33 +90,59 @@ ebtnjql('S01', 'DC', 'Social (DC)', "tblsocial", "n", "n", "n");
 		
 ebtnjql('S01', 'ME', 'Social (ME)', "tblsocial", "n", "n", "n");
 
+ebtnjql('S01', 'MH', 'Social (MH)', "tblsocial", "n", "n", "n");
+
+ebtnjql('S01', 'RC', 'Social (RC)', "tblsocial", "n", "n", "n");
+
+ebtnjql('S01', 'ADf', 'Social (A&F)', "tblsocial", "n", "n", "n");
+
 ebtnjql('A02', 'ADMIN', 'Inbox', "tblwork", "n", "n", "n");
+
+ebtnjql('T04', 'TRAINING.2', 'WF Training', "tblwork", "n", "n", "n");
+
+ebtnjql('M10', 'MEET.01', 'Team Mtg', "tblwork", "n", "n", "n");
+
+ebtnjql('A07', 'ADMIN', 'Tech Support', "tblwork", "n", "n", "n");
 
 ebtnjql('W15', 'ISSUE.00', 'Issue Memo', "tblwork", "n", "n", "n");
 
-ebtnjql('W04', 'ISSUE.00', 'Issues Reporting', "tblwork", "n", "n", "n");
+ebtnjql('W04', 'ISSUE.R', 'Issues Reporting', "tblwork", "n", "n", "n");
 
-ebtnjql('W10', 'ISSUE.00', 'Email: Issues', "tblwork", "n", "n", "n");
+ebtnjql('W10', 'ISSUE.00', 'Issues: Email', "tblwork", "n", "n", "n");
 
-ebtnjql('M01', 'ISSUE.00', 'Issues R&C Mtg', "tblwork", "n", "n", "n");
+ebtnjql('M01', 'ISSUE.00', 'Issues: R&C Mtg', "tblwork", "n", "n", "n");
 
-ebtnjql('M02', 'ISSUE.00', 'Issues Bus Mtg', "tblwork", "n", "n", "n");
+ebtnjql('M02', 'ISSUE.00', 'Issues: Bus Mtg', "tblwork", "n", "n", "n");
 
-ebtnjql('W10', 'RCSA.00', 'Email: RCSA', "tblwork", "n", "n", "n");
-
-ebtnjql('M01', 'RCSA.00', 'RCSA R&C Mtg', "tblwork", "n", "n", "n");
+ebtnjql('W01', 'RCSA.00', 'RCSA: Agenda', "tblwork", "n", "n", "n");
 
 ebtnjql('M02', 'RCSA.00', 'RCSA: Bus Mtg', "tblwork", "n", "n", "n");
 
-ebtnjql('W04', 'RCSA.R', 'RCSA Rep', "tblwork", "n", "n", "n");
+ebtnjql('M01', 'RCSA.00', 'RCSA: R&C Mtg', "tblwork", "n", "n", "n");
 
-ebtnjql('M01', 'SHRP.01', 'MR Ctr R&C Mtg', "tblwork", "n", "n", "n");
+ebtnjql('W33', 'RCSA.A', 'RCSA: Risk Asmt', "tblwork", "n", "n", "n");
 
-ebtnjql('W10', 'SHRP.01', 'MR Ctr Email', "tblwork", "n", "n", "n");
+ebtnjql('W29', 'RCSA.A', 'RCSA: Controls', "tblwork", "n", "n", "n");
 
-ebtnjql('W04', 'SHRP.01', 'MR Ctr Rep', "tblwork", "n", "n", "n");
+ebtnjql('W37', 'RCSA.A', 'RCSA: QA', "tblwork", "n", "n", "n");
 
-ebtnjql('T04', 'TRAINING.2', 'WF Training', "tblwork", "n", "n", "n");
+ebtnjql('W10', 'RCSA.00', 'RCSA: Email', "tblwork", "n", "n", "n");
+
+ebtnjql('W38', 'RCSA.R', 'RCSA: Status Rep', "tblwork", "n", "n", "n");
+
+ebtnjql('W04', 'RCSA.R', 'RCSA: Rep', "tblwork", "n", "n", "n");
+
+ebtnjql('W29', 'SHRP.01', 'MR Ctr: Controls', "tblwork", "n", "n", "n");
+
+ebtnjql('W10', 'SHRP.01', 'MR Ctr: Email', "tblwork", "n", "n", "n");
+
+ebtnjql('W37', 'SHRP.01', 'MR Ctr: QA', "tblwork", "n", "n", "n");
+
+ebtnjql('W38', 'SHRP.01', 'MR Ctr: Status Rep', "tblwork", "n", "n", "n");
+
+ebtnjql('M01', 'SHRP.01', 'MR Ctr: R&C Mtg', "tblwork", "n", "n", "n");
+
+ebtnjql('W04', 'SHRP.01', 'MR Ctr: Rep', "tblwork", "n", "n", "n");
 
 ebtnjql('W04', 'REP.01', 'Qtrly Report', "tblwork", "n", "n", "n");
 
@@ -439,13 +154,13 @@ ebtnjql('W10', 'RC.00', 'Reg Ctr Email', "tblwork", "n", "n", "n");
 
 ebtnjql('M01', 'RC.00', 'Reg Ctr R&C Mtg', "tblwork", "n", "n", "n");
 
-ebtnjql('M10', 'MEET.01', 'Team Mtg', "tblwork", "n", "n", "n");
-
 ebtnjql('W50', 'POL.00', 'Procedures: Policy', "tblwork", "n", "n", "n");
 
-ebtnjql('M01', 'POL.00', 'Policy R&C Mtg', "tblwork", "n", "n", "n");
+ebtnjql('M01', 'POL.00', 'Procedures: R&C Mtg', "tblwork", "n", "n", "n");
 
-ebtnjql('A07', 'ADMIN', 'Tech Support', "tblwork", "n", "n", "n");
+ebtnjql('W10', 'POL.00', 'Procedures: Email', "tblwork", "n", "n", "n");
+
+ebtnjql('W38', 'POL.00', 'Procedures: Status Rep', "tblwork", "n", "n", "n");
 
 ebtnjql('N02', 'AD', 'Drive (A)', "tblfam", "n", "n", "n");
 
@@ -539,7 +254,7 @@ ebtnjql('P05', 'PERSONAL.A', 'Personal Admin', "tblpersonal", "n", "n", "n");
 
 ebtnjql('P01', 'TIMEDB.0', 'Database', "tblpersonal", "n", "n", "n");
 
-ebtnjql('P04', 'PFIN.00', 'Finances', "tblpersonal", "n", "n", (14*60*60*24));
+ebtnjql('P04', 'PFIN.00', 'Finances', "tblpersonal", "n", "n", "n");
 
 ebtnjql('P26', 'PERSONAL.1', 'JO', "tblpersonal", "n", "n", "n");
 
@@ -553,8 +268,14 @@ ebtnjql('L19', 'LEARNING.1', 'Crossword', "tblpersonal", "n", "n", "n");
 
 ebtnjql('L14', 'PROG.3', 'JavaScript', "tblpersonal", "n", "n", "n");
 
+ebtnjql('L14', 'PROG.1', 'Python', "tblpersonal", "n", "n", "n");
+
+ebtnjql('L16', 'NORM.F', 'Read: Fashion', "tblpersonal", "n", "n", "n");
+
 ebtnjql('P24', 'PERSONAL.1', 'Internet', "tblpersonal", "n", "n", "n");
-		
+
+ebtnjql('P53', 'PERSONAL.1', 'Crypto', "tblpersonal", "n", "n", "n");
+
 ebtnjql('L16', 'News', 'News', "tblpersonal", "n", "n", "n");
 
 function emptyps(){
@@ -601,7 +322,6 @@ function resetTime(){
 	}
 }
 
-
 function btnclr(){
 
 	$("button").css("background-color", "navy");
@@ -620,6 +340,12 @@ $("button").click(function(){
     		
     	setTimeout(btnclr, 1000);
     		
+});
+
+$(".sTime").change(function(){
+
+	displayLEvents();
+	
 });
 
 
@@ -742,32 +468,32 @@ function displayLMoods(){
 		
 		if(i>0){
 		
-			var at = smn(LMoods[i-1][4]);
+			var boxStart = svgboxstartxcoord(LMoods[i-1][4]);
 			
 		}else{
 		
-			var at = smn(LMoods[i][4]);
+			var boxStart = svgboxstartxcoord(LMoods[i][4]);
 			
 		}
 		
-		var ac0 = "mcht";
-		var ac1 = smn(LMoods[i][4]);
-		var ac2 = (EL / 1000)/90;
-		var ac3 = mclr(LMoods[i][1]);
+		var boxId = "mcht";
+		var boxStartX = svgboxstartxcoord(LMoods[i][4]);
+		var boxWidth = (EL / 1000)/90;
+		var boxFill = mclr(LMoods[i][1]);
 	
-		if(ac1<0){
+		if(boxStartX<0){
 		
-			if(at>0){
+			if(boxStart>0){
 			
-				drawbox(ac0, 0, at, ac3);
+				drawbox(boxId, 0, boxStart, boxFill);
 			
 			}
 		
 		}
 	
-		if(ac1>0){
+		if(boxWidth>0){
 		
-			drawbox(ac0, ac1, ac2, ac3);
+			drawbox(boxId, boxStartX, boxWidth, boxFill);
 
 		}
 		
@@ -806,18 +532,11 @@ function displayLMoods(){
 	
 }
 
+function CheckLEvents(){
 
-function displayLEvents(){
-
-	resetSVG('echt');
-
-	var arrchart = [];
-
-	//set up array for act length details
-	var arrActLenDet = [];
-
-	//set up array for cont length details
-	var arrContLenDet = [];
+	//TO BE BUILT TO CHECK EVENTS
+	
+	let missingEvents = [];
 
 	LEvents.sort();
 	
@@ -825,7 +544,96 @@ function displayLEvents(){
 	
 	ELen = LEvents.length;
 	
-	var minDate = Date.now()-(2*24*60*60*1000);
+	SLen = srvevents[0].length;
+	
+	//confirm local events are in server
+	
+	for (i = 0; i < ELen; i++) {
+	
+		let varLocal = FixTime(LEvents[i][0]);
+		let svrList = srvevents[0];
+		
+if(svrList.includes(varLocal[3])==true){
+			
+		}else{
+		
+			missingEvents.push(LEvents[i]);
+			
+		}
+	
+	}
+
+	let MLen = missingEvents.length;
+	
+	if(MLen>0){
+	
+		text = "<table>";
+	
+		text += "<th></th><th></th><th>Date</th><th>Time</th><th>Act</th><th>Cont</th><th></th>";
+
+		for (i = 0; i < MLen; i++) {
+	
+			text += "<tr><td>" +
+			
+			"<input type=button  value=+ class=slnk onclick='JQPost(`"+ missingEvents[i][1] + "`,`" + missingEvents[i][2] + "`,`" + missingEvents[i][0] + "`,`" + i+"`)'/>" + 
+		
+			"</td><td>" 
+			+ missingEvents[i][5].substring(0,5) 
+			+ "</td><td>" 
+			+ missingEvents[i][5].substring(6) 			
+			+ "</td><td>" 
+			+ missingEvents[i][3] 
+			+ "</td><td>" 
+			+ missingEvents[i][2] 
+			+ "</td><td>" 
+			+ missingEvents[i][4] 
+			+ "</td></tr>";
+	
+	}
+	
+	text += "</table>";
+
+				document.getElementById("elog").innerHTML = text;
+	
+	alert("Conflicts Found!");
+	
+	return;
+}
+
+LEvents =[];
+
+for (i = 0; i < SLen; i++) {
+
+	let srvtime = FixTime(srvevents[0][i]);
+
+	LEvents.push([srvtime[0], srvevents[1][i], srvevents[2][i], srvevents[3][i], "N", srvtime[2], srvtime[1]]);
+}
+
+displayLEvents();
+
+alert("Sync Done");
+}
+
+
+function displayLEvents(){
+
+	resetSVG('echt');
+
+	var arrchart = [];
+
+	LEvents.sort();
+	
+	LEvents.reverse();
+	
+	ELen = LEvents.length;
+	
+	let selMinDate = $("#selMinDate").val();
+	
+	var minDate = Date.now()-(selMinDate*24*60*60*1000);
+	
+	let selMaxDate = $("#selMaxDate").val();
+	
+	let maxDate = Date.now()-(selMaxDate*24*60*60*1000);
 	
 	text = "<table>";
 	
@@ -843,24 +651,21 @@ function displayLEvents(){
 		
 		}
 		
-		//Event Length (EL) is in Milliseconds.  fmtime converts to readable time.
 		fmtime(EL);
 		
-		
-		//at and smn are used with the chart
 		if(i>0){
 		
-			var at = smn(LEvents[i-1][6]);
+			var at = svgboxstartxcoord(LEvents[i-1][6]);
 			
 			
 		}else{
 		
-			var at = smn(LEvents[i][6]);
+			var at = svgboxstartxcoord(LEvents[i][6]);
 			
 		}
 		
 		var ac0 = "echt";
-		var ac1 = smn(LEvents[i][6]);
+		var ac1 = svgboxstartxcoord(LEvents[i][6]);
 		var ac2 = (EL / 1000)/90;
 		var ac3 = faclr(LEvents[i][1]);
 		
@@ -880,59 +685,45 @@ function displayLEvents(){
 
 		}
 	
-		//includes only events that happened after the min date
-		if(LEvents[i][6] > minDate){
+		//end edur calc
 		
-			text += "<tr><td>" +
-			"<input type=button  value=+ class=slnk onclick='JQPost(`"+ LEvents[i][1] + "`,`" + LEvents[i][2] + "`,`" + LEvents[i][0] + "`,`" + i+"`)'/>" + 
-			
-			"</td><td>" 
-			
-			+ 
-			
-			"<input type=button value=- class=slnk onclick='delEvent("+i+")' />" 
-			
-			+ 
-			
-			"</td><td>" 
-			
-			+ 
-			
-			"<input type=button class=slnk value=U onclick='UpdateEvent(`"+ i + "`)' />"
-			
-			+
-			
-			"</td><td>" 
-			
-			+ 
-			
-			LEvents[i][5].substring(0,5) + 
-			"</td><td>" + 
-			LEvents[i][5].substring(6) + 
-			"</td><td>" + 
-			LEvents[i][3] +
-			"</td><td>" + 
-			LEvents[i][2] + 
-			"</td><td>" + 
-			LEvents[i][4] + 
-			"</td><td>" + 
-			EDur + 
-			"</td></tr>";
-
-			//for detail arrays
-			let actdet = LEvents[i][3];
-			let contdet = LEvents[i][2];
-
-			//add the event length and the act name to the act detail table
-			arrActLenDet.push([actdet, EL]);
-
-			
-			//add the event length and the sub proj name to the sub proj detail table
-			arrContLenDet.push([contdet, EL]);
-
-			//sort the arrays, go through them and identify unique values, add the unique ids to summary tables, add the ELs to the time for each value, dipsplay 
-
-
+		if(LEvents[i][6] > minDate && LEvents[i][6] <= maxDate){
+		
+		text += "<tr><td>" +
+		"<input type=button  value=+ class=slnk onclick='JQPost(`"+ LEvents[i][1] + "`,`" + LEvents[i][2] + "`,`" + LEvents[i][0] + "`,`" + i+"`)'/>" + 
+		
+		"</td><td>" 
+		
+		+ 
+		
+		"<input type=button value=- class=slnk onclick='delEvent("+i+")' />" 
+		
+		+ 
+		
+		"</td><td>" 
+		
+		+ 
+		
+		"<input type=button class=slnk value=U onclick='UpdateEvent(`"+ i + "`)' />"
+		
+		+
+		
+		"</td><td>" 
+		
+		+ 
+		
+		LEvents[i][5].substring(0,5) + 
+		"</td><td>" + 
+		LEvents[i][5].substring(6) + 
+		"</td><td>" + 
+		LEvents[i][3] +
+		"</td><td>" + 
+		LEvents[i][2] + 
+		"</td><td>" + 
+		LEvents[i][4] + 
+		"</td><td>" + 
+		EDur + 
+		"</td></tr>";
 	
 		}
 	
@@ -942,55 +733,9 @@ function displayLEvents(){
 
 	document.getElementById("demo").innerHTML = text;
 	
-	svgtext('echt');
-
-	//displaySummaryTable(arrActLenDet);
-
+	svgtext('echt')
+	
 }
-
-function displaySummaryTable(arr){
-
-	let arrSum = [];
-
-	arr.sort();
-
-	S = arr.length;
-	
-	for (i = 0; i < S; i++) {
-		
-		varIndex = arr[i][0];
-		varQty = arr[i][1];
-
-		if(i=!0){
-
-			varPrior = arr[i-1][0];
-		
-		}
-
-		if(i==0){
-
-			arrSum.push([varIndex, varQty]);
-
-		}
-		else if(varIndex=!varPrior){
-
-			//arrSum.push([varIndex, varQty]);			
-
-		}
-		//else{
-
-			//arr[1][i-1] = arr[1][i-1]+varQty;
-
-		//}
-	
-
-	}
-	
-	displayList(arrSum);
-
-}
-
-
 
 function delEvent(i){
 	
@@ -1175,6 +920,69 @@ function TimeArr(){
 	return arrTime;
 }
 
+function FixTime(CTime){
+
+	var Y = CTime.substring(0,4);
+	var M = CTime.substring(5,7);
+	var D = CTime.substring(8,10);
+	var H = CTime.substring(11,13);
+	var Mn = CTime.substring(14,16);
+	let S = CTime.substring(17);
+	
+	var m = new Date(Y,M-1,D,H,Mn,S);
+	
+	//M = zerofix(M);
+	
+	var D = m.getDate();
+	
+	D = zerofix(D);
+	
+	var H = m.getHours();
+
+	H = zerofix(H);
+	
+	var Mn = m.getMinutes();
+	
+	Mn = zerofix(Mn);
+
+	if(H<12){
+	
+		var AP = "AM";
+		
+	}else{
+	
+		AP = "PM";
+		
+	}
+	
+	if(H===0){
+	
+		var hr = 12;
+		
+	}else if(H<13){
+	
+		hr = H;
+		
+	}else{
+	
+		hr = H-12;
+		
+	}
+	
+	var FT = m.getTime();
+
+	var NDTime = Y+'-'+M +'-'+ D +'T'+ H +':'+ Mn + ':' + S;
+	
+	var ShTime = M +'-'+ D +' '+ hr +':'+ Mn + ':' + S + ' ' + AP;
+	
+	var SvrTime = Y+'-'+M +'-'+ D +' '+ H +':'+ Mn + ':' + S;
+
+	var arrTime = [NDTime, FT, ShTime, SvrTime];
+
+	return arrTime;
+
+}
+
 function GPost(){
 
 	ELen = LEvents.length;
@@ -1300,19 +1108,19 @@ function AddTime(min){
 
 function displayList(arr){
 
-	S = arr.length;
+	S = arr. length;
 	
 	L = arr[0].length;
-
+	
 	text = "<table>";
 	
-	for (i = 0; i < S; i++) {
+	for (i = 0; i < L; i++) {
 		
 		text += "<tr>";
 		
-		for (j = 0; j < L; j++){
+		for (j = 0; j < S; j++){
 		
-			text += "<td>" + arr[i][j] + "</td>";
+			text += "<td>" + arr[j][i] + "</td>";
 			
 		}
 		
@@ -1347,6 +1155,8 @@ function ebtnjql(act, cont, bname, tbl, vrow, vcol, warn){
 	btn.setAttribute('data-act', act);
 	
 	btn.setAttribute('data-cont', cont);
+	
+	btn.setAttribute('data-warn', warn);
 	
     var t = document.createTextNode(bname);
     
@@ -1429,13 +1239,25 @@ function resetbtn(){
  		
  			let bcont = buttons[i].getAttribute('data-cont');
 
+			let bwarn = buttons[i].getAttribute('data-warn');
+
  			let arrelpTime = findLast(bact, bcont);
 
  			let elpTime = arrelpTime[0];
+ 			
+ 			let wTime = arrelpTime[1];
  
  			let newnode = document.createTextNode(elpTime);
  
  			buttons[i].replaceChild(newnode, buttons[i].childNodes[2]);
+ 			
+ 			if (bwarn!="n"){
+
+    				if(bwarn < wTime){
+								buttons[i].style.backgroundColor="red";    
+		
+				}
+			}
  
  		}
  
@@ -1895,8 +1717,12 @@ function PriorEvent(){
 		JQPost(act, cont, tmv);
 		
 	}
-	
+
 	resetAll();
+	
+	setTimeout(bclr("Orange"), 1000);
+	
+	bclr("black");
 }
 
 //updates the contents of a record in the events table
@@ -1943,9 +1769,6 @@ function bclr(clr){
 
 function faclr(act){
 	
-	//BUG 1: WONT WORK WITH EMPTY LOCAL STORAGE
-
-	/*
 	var arrAct = LActs[0];
 		
 	var ans = $.inArray(act, arrAct);
@@ -1957,310 +1780,7 @@ function faclr(act){
 	var an2 = $.inArray(PU, arrLPU);
 	
 	var clr = LPU[2][an2];
-	*/
 	
-
-	/*
-
-	NEW COLOR THEORY
-
-	Move towards having the primary colors represent fundamental states (productivity, idelness, social connection, etc.) and having the activities represent the mix of those things.  Not sure exactly how to do this yet.
-
-	*/
-        let clr = 'black';
-
-        switch(act){
-
-            default:
-               clr = 'black';
-               break;
-
-            case 'P33':
-               clr = 'aqua';
-               break;
-
-            case 'P60':
-               clr = 'aqua';
-               break;
-
-
-            case 'L14':
-               clr = 'orange';
-               break;
-
-            case 'L16':
-               clr = '#c65b00';
-               break;
-
-			case 'L19':
-				clr = 'orange';
-				break;
-
-			case 'P01':
-				clr = '#c65b00';
-				break;
-
-			case 'P04':
-				clr = '#c65b00';
-				break;
-
-			case 'P05':
-				clr = 'teal';
-				break;
-
-			case 'P24':
-				clr = 'maroon';
-				break;
-
-			case 'P26':
-				clr = 'blue';
-				break;
-
-			case 'P15':
-				clr = 'blue';
-				break;
-
-			case 'P31':
-				clr = 'blue';
-				break;
-
-			case 'P42':
-				clr = 'blue';
-				break;
-
-			case 'P63':
-				clr = 'blue';
-				break;
-
-			case 'B02':
-				clr = 'fuchsia';
-				break;
-
-			case 'B05':
-				clr = 'fuchsia';
-				break;
-
-			case 'B06':
-				clr = 'fuchsia';
-				break;
-
-			case 'B09':
-				clr = 'fuchsia';
-				break;
-
-			case 'P13':
-				clr = 'fuchsia';
-				break;
-
-			case 'P18':
-				clr = 'fuchsia';
-				break;
-
-			case 'P45':
-				clr = 'fuchsia';
-				break;
-
-			case 'N02':
-				clr = 'gray';
-				break;
-
-			case 'N03':
-				clr = '#b97346';
-				break;
-
-			case 'P56':
-				clr = 'blue';
-				break;
-
-			case 'S07':
-				clr = 'yellow';
-				break;
-
-			case 'S09':
-				clr = 'yellow';
-				break;
-
-			case 'S10':
-				clr = 'red';
-				break;
-
-			case 'L03':
-				clr = 'navy';
-				break;
-
-			case 'P11':
-				clr = 'navy';
-				break;
-
-			case 'P22':
-				clr = 'aqua';
-				break;
-
-			case 'P34':
-				clr = 'navy';
-				break;
-
-			case 'P35':
-				clr = 'navy';
-				break;
-
-			case 'P36':
-				clr = 'red';
-				break;
-
-			case 'P37':
-				clr = 'navy';
-				break;
-
-			case 'P39':
-				clr = 'red';
-				break;
-
-			case 'P41':
-				clr = 'navy';
-				break;
-
-			case 'P43':
-				clr = 'navy';
-				break;
-
-			case 'P47':
-				clr = 'red';
-				break;
-
-			case 'P48':
-				clr = 'navy';
-				break;
-
-			case 'P58':
-				clr = 'navy';
-				break;
-
-			case 'P59':
-				clr = 'navy';
-				break;
-
-			case 'P61':
-				clr = 'navy';
-				break;
-
-			case 'P64':
-				clr = 'teal';
-				break;
-
-			case 'C01':
-				clr = 'purple';
-				break;
-
-			case 'C02':
-				clr = 'purple';
-				break;
-
-			case 'C03':
-				clr = 'purple';
-				break;
-
-			case 'C04':
-				clr = 'purple';
-				break;
-
-			case 'C08':
-				clr = 'purple';
-				break;
-
-			case 'C09':
-				clr = 'purple';
-				break;
-
-			case 'A02':
-				clr = 'teal';
-				break;
-
-			case 'A07':
-				clr = 'teal';
-				break;
-
-			case 'M01':
-				clr = 'lime';
-				break;
-
-			case 'M02':
-				clr = 'lime';
-				break;
-
-			case 'M10':
-				clr = 'olive';
-				break;
-
-			case 'T04':
-				clr = 'teal';
-				break;
-
-			case 'W04':
-				clr = 'green';
-				break;
-
-			case 'W10':
-				clr = 'green';
-				break;
-
-			case 'W15':
-				clr = 'green';
-				break;
-
-			case 'W50':
-				clr = 'green';
-				break;
-
-			case 'P40':
-				clr = 'gray';
-				break;
-
-			case 'S01':
-				clr = 'yellow';
-				break;
-
-			case 'S13':
-				clr = 'yellow';
-				break;
-
-			case 'B01':
-				clr = 'aqua';
-				break;
-
-			case 'B07':
-				clr = 'aqua';
-				break;
-
-			case 'N04':
-				clr = 'black';
-				break;
-
-			case 'P09':
-				clr = 'aqua';
-				break;
-
-			case 'P12':
-				clr = 'aqua';
-				break;
-
-			case 'P16':
-				clr = 'navy';
-				break;
-
-			case 'P20':
-				clr = 'aqua';
-				break;
-
-			case 'P29':
-				clr = 'aqua';
-				break;
-
-			case 'P30':
-				clr = 'blue';
-				break;
-			}
-
 	return clr;
 }
 
@@ -2292,14 +1812,14 @@ function mclr(mood){
 
 //determines the starting x coord of each colored box in the svg charts
 
-function smn(time){
+function svgboxstartxcoord(time){
 
-	var mmn = new Date();
-	mmn.setHours(0, 0, 0, 0);
+	let minTime = new Date();
+	minTime.setHours(0, 0, 0, 0);
 	
-	var smn = ((time-mmn)/1000)/90;
+	var svgboxstartxcoord = ((time-minTime)/1000)/90;
 	
-	return smn;
+	return svgboxstartxcoord;
 }
 
 //Draws colored boxes in svg charts
@@ -2464,7 +1984,25 @@ function findLast(actid, contid){
 					
 				var STime = ELTime(ESecs);
 
-				//return(STime);
+				let arrFL = [STime, ESecs];
+
+				return(arrFL);
+				
+			}
+		}
+	}
+	
+	LUlen = lastuse[0].length;
+	
+	for (j = 0; j < LUlen; j++) {
+
+		if(lastuse[0][j]==actid){
+		
+			if(lastuse[1][j]==contid){
+					
+				var ESecs = lastuse[2][j];
+					
+				var STime = ELTime(ESecs);
 
 				let arrFL = [STime, ESecs];
 
@@ -2539,8 +2077,71 @@ function testlog(text){
 	
 	e.appendChild(objTL);
 }
-</script>
 
-</body>
 
-</html>
+
+function displayActDurs(){
+
+	let arr1 = [];
+	
+	let arr2 = [];
+
+	LEvents.sort();
+	
+	LEvents.reverse();
+	
+	ELen = LEvents.length;
+	
+	var minDate = Date.now()-(2*24*60*60*1000);
+	
+	text = "<table>";
+	
+	text += "<th>Act</th><th>Dur</th>";
+
+	for (i = 0; i < ELen; i++) {
+	
+		if(i==0){
+			
+			var EL = Date.now()-LEvents[i][6];
+			
+		}else{
+		
+			EL = LEvents[i-1][6]-LEvents[i][6];
+		
+		}
+		
+		//fmtime(EL);
+		
+		if(LEvents[i][6] > minDate){
+
+			arr1.push([LEvents[i][3], EL]);
+		
+		}
+	
+	}
+	
+	arr1.sort();
+	
+	ELen = arr1.length;
+	
+	for (i = 0; i < ELen; i++) {
+	
+		if(i==0){
+		
+			arr2.push(arr1[i]);
+			
+		}else if(arr1[i][0]==arr1[i-1][0]){
+		
+			//arr2[i-1][1]=arr2[i-1][1]+arr2[i][1];
+			
+		}else{
+		
+			arr2.push(arr1[i]);
+			
+		}
+	 	 
+	}
+	
+document.getElementById("elog").innerHTML = arr2;
+
+}

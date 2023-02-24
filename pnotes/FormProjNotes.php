@@ -41,7 +41,7 @@ var val = "<?php echo $selCont1 ?>";
 document.getElementById("selCont").value=val;
 </script>
 <title>Project Notes</title>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
 <h1>Project Notes</h1>

@@ -1,12 +1,11 @@
 <?php
-header("Cache-Control: no-cache, must-revalidate");
 include("../function/Functions.php");
 ?>
 
 <html>
 <head>
     <title>Goals</title>
-    <link rel="stylesheet" href="../css/MobileStyle.css" />
+    <link rel="stylesheet" href="../../styles.css" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     
 <script>
@@ -37,6 +36,7 @@ LoadDiv("HGoals", "../goals/ViewGoals.php");
 </head>
 
 <body>
+
 	<h1>Goals</h1>
 	<?php linktable(); ?>
 

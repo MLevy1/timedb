@@ -1,65 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="./css/main.css" />
-	</head>
-	<body>
-		<h1>Main Menu</h1>
-	<hr />
-	<table>
-		<tr>
-		<td>
-			<a href="./menu/MenuEntry.htm">Entry Menu</a>
-		</td>
-		<td>
-			<a href="./menu/MenuSelfEval.htm">Self Evals</a>
-		</td>
-		<td>
-			<a href="./menu/MenuMod.htm">Modify Tables</a>
-		</td>
-		</tr>
-		<tr>
-		<td>
-			<a href="./menu/MenuIssues.htm">Issue Management</a>
-		</td>
-		<td>
-			<a href="./sch/FormJQSch.php">Daily Schedule</a>
-		</td>
-		<td>
-			<a href="./menu/MenuCT.php">Convo Topics</a>
-		</td>
-		</tr>
-		<tr>
-		<td>
-			<a href="./menu/MenuEventLists.htm">Events Lists</a>
-		</td>
-		<td>
-			<a href="./menu/MenuDev.php">Dev Menu</a>
-		</td>
-		<td>
-			<a href="./menu/MenuAllForms.php">All Forms</a>
-		</td>
-		</tr>
-		<tr>
-		<td>
-			<a href="./menu/MenuAllView.php">All View</a>
-		</td>
-		<td>
-			<a href="./menu/MenuAllSch.php">All Sch</a>
-		</td>
-		<td>
-			<a href="./menu/MenuPNotes.php">Project Notes</a>
-		</td>
-		</tr>
-		<tr>
-		<td>
-			<a href="./menu/MenuAllEvents.php">All Events</a>
-		</td>
-		<td>
-			<a href="./index1.php">PHP TEST</a>
-		</td>
-	</table>
-	</body>
+<head>
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <link href='https://fonts.googleapis.com/css?family=Homenaje' rel='stylesheet'>
+</head>
+<body>
+    <header>
+        <div id="header" include="header.html"></div>
+    </header>
+    <nav>
+        <div include="navbar.html"></div>
+    </nav>
+
+    <main id="main"></main>
+
+    <!-- load the page content using JavaScript -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="./sch/schScript.js"></script>
+    <script src="./function/JSFunctions1.js"</script>
+    <script>
+        
+    </script>
+
+    <!-- include HTML files using the include attribute -->
+    <script>
+                includeHTML();
+    </script>
+</body>
 </html>

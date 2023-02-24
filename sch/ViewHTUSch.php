@@ -1,26 +1,19 @@
 <!DOCTYPE html>
 <html>
+<head>
+	<link rel="stylesheet" href="../styles.css" />
+</head>
 <body>
-<?php header("Cache-Control: no-cache, must-revalidate");?>
-
-<link rel="stylesheet" href="../css/MobileStyle.css" />
 
 <?php
 include('../function/Functions.php');
 
 pconn();
 
-$selDate = $_REQUEST["selDate"];
+$selDate = $_REQUEST["selDate"] ?? date('Y-m-d');
 
-if($selDate==null){
-$SDate1 = date('Y-m-d');
-
-$EDate1 = date('Y-m-d');
-}
-else{
 $SDate1 = $selDate;
 $EDate1 = $selDate;
-}
 
 $SDate = date_create($SDate1);
 
@@ -135,7 +128,12 @@ foreach($dtest as $x => $xval) {
 
 //Count rows in arrays
 
-$cnt=count ($data[0]);
+if (isset($data[0])) {
+    $cnt = count($data[0]);
+} else {
+    $cnt = 0;
+}
+
 
 $SDate = date_create($SDate1);
 
@@ -151,7 +149,8 @@ for($x = 0; $x < ($cnt); $x++) {
  
 }
 
-$cnt= count ($data[0]);
+//2/23/23: Already defined above
+//$cnt= count ($data[0]);
 
 $dcnt = max($arrETime[0])+1;
 

@@ -1,6 +1,6 @@
 <?php header("Cache-Control: no-cache, must-revalidate"); ?>
 
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 <!-- For Date Picker -->
 <link rel="stylesheet" href="../css/jquery-ui.css" />

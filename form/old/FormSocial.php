@@ -7,7 +7,7 @@ formid();
 <html>
 <head>
 	<title>Social</title>
-	<link rel="stylesheet" href="../css/MobileStyle.css" />
+	<link rel="stylesheet" href="../../styles.css" />
 </head>
 <h1>Social</h1>
 <?php include("../view/LinkTable.php"); ?>

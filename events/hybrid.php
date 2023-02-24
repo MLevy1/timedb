@@ -52,94 +52,14 @@ mysqli_close($conn);
 </head>
 <link href='https://fonts.googleapis.com/css?family=Homenaje' rel='stylesheet'>
 
-<style>
 
-body {
-background-color: black;
-color: white;
-font-family: 'Homenaje';
-}
-
-a {
-font-weight: bold;
-font-size: 30px;
-}
-
-button {
-font-family: 'Homenaje';
-background-color: Navy;
-color: yellow;
-font-size: 32px;
-width:135px;
-height:125px;
-font-weight: bold;
-float: center;
-border-radius: 6px;
-padding: 2px;
-}
-
-
-select {
-font-size: 30px;
-}
-
-input {
-font-size: 30px;
-height: 55px;
-float: center;
-}
-
-h1 {
-font-size: 50px;
-}
-
-h2 {
-font-size: 30px;
-}
-
-th {
-font-size:30px;
-}
-
-td {
-font-size: 30px;
-vertical-align: center;
-}
-
-textarea {
-font-size: 30px;
-}
-
-table {
-border-spacing: 10px;
-}
-
-.link {
-width: 100%;
-height: 50px;
-color: white;
-background-color: black;
-font-size: 20px;
-font-weight: bold;
-}
-
-.slnk{
-
-font-size: 16px;
-background-color: black;
-color: yellow;
-font-weight: bold;
-float: center;
-}
-
-</style>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 <body onoffline="bclr('SandyBrown')">
 
 <h1>Hybrid</h1>
-<p>2021-11-13</p>
+<p>2022-02-24</p>
 
 <span id="testres"></span>
 
@@ -2313,7 +2233,7 @@ function JQUpdate(act, cont, etime){
 //USED IN FUNCTIONS: delEvent(l#1010) and delMood (l#1029)
 function JQDel(etime, tbl, index){
 
- $.post("../del/DelJQ.php",
+ $.post("./timedb/del/DelJQ.php",
     {
         v1: etime,
         c1: index,

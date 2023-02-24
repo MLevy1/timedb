@@ -4,7 +4,7 @@ header("Cache-Control: no-cache, must-revalidate");
 <html>
 <head>
 <title>Update Convo Topic</title>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 </head>
 <body>

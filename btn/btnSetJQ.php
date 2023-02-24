@@ -103,6 +103,6 @@ date_default_timezone_set('America/New_York');
 
 <?php
 
-mysqli_close($conn);
+//mysqli_close($conn);
 
 ?>

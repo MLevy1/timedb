@@ -1,7 +1,3 @@
-<?php header("Cache-Control: no-cache, must-revalidate"); ?>
-
-<link rel="stylesheet" href="../css/MobileStyle.css" />
-
 <?php
 include('../function/Functions.php');
 

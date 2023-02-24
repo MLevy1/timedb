@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
+<head>
+	<link rel="stylesheet" href="../styles.css" />
+</head>
 <body>
-<?php header("Cache-Control: no-cache, must-revalidate");?>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
-
 <?php
 include('../function/Functions.php');
 
@@ -66,6 +66,7 @@ $result = mysqli_query($conn, $sql);
 //Reset arrays for results
 
 $data = array();
+$dtest = array();
 
 //Populate arrays with results of all events query
 
@@ -92,7 +93,11 @@ foreach($dtest as $x => $xval) {
 
 //Count rows in arrays
 
-$cnt=count ($data[0]);
+if (isset($data[0])) {
+    $cnt = count($data[0]);
+} else {
+    $cnt = 0;
+}
 
 $SDate = date_create($SDate1);
 

@@ -6,7 +6,7 @@ include("../function/sqlSelect.php");
 <html>
 <head>
     <title>Daily Goals</title>
-        <link rel="stylesheet" href="../css/MobileStyle.css" />
+        <link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
 <h1>Daily Goals</h1>

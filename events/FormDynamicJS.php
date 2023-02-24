@@ -10,7 +10,7 @@ date_default_timezone_set('America/New_York');
 <html>
 <head>
   <title>JS Dynamic</title>
-  <link href="../css/MobileStyle.css" rel="stylesheet"/>
+  <link href="../../styles.css" rel="stylesheet"/>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="../function/JSFunctions1.js"></script>
 <script>

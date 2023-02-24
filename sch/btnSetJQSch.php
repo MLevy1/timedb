@@ -10,14 +10,15 @@ date_default_timezone_set('America/New_York');
 $tbl = 'tblSchedEvents';
 
 if (!function_exists('eventbtnjqs')) {
-function eventbtnjqs($act, $cont, $btnname, $tbl){
     
-    $btnid0 = $act.$cont.'B';
-    
-    $btnid = preg_replace("/[^a-zA-Z0-9]/", "", $btnid0);
-    
-    echo "<button id='$btnid' onclick=\"btnJQs('$act', '$cont', '$btnid', '$tbl', '$dtime')\">$btnname</button>";
-}
+    function eventbtnjqs($act, $cont, $btnname, $tbl){
+        
+        $btnid0 = $act.$cont.'B';
+        
+        $btnid = preg_replace("/[^a-zA-Z0-9]/", "", $btnid0);
+        
+        echo "<button id='$btnid' onclick=\"btnJQs('$act', '$cont', '$btnid', '$tbl')\">$btnname</button>";
+    }
 }
 
 ?>

@@ -1,56 +1,21 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
-	<?php include("../function/password_protect.php"); ?>
-	<link rel="stylesheet" href="../css/main.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="UTF-8" />
 	</head>
 	<body>
-		<h1>Entry Menu</h1>
-	<hr />
-	<table>
-		<tr>
-		<td>
-		<a href="../form/FormNewEvent.php">Event</a>
-		</td>
-		<td>
-		<a href="../form/FormMobile.php">Mobile</a>
-		</td>
-		<td>
-		<a href="../form/FormPastEvent.php">Manual Past</a>
-		</td>
-		</tr>
-		<tr>
-		<td>
-		<a href="../form/FormMorning.php">Morning</a>
-		</td>
-		<td>
-		<a href="../form/FormSocial.php">Social</a>
-		</td>
-		<td>
-		<a href="../form/FormPastEventMobile.php">Mobile Past</a>
-		</td>
-		</tr>
-		<tr>
-		<td>
-		<a href="../form/FormBtnCnt.php">Frequent</a>
-		</td>
-		<td>
-		<a href="../index.html">Main Menu</a>
-		</td>
-		<td>
-		<a href="../form/FormPastEventDynamic.php">Dynamic Past</a>
-		</td>
-		</tr>
-		<tr>
-		<td>
-
-		</td>
-		<td>
-
-		</td>
-		<td>
-
-		</td>
-		</tr>
-	</table>
+		<ul>
+            <li><a href="#main" onclick="loadPage('./events/hybrid.php', './events/test.js')">Hybrid Entry Form</a></li>
+			<li><a href="#main" onclick="loadPage('./GLocal.htm')">GH Local Event Entry Form</a></li>
+			<li><a href="#main" onclick="loadPage('./GLocal1.htm')">GH Local Event Entry Form II</a></li>
+			<li><a href="#main" onclick="loadPage('./events/FormDynamicJS.php')">Dynamic JS Event Entry Form</a></li>
+			<li><a href="#main" onclick="loadPage('./events/FormMorningJS.php')">Morning JS Event Entry Form</a></li>
+			<li><a href="#main" onclick="loadPage('./events/FormEveningJS.php')">Evening JS Event Entry Form</a></li>
+			<li><a href="#main" onclick="loadPage('./events/FormMobileJQ.php')">JQ Mobile Entry Form</a></li>
+			<li><a href="#main" onclick="loadPage('./events/FormSocialJQ.php')">Social JQ Event Entry Form</a></li>
+			<li><a href="#main" onclick="loadPage('./events/NewLocalForm.htm')">New Local Form</a></li>
+			<li><a href="#main" onclick="loadPage('./events/local.htm')">Local</a></li>
+		</ul>
 	</body>
 </html>

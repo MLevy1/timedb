@@ -1,6 +1,6 @@
 <?php header("Cache-Control: no-cache, must-revalidate"); ?>
 
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 <h1>Sub-Project Duration - Date Range</h1>
 
 <a href="../menu/MenuEventLists.htm">Events Menu</a>

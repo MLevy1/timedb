@@ -1,9 +1,7 @@
 <?php
-header("Cache-Control: no-cache, must-revalidate");
 include("../function/Functions.php");
 ?>
-<link rel="stylesheet" href="../css/main.css" />
-<h1>CT Menu</h1>
+<link rel="stylesheet" href="../../styles.css" />
 
 <?php
 $dir    = '../ct';
@@ -15,19 +13,13 @@ $rowcount=count($files1);
 $rowcounter = 2;
 ?>
 
-<table>
-<tr><td>
-<?php
-echo '<a href="../ct/'.$files1[1].'">Main Menu</a>';
-?>
-</td></tr>
-
+<ul>
 <?php
 while ($rowcounter<=$rowcount){
-	echo "<tr><td>";
+	echo "<li>";
 	echo '<a href="../ct/'.$files1[$rowcounter].'">'.$files1[$rowcounter].'</a>';
-	echo "</td></tr>";
+	echo "</li>";
  	$rowcounter++;
 }
 ?>
-</table>
+</ul>

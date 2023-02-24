@@ -7,7 +7,7 @@ pconn();
 <html>
 <head>
 <title>Update Project Note</title>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
 

@@ -1,6 +1,6 @@
 <?php header("Cache-Control: no-cache, must-revalidate"); ?>
 
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 

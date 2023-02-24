@@ -8,8 +8,8 @@ formid();
 <html>
 <head>
     <title>New Goal Option</title>
-    <link rel="stylesheet" href="../css/MobileStyle.css" />
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="../../styles.css" />
+
 <script>
     
 function AddNewGoalOpt()
@@ -17,7 +17,7 @@ function AddNewGoalOpt()
 	var a = $( "#selGoal" ) . val();
 	var b = $( "#inpGoal" ) . val();
 	
-	$.post("../add/AddJQ.php",
+	$.post("./timedb/add/AddJQ.php",
 	{
 		v1: a,
 		v2: b,
@@ -25,7 +25,7 @@ function AddNewGoalOpt()
 	});
 	setTimeout(function(){
 	
-        LoadDiv('GOpt', '../goals/ViewGoalOptions.php');
+        LoadDiv('GOpt', './timedb/goals/ViewGoalOptions.php');
         
         }, 100);
 }

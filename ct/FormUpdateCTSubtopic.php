@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>Update Subtopic</title>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 </head>
 <body>

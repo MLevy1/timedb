@@ -1,0 +1,144 @@
+*{
+	padding: 0;
+	margin: 0;
+	font-family: 'Homenaje';
+}
+
+header {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 50px;
+	width: 100%;
+	background-color: #9f9;
+	color: #040;
+	z-index: 100;
+}
+
+nav {
+	position: fixed;
+	top: 50px;
+	left: 0;
+	width: 100%;
+	background-color: #333;
+	color: #fff;
+	z-index: 100;
+}
+
+a {
+	display: block;
+	text-decoration: none;
+	color: white;
+	padding: 10px;
+}
+
+a:hover {
+	color: #050;
+	background: silver;
+}
+
+a:active {
+	color: black;
+	background-color: white;
+}
+
+nav ul {
+	display: flex;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+nav ul li {
+	cursor: pointer;
+	flex: auto;
+	text-align: center;
+}
+
+body {
+	background: darkslategray;
+	border: white;
+	font-family: 'Homenaje';
+}
+
+#main {
+	position: fixed;
+	top: 90px;
+	left: 0;
+	width: 100%;
+	color: #fff;
+	height: calc(100vh - 100px);
+	overflow: auto;
+}
+
+
+button {
+	font-family: 'Homenaje';
+	background-color: #030;
+	color: #9f9;
+	font-size: 18px;
+	width:110px;
+	height:90px;
+	font-weight: bold;
+	float: center;
+	border-radius: 6px;
+	padding: 2px;
+}
+
+
+select {
+	font-size: 20px;
+}
+
+input {
+	font-size: 20px;
+	height: 55px;
+	float: center;
+}
+
+h1 {
+	font-size: 40px;
+}
+
+h2 {
+	font-size: 25px;
+}
+
+th {
+	font-size:20px;
+}
+
+td {
+	font-size: 20px;
+	vertical-align: center;
+}
+
+textarea {
+	font-size: 20px;
+}
+
+table {
+	border-spacing: 5px;
+}
+
+.slnk{
+
+	font-size: 16px;
+	background-color: black;
+	color: yellow;
+	font-weight: bold;
+	float: center;
+}
+
+.link {
+	width: 100%;
+	height: 50px;
+	background-color: lightgreen;
+	font-size: 14px;
+	font-weight: bold;
+	border-radius: 10px;
+}

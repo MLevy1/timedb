@@ -1,7 +1,7 @@
 <?php header("Cache-Control: no-cache, must-revalidate"); ?>
 <h1>Sleep</h1>
 
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 <!--For Chart -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>

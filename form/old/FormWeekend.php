@@ -5,7 +5,7 @@ include("../function/sqlSelect.php");
 <html>
 <head>
 	<title>Mobile Entry Form - Weekend</title>
-	<link rel="stylesheet" href="../css/MobileStyle.css" />
+	<link rel="stylesheet" href="../../styles.css" />
 </head>
 <h1>Weekend</h1>
 <?php include("../view/LinkTable.php"); ?>

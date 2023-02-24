@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Past Event</title>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
 <h1>Past Event</h1>

@@ -1,10 +1,9 @@
 <?php
-header("Cache-Control: no-cache, must-revalidate");
 include('../function/Functions.php');
 include('../view/ViewActDurP.php');
 pconn();
 
-$I = $_REQUEST["I"];
+$I = $_REQUEST["I"] ?? 'n';
 
 if($I == 'y'){
 

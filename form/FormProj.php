@@ -4,7 +4,7 @@ include("../function/Functions.php");
 <html>
 <head>
     <title>Projects</title>
-    <link rel="stylesheet" href="../css/MobileStyle.css" />
+    <link rel="stylesheet" href="../../styles.css" />
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     
    <script>

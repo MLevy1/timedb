@@ -1,7 +1,7 @@
 <?php header("Cache-Control: no-cache, must-revalidate"); ?>
 <h1>Average Day</h1>
 <a href="../menu/MenuDev.php">Dev Menu</a>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 <?php
 include('../function/Functions.php');
 include('../view/LinkTable.php');

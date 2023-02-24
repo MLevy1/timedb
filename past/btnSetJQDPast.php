@@ -17,7 +17,7 @@ function eventbtnjqs1($act, $cont, $btnname, $tbl){
     
     $btnid = preg_replace("/[^a-zA-Z0-9]/", "", $btnid0);
     
-    echo "<button id='$btnid' onclick=\"btnJQs('$act', '$cont', '$btnid', '$tbl', '$dtime')\">$btnname</button>";
+    echo "<button id='$btnid' onclick=\"btnJQs('$act', '$cont', '$btnid', '$tbl')\">$btnname</button>";
 }
 }
 

@@ -3,7 +3,7 @@
 <body>
 <?php header("Cache-Control: no-cache, must-revalidate");?>
 
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 <!-- For Date Picker -->
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">

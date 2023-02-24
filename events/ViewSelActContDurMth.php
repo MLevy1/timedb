@@ -3,7 +3,7 @@
 <!--For Chart -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 <?php
 include('../function/Functions.php');

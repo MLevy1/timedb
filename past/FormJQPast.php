@@ -13,7 +13,7 @@ $T1 = $QDate.'T'.$QTime;
 ?>
 
 <head>
-<link href="../css/MobileStyle.css" rel="stylesheet"/>
+<link href="../../styles.css" rel="stylesheet"/>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 <?php
@@ -177,7 +177,7 @@ UpdateButtonsS(p6);
 
 function btnJQDelE(a, b, c)
 {
-	$.post("../del/DelJQ.php",
+	$.post("./timedb/del/DelJQ.php",
 	{
 		v1: a,
 		c1: b,

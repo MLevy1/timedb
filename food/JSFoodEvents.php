@@ -5,7 +5,7 @@ include("../function/Functions.php");
 <html>
 <head>
   <title>JS Food Events</title>
-  <link href="../css/MobileStyle.css" rel="stylesheet"/>
+  <link href="../../styles.css" rel="stylesheet"/>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="../function/JSFunctions1.js"></script>
 <script>

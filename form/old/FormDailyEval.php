@@ -5,7 +5,7 @@ include("../function/password_protect.php");
 <html>
 <head>
 	<title>Daily Eval Form</title>
-	<link rel="stylesheet" href="../css/MobileStyle.css" />
+	<link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
 <h1>Daily Eval Form</h1>

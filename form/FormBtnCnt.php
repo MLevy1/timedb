@@ -9,7 +9,7 @@ formid();
 <html>
 <head>
 <title>Dynamic</title>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
 <h1>Dynamic</h1>

@@ -5,7 +5,7 @@ include("../function/Functions.php");
 <html>
 <head>
 	<title>Convo Entry</title>
-	<link rel="stylesheet" href="../css/MobileStyle.css" />
+	<link rel="stylesheet" href="../../styles.css" />
 </head>
 <h1>Convo Entry</h1>
 <?php linktable(); ?>

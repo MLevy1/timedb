@@ -5,7 +5,7 @@ include("../function/Functions.php");
 <html>
 <head>
     <title>New PU Code</title>
-    <link rel="stylesheet" href="../css/MobileStyle.css" />
+    <link rel="stylesheet" href="../../styles.css" />
 </head>
 
 <body>

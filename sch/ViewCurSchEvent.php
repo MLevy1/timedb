@@ -9,7 +9,7 @@ $varSel="SESTime";
 
 date_default_timezone_set('America/New_York');
 
-if($selDate==null){
+if(!isset($selDate) || $selDate==null){
 $selDate = date('Y-m-d');
 }
 

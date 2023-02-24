@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>Update PU Code</title>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 </head>
 <body>

@@ -1,6 +1,6 @@
 <?php header("Cache-Control: no-cache, must-revalidate"); ?>
 <h1>CFA Info</h1>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 <?php
 include('../function/Functions.php');
 include('../function/SqlList.php');

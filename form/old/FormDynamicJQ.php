@@ -7,7 +7,7 @@ header("Pragma: no-cache");
 ?>
 <html>
 <head>
-<link href="../css/MobileStyle.css" rel="stylesheet"/>
+<link href="../../styles.css" rel="stylesheet"/>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 <script>
@@ -159,7 +159,7 @@ function btnJQ(a, b, c, d, e)
 
 function btnJQDel(a, b, c)
 {
-	$.post("../del/DelJQ.php",
+	$.post("./timedb/del/DelJQ.php",
 	{
 		v1: a,
 		c1: b,

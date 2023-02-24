@@ -2,7 +2,7 @@
 header("Cache-Control: no-cache, must-revalidate");?>
 <html>
 <head>
-<link href="../css/MobileStyle.css" rel="stylesheet"/>
+<link href="../../styles.css" rel="stylesheet"/>
 
 <script src="../function/JSFunctions.js"></script>
 

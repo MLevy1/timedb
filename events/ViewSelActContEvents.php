@@ -1,6 +1,6 @@
 <?php header("Cache-Control: no-cache, must-revalidate");?>
 
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 <!-- For Date Picker
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -423,7 +423,7 @@ function btnJQDelE(a, b, c)
 var result = confirm("Delete record?");
 
 if (result == true) {
-  	$.post("../del/DelJQ.php",
+  	$.post("./timedb/del/DelJQ.php",
 	{
 		v1: a,
 		c1: b,

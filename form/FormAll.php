@@ -11,7 +11,7 @@ $link=1;
 		include("../function/Functions.php");
 ?>
 
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 

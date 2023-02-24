@@ -1,6 +1,4 @@
 <?php
-header("Cache-Control: no-cache, must-revalidate");
-
 include("../function/Functions.php");
 
 pconn();
@@ -17,7 +15,7 @@ function eventbtnjqs1($act, $cont, $btnname, $tbl){
     
     $btnid = preg_replace("/[^a-zA-Z0-9]/", "", $btnid0);
     
-    echo "<button id='$btnid' onclick=\"btnJQs('$act', '$cont', '$btnid', '$tbl', '$dtime')\">$btnname</button>";
+    echo "<button id='$btnid' onclick=\"btnJQs('$act', '$cont', '$btnid', '$tbl')\">$btnname</button>";
 }
 }
 
@@ -25,18 +23,18 @@ function eventbtnjqs1($act, $cont, $btnname, $tbl){
 
 $data = array();
  
-$selDate = $_REQUEST["selDate"];
-$selTime = $_REQUEST["selTime"];
+$selDate = $_REQUEST["selDate"] ?? null;
+$selTime = $_REQUEST["selTime"] ?? null;
 
 if($selDate==null){
-$SQTime = date_create(date('Y-m-d'));
-$NowHr = date("G");
-$NowD1 = date("N");
+    $SQTime = date_create(date('Y-m-d'));
+    $NowHr = date("G");
+    $NowD1 = date("N");
 }
 else{
-$SQTime = date_create($selDate);
-$NowHr = date("G", strtotime($selTime));
-$NowD1 = date("N", strtotime($selDate));
+    $SQTime = date_create($selDate);
+    $NowHr = date("G", strtotime($selTime));
+    $NowD1 = date("N", strtotime($selDate));
 }
 
 date_modify($SQTime, '-21 days');
@@ -49,12 +47,12 @@ else{
 	$NowD = 0;
 }
 
-$MinHr = $NowHr - $selHrRange;
-$MaxHr = $NowHr + $selHrRange;
-
-if($selHrRange==NULL){
-$MinHr = $NowHr - 3;
-$MaxHr = $NowHr + 3;
+if(isset($selHrRange)){
+    $MinHr = $NowHr - $selHrRange;
+    $MaxHr = $NowHr + $selHrRange;
+}else{
+    $MinHr = $NowHr - 3;
+    $MaxHr = $NowHr + 3;
 }
 
 $sql = "SELECT EXTRACT( HOUR FROM tblEvents.STime ) AS EventHr,
@@ -148,5 +146,4 @@ if ($lrowbtns!=0){
     echo "</tr>";
 }
 echo "</table>";
-mysqli_close($conn);
 ?>

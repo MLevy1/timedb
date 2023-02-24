@@ -3,7 +3,7 @@
 <head>
     <title>New Convo Topic</title>
 <?php include("../function/sqlSelect.php"); ?>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
 	<h1>New Convo Topic</h1>

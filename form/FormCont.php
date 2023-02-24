@@ -8,7 +8,7 @@ formid();
 <html>
 <head>
     <title>Sub-Projects</title>
-    <link rel="stylesheet" href="../css/MobileStyle.css" />
+    <link rel="stylesheet" href="../../styles.css" />
     <script src="../function/JSFunctions.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
        

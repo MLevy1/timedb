@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 <?php
 
 include('../function/Functions.php');

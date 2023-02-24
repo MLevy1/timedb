@@ -1,67 +1,57 @@
 <?php
 
-$tbl = $_REQUEST["selTbl"];
+$tbl = $_REQUEST["selTbl"] ?? null;
 
-$app = $_REQUEST["selApp"];
-
-if($_REQUEST["selApp"]==null){
-	
-	$app = "n";
-	
-}
+$app = $_REQUEST["selApp"] ?? "n";
 
 //FOR EVENTS
 
 if($tbl === 'tblEvents'){
 
-$SD = $_REQUEST["SD"];
+	$SD = $_REQUEST["SD"] ?? null;
 
-$v1 = $_REQUEST["v1"];
+	$v1 = $_REQUEST["v1"] ?? null;
 	
-$v2 = $_REQUEST["v2"];
+	$v2 = $_REQUEST["v2"] ?? null;
 
-if($_REQUEST["v3"]==null){
-$v3 = date("Y-m-d H:i:s");
-}else{
-$v3 = $_REQUEST["v3"];
-}
+	$v3 = $_REQUEST["v3"] ?? date("Y-m-d H:i:s");
 
-$c1 = 'ActID';
+	$c1 = 'ActID';
 	
-$c2 = 'ProID';
+	$c2 = 'ProID';
 	
-$c3 = 'STime';
+	$c3 = 'STime';
 
-if($SD != 'L'){
+	if($SD != 'L'){
 
-	$varcnt = 3;
+		$varcnt = 3;
 
-}else{
+	}else{
 
-	$varcnt = 4;
+		$varcnt = 4;
 	
-	$c4 = 'StartTime';
+		$c4 = 'StartTime';
 
-}
+	}
 }
 
 //FOR GOALS
 
 if($tbl === 'tblNewDailyGoals'){
 
-$varcnt = 3;
+	$varcnt = 3;
 
-$v1 = $_REQUEST["v1"];
+	$v1 = $_REQUEST["v1"] ?? null;
 	
-$v2 = $_REQUEST["v2"];
+	$v2 = $_REQUEST["v2"] ?? null;
 
-$v3 = $_REQUEST["v3"];
+	$v3 = $_REQUEST["v3"] ?? null;
 	
-$c1 = 'GDate';
+	$c1 = 'GDate';
 	
-$c2 = 'Goal';
+	$c2 = 'Goal';
 	
-$c3 = 'ContID';
+	$c3 = 'ContID';
 
 }
 
@@ -69,15 +59,15 @@ $c3 = 'ContID';
 
 if($tbl === 'tblGoalOptions'){
 
-$varcnt = 2;
+	$varcnt = 2;
 
-$v1 = $_REQUEST["v1"];
+	$v1 = $_REQUEST["v1"] ?? null;
 	
-$v2 = $_REQUEST["v2"];
+	$v2 = $_REQUEST["v2"] ?? null;
 	
-$c1 = 'OGoal';
+	$c1 = 'OGoal';
 	
-$c2 = 'Goal';
+	$c2 = 'Goal';
 
 }
 
@@ -85,15 +75,15 @@ $c2 = 'Goal';
 
 if($tbl === 'tblGoals'){
 
-$varcnt = 2;
+	$varcnt = 2;
 
-$v1 = $_REQUEST["v1"];
+	$v1 = $_REQUEST["v1"] ?? null;
 	
-$v2 = $_REQUEST["v2"];
+	$v2 = $_REQUEST["v2"] ?? null;
 	
-$c1 = 'GoalID';
+	$c1 = 'GoalID';
 	
-$c2 = 'Goal';
+	$c2 = 'Goal';
 	
 }
 
@@ -102,11 +92,11 @@ $c2 = 'Goal';
 
 if($tbl === 'tblFoods'){
 
-$varcnt = 1;
+	$varcnt = 1;
 
-$v1 = $_REQUEST["v1"];
+	$v1 = $_REQUEST["v1"] ?? null;
 	
-$c1 = 'Food';
+	$c1 = 'Food';
 	
 }
 
@@ -116,15 +106,15 @@ $c1 = 'Food';
 
 if($tbl === 'tblDateInfo'){
 
-$varcnt = 2;
+	$varcnt = 2;
 
-$v1 = $_REQUEST["v1"];
+	$v1 = $_REQUEST["v1"] ?? null;
 	
-$v2 = $_REQUEST["v2"];
+	$v2 = $_REQUEST["v2"] ?? null;
 	
-$c1 = 'Date1';
+	$c1 = 'Date1';
 	
-$c2 = 'Type';
+	$c2 = 'Type';
 
 }
 
@@ -134,11 +124,11 @@ if($tbl === 'tblSchedEvents'){
 
 $varcnt = 3;
 
-$v1 = $_REQUEST["v1"];
+$v1 = $_REQUEST["v1"] ?? null;
 	
-$v2 = $_REQUEST["v2"];
+$v2 = $_REQUEST["v2"] ?? null;
 
-$v3 = $_REQUEST["v3"];
+$v3 = $_REQUEST["v3"] ?? null;
 	
 $c1 = 'SEActID';
 	
@@ -152,19 +142,15 @@ $c3 = 'SESTime';
 
 if($tbl === 'tblMood'){
 
-$varcnt = 2;
+	$varcnt = 2;
 
-if($_REQUEST["v1"]==null){
-	$v1 = date("Y-m-d H:i:s");
-}else{
-	$v1 = $_REQUEST["v1"];
-}
+	$v1 = $_REQUEST["v1"] ?? date("Y-m-d H:i:s");
+
+	$v2 = $_REQUEST["v2"] ?? null;
 	
-$v2 = $_REQUEST["v2"];
+	$c1 = 'MoodDT';
 	
-$c1 = 'MoodDT';
-	
-$c2 = 'Mood';
+	$c2 = 'Mood';
 
 }
 
@@ -173,15 +159,15 @@ $c2 = 'Mood';
 
 if($tbl === 'tblWeight'){
 
-$varcnt = 2;
+	$varcnt = 2;
 
-$v1 = $_REQUEST["v1"];
+	$v1 = $_REQUEST["v1"] ?? null;
 	
-$v2 = $_REQUEST["v2"];
+	$v2 = $_REQUEST["v2"] ?? null;
 	
-$c1 = 'wDateTime';
+	$c1 = 'wDateTime';
 	
-$c2 = 'Weight';
+	$c2 = 'Weight';
 
 }
 
@@ -191,23 +177,19 @@ $c2 = 'Weight';
 
 if($tbl === 'tblFoodEvents'){
 
-$varcnt = 3;
+	$varcnt = 3;
 
-if($_REQUEST["v1"]==null){
-	$v1 = date("Y-m-d H:i:s");
-}else{
-	$v1 = $_REQUEST["v1"];
-}
-	
-$v2 = $_REQUEST["v2"];
+	$v1 = $_REQUEST["v1"] ?? date("Y-m-d H:i:s");
 
-$v3 = $_REQUEST["v3"];
-	
-$c1 = 'MTime';
-	
-$c2 = 'FoodID';
+	$v2 = $_REQUEST["v2"] ?? null;
 
-$c3 = 'Type';
+	$v3 = $_REQUEST["v3"] ?? null;
+	
+	$c1 = 'MTime';
+	
+	$c2 = 'FoodID';
+
+	$c3 = 'Type';
 
 }
 

@@ -29,7 +29,7 @@ while($row = mysqli_fetch_assoc($result0)) {
 <html>
 <head>
 <title>Project Note Details</title>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 </head>
 <body>
 <h1>Project Note Details</h1>

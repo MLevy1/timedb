@@ -1,7 +1,7 @@
 <?php header("Cache-Control: no-cache, must-revalidate");?>
 <h1>Events - Selected Activity and Date Range</h1>
 <a href="../menu/MenuEventLists.htm">Events Menu</a>
-<link rel="stylesheet" href="../css/MobileStyle.css" />
+<link rel="stylesheet" href="../../styles.css" />
 
 <!-- For Date Picker -->
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">

@@ -514,7 +514,9 @@ if (!function_exists('etimea')) {
 
 		pconn();
 
-		$sql = "SELECT ActID, COUNT(*) AS cnt, DATEDIFF (NOW(), MAX(STime)) AS LTime FROM tblEvents WHERE ActID = '$act' GROUP BY ActID ORDER BY LTime";
+		//$sql = "SELECT ActID, COUNT(*) AS cnt, DATEDIFF (NOW(), MAX(STime)) AS LTime FROM tblEvents WHERE ActID = '$act' GROUP BY ActID ORDER BY LTime";
+		$sql = "SELECT DATEDIFF(NOW(), MAX(STime)) AS LTime FROM tblEvents WHERE ActID = '$act' ORDER BY STime DESC LIMIT 1";
+
 	
 		$result = mysqli_query($conn, $sql);
 
@@ -554,16 +556,16 @@ $conn->close();
 
 
 if (!function_exists('linktable')) {
-function linktable(){
-
-$link = $_REQUEST["link"];
-
-if($link == NULL){
-include('../view/LinkTable.php');
+    function linktable(){
+        if(isset($_REQUEST["link"])) {
+            $link = $_REQUEST["link"];
+            if(is_array($link) && array_key_exists('link'. $link, $link)){
+                include('../view/LinkTable.php');
+            }
+        }
+    }
 }
 
-}
-}
 
 if (!function_exists('ELTime')) {
 	
