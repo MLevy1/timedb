@@ -220,7 +220,7 @@
 					<a href="../timedbo/goals/FormDailyGoalsJQ.php">Goals</a>
 				</li>
 				<li>
-					<a href="#" onclick="CheckLEvents()">Test</a>
+					<a href="#" onclick="displayActDurs()">Test</a>
 				</li>
 				<li>
 					<a href="#" onclick="AddTime(-1)">-1m</a> 
@@ -744,7 +744,7 @@
 				
 				if(U!="U"){
 				
-					LEvents.push([datetimeValue, act, cont, A2, 'N', datetimeText, millisecTime]);
+					LEvents.push([sqTime(datetimeValue), act, cont, A2]);
 					
 					if(selPost==="Y"){
 					
@@ -754,7 +754,7 @@
 					
 				}else{
 				
-					LEvents[eid]=([etmv, act, cont, A2, 'N', etmt, eft]);
+					LEvents[eid]=([etmv, act, cont, A2]);
 					
 					if(selPost==="Y"){
 						
@@ -782,7 +782,7 @@
 
 				setETime();
 				
-				LMoods.push([datetimeValue, a, 'N', datetimeText, millisecTime]);
+				LMoods.push([sqTime(datetimeValue), String(a)]);
 				
 				$( "#moodIndicator" ).css("color", moodColor(a));
 				
@@ -978,7 +978,7 @@
 
 					let srvtime = FixTime(srvevents[0][i]);
 
-					LEvents.push([srvtime[0], srvevents[1][i], srvevents[2][i], srvevents[3][i], "N", srvtime[2], srvtime[1]]);
+					LEvents.push([srvtime[0], srvevents[1][i], srvevents[2][i], srvevents[3][i]]);
 				}
 
 				displayLEvents();
@@ -1354,7 +1354,7 @@
 				
 				setETime();
 				
-				LEvents.push([datetimeValue, actValue, contValue, actText, 'N', datetimeText, millisecTime]);
+				LEvents.push([sqTime(datetimeValue), actValue, contValue, actText]);
 				
 				if(selPost==="Y"){
 										
@@ -1378,8 +1378,6 @@
 				$("#pu").val("U");
 				
 				etmv = LEvents[id][0];
-				etmt = LEvents[id][5];
-				eft = LEvents[id][6];
 				
 				eid = id;
 				
@@ -1645,9 +1643,7 @@
 
 			function displayActDurs(){
 
-				let arr1 = [];
-				
-				let arr2 = [];
+				const activityDurationList = {};
 
 				LEvents.sort();
 				
@@ -1657,10 +1653,14 @@
 				
 				var minDate = Date.now()-(2*24*60*60*1000);
 				
-				text = "<table>";
+				text = 
+					"<table class='durationSummary'>" +
+						"<thead>" +
+							"<th>Activity</th>" +
+							"<th>Duration</th>" +
+						"</thead>" +
+						"<tbody>";
 				
-				text += "<th>Act</th><th>Dur</th>";
-
 				for (i = 0; i < ELen; i++) {
 				
 					if(i==0){
@@ -1675,37 +1675,49 @@
 					
 					//formatEventDuration(eventLength);
 					
-					if(Date.parse(LEvents[i][6]) > minDate){
+					if(Date.parse(LEvents[i][0]) > minDate){
 
-						arr1.push([LEvents[i][3], eventLength]);
+						//arr1.push([LEvents[i][3], eventLength]);
+
+						if(activityDurationList.hasOwnProperty(LEvents[i][3])==false){
+							
+							activityDurationList[LEvents[i][3]] = eventLength;
+
+						} else {
+
+							activityDurationList[LEvents[i][3]] += eventLength;
+
+						}
 					
 					}
 				
 				}
 				
-				arr1.sort();
+				let sortArray = [];
+
+				for (let activityName in activityDurationList) {
+					sortArray.push([activityName, activityDurationList[activityName]]);
+				}
+
+				sortArray.sort(function(a, b){
+					return b[1]-a[1];
+				})
+
+				let sortedActivityDurationList = {}
+
+				sortArray.forEach(function(item){
+					sortedActivityDurationList[item[0]]=item[1];
+				});
+
+				for (let activityName in sortedActivityDurationList) {
 				
-				ELen = arr1.length;
-				
-				for (i = 0; i < ELen; i++) {
-				
-					if(i==0){
-					
-						arr2.push(arr1[i]);
+					text += "<tr><td>"+activityName+"</td><td>"+formatEventDuration(sortedActivityDurationList[activityName])+"</td></tr>";
 						
-					}else if(arr1[i][0]==arr1[i-1][0]){
-					
-						//arr2[i-1][1]=arr2[i-1][1]+arr2[i][1];
-						
-					}else{
-					
-						arr2.push(arr1[i]);
-						
-					}
-					
 				}
 				
-			document.getElementById("listContainer").innerHTML = arr2;
+				text += "</tbody></table>";
+
+				document.getElementById("listContainer").innerHTML = text;
 
 			}
 
