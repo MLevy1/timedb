@@ -1,3 +1,7 @@
+:root {
+	--page-bottom: calc(100vh - 150px);
+}
+
 *{
 	padding: 0;
 	margin: 0;
@@ -7,7 +11,7 @@
 header {
 	display: flex;
 	flex-direction: row;
-	justify-content: center;
+	justify-content: space-evenly;
 	align-items: center;
 	position: fixed;
 	top: 0;
@@ -60,7 +64,7 @@ nav ul li {
 }
 
 body {
-	background: darkslategray;
+	background: #232;
 	border: white;
 	font-family: 'Homenaje';
 }
@@ -81,8 +85,8 @@ button {
 	background-color: #030;
 	color: #9f9;
 	font-size: 18px;
-	width:110px;
-	height:90px;
+	width: 110px;
+	height: 90px;
 	font-weight: bold;
 	float: center;
 	border-radius: 6px;
@@ -92,6 +96,7 @@ button {
 
 select {
 	font-size: 20px;
+	color: #ccc;
 }
 
 input {
@@ -128,17 +133,188 @@ table {
 .slnk{
 
 	font-size: 16px;
-	background-color: black;
-	color: yellow;
+	width: 25px;
+	background-color: greenyellow;
+	color: darkslategrey;
 	font-weight: bold;
 	float: center;
+	border-radius: 8px;
 }
 
 .link {
-	width: 100%;
+	width: 75px;
 	height: 50px;
 	background-color: lightgreen;
+	color: black;
 	font-size: 14px;
 	font-weight: bold;
 	border-radius: 10px;
+}
+
+.ebtn:active {
+	background-color: orange;
+	color: blue;
+}
+
+select {
+	background-color: black;
+}
+
+.dateinput {
+	background-color: black;
+}
+
+.sectExpand {
+
+	background-color: black;
+	color: white;
+
+}
+
+svg, table {
+
+	width: 100%;
+
+}
+
+.controlGrid {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	grid-template-rows: repeat(6, fr);
+	justify-items: stretch;
+	align-items: center;
+	position: fixed;
+	top: 50px;
+	left: 0;
+	width: 100%;
+	background-color: #333;
+	color: #fff;
+	z-index: 100;
+	list-style-type: none;
+}
+
+.controlGrid a, .controlGrid p, .controlGrid select {
+	display: flex;
+	padding: 0;
+	height: 25px;
+	justify-content: center;
+	align-items: center;
+}
+
+.controlGrid select {
+	width: 100%;
+	text-align: center;
+}
+
+
+#lblEventTime {
+	grid-column-start: 2;
+	grid-column-end: 4;
+}
+
+#mainSection {
+	top: 150px;
+	bottom: var(--page-bottom);
+	position: absolute;
+	left: 0;
+	width: 100%;
+	color: #fff;
+	height: calc(100vh - 300px);
+	overflow: auto;
+	margin-bottom: 150px;
+}
+
+#footer {
+	top: var(--page-bottom);
+	position: absolute;
+	width: 100%;
+	background-color: #333;
+	overflow: scroll;
+	color: lime;
+}
+
+#timeZoneLabel, #timeZoneSelectContainer {
+	grid-column-start: 1;
+	grid-column-end: 3;
+}
+
+#detailStartLabel, #detailStartSelectContainer {
+	grid-column-start: 4;
+	grid-column-end: 6;
+}
+
+#detailEndLabel, #detailEndSelectContainer {
+	grid-column-start: 6;
+	grid-column-end: 8;
+}
+
+.eventList {
+	font-size: 16px;
+}
+
+.pageSettings {
+	display: none;
+}
+
+.groupHeading {
+	font-size: 30px;
+	font-weight: bold;
+	color: #aaa;
+}
+
+.btnGroup {
+	display: flex;
+	flex-wrap: wrap;
+	list-style-type: none;
+	gap: 5px;
+}
+
+.hidden {
+	display: none;	
+}
+
+#moodIndicator {
+	display: flex;
+	padding: 0;
+	height: 25px;
+	justify-content: center;
+	align-items: center;
+	font-size: 20px;
+}
+
+.warn {
+
+	background-color: red;
+
+}
+
+@media screen and (max-width: 500px) 
+	{
+	
+		.groupHeading {
+		
+			font-size: 16px;
+		
+		}
+		
+		button {
+
+			width: 75px;
+			height: 75px;
+			font-size: 12px;
+
+		}
+		
+		.eventList td, .eventList th {
+			font-size: 10px;
+		}
+		
+		.slnk {
+			font-size: 8px;
+			width: 15px;
+			height: 15px;
+		
+		}
+
+
 }
