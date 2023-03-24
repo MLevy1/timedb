@@ -1,60 +1,30 @@
 <?php
-include("../function/Functions.php");
+	$servername = "localhost:3306";
+	$username = "root";
+	$password = "1234567a";
+	$dbname = "tdb";
 
-pconn();
+	$conn = new mysqli($servername, $username, $password, $dbname);
 
-$btnfull = $_GET['btn_submit'];
+	$origTime = $_REQUEST["origTime"];
 
-$TimeStamp = $_GET["TimeStamp"];
-$newSTime = $_GET["newSTime"];
-$newActID = $_GET["NselAct"];
-$newContID = $_GET["NselCont"];
-$newDetails = $_GET["newDetails"];
-$secs = $_GET["sec"];
+	$newTime = $_REQUEST["newTime"];
+	$newAct = $_REQUEST["newAct"];
+	$newCont = $_REQUEST["newCont"];
 
-$fullSTime = $newSTime.':'.$secs;
+	$sql = "UPDATE tblEvents SET StartTime='$newTime', STime='$newTime', ActID='$newAct', ProID='$newCont' 
+			WHERE StartTime='$origTime'";
 
-$selQDate= $_GET["selQDate"];
+	$result = $conn->query($sql);
 
-$selSDate = $_GET["selSDate"];
-$selEDate = $_GET["selEDate"];
-$selAct = $_GET["selAct"];
-$selCont = $_GET["selCont"];
+	if ($conn->query($sql) === TRUE) {
+		
+		echo "<p style='color: white; text-align:center'>Done!</p>";
+		$conn->close();
 
-$selProj = $_REQUEST["selProj"];
-$timecode = $_REQUEST["timecode"];
-$selUCode = $_REQUEST["selUCode"];
+	} else {
 
-$form1 =  $_GET["form"];
-
-if($btnfull != NULL) {
-	$newActID = substr($btnfull, 0, 3);
-	$newContID = substr($btnfull, 4);
-}
-
-if($form1='../events/ViewSelActContEvents.php'){
-
-	$form = 'Location: ../events/FormEventInfo.php';
-
-}else{
-
-	$form = 'Location: ../form/FormAll.php';
-	
-}
-
-echo '<input type="hidden" name="selQDate" value="<?php echo $selQDate; ?>">';
-
-$sql = "UPDATE tblEvents SET STime='$fullSTime', ActID='$newActID', ProID='$newContID', Details='$newDetails' WHERE StartTime='$TimeStamp'";
-
-$result = mysqli_query($conn, $sql);
-
-if (mysqli_query($conn, $sql) != TRUE) {
-	echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-}
-mysqli_close($conn);
-
-header ("$form");
-
-
+		echo "Error updating record: " . $conn->error;
+		$conn->close();
+	}
 ?>
-

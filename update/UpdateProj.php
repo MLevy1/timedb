@@ -1,20 +1,29 @@
 <?php
-include("../function/DBConn.php");
+	$servername = "localhost:3306";
+	$username = "root";
+	$password = "1234567a";
+	$dbname = "tdb";
 
-$ProjID = $_POST["selProjID"];
-$ProjDesc = $_POST["newProjDesc"];
-$PCode = $_POST["newPCode"];
-$Status = $_POST["newStatus"];
+	$conn = new mysqli($servername, $username, $password, $dbname);
 
-$sql = "UPDATE tblProj SET ProjID='$ProjID', ProjDesc='$ProjDesc', PCode='$PCode', ProjStatus='$Status' WHERE ProjID='$ProjID'";
+	$ProjID = $_POST["ProjID"];
+	$ProjDesc = $_POST["ProjDesc"];
+	$PCode = $_POST["PCode"];
+	$Status = $_POST["ProjStatus"];
 
-$result = $conn->query($sql);
+	$sql = "UPDATE tblProj SET ProjID='$ProjID', ProjDesc='$ProjDesc', PCode='$PCode', ProjStatus='$Status' WHERE ProjID='$ProjID'";
 
-if ($conn->query($sql) === TRUE) {
-	$conn->close();
-	Header ("Location: ../form/FormProj.php");
-} else {
-	echo "Error updating record: " . $conn->error;
-	$conn->close();
-}
+	$result = $conn->query($sql);
+
+	if ($conn->query($sql) === TRUE) {
+
+		echo "<p style='color: white; text-align:center'>Done!</p>";
+		$conn->close();
+
+	} else {
+
+		echo "Error updating record: " . $conn->error;
+		$conn->close();
+
+	}
 ?>

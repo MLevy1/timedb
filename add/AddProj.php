@@ -1,20 +1,18 @@
 <?php 
-include("../function/DBConn.php");
+include("./add.php");
+$rec = $_POST;
 
-$ProjID = $_POST["inpProjID"];
-$ProjDesc = $_POST["inpProj"];
-$PCode = $_POST["codesel"];
-$ProjStatus = 'Open';
+$vars = [];
+$vals = [];
 
-$sql = "INSERT INTO tblProj (ProjID, ProjDesc, PCode, ProjStatus)
-VALUES ('$ProjID', '$ProjDesc', '$PCode', '$ProjStatus')";
-
-if ($conn->query($sql) === TRUE) {
-	$conn->close();
-	header ("Location: ../form/FormProj.php");
-} else {
-	$conn->close();    
-	echo "Error: " . $sql . "<br>" . $conn->error;
+foreach($rec as $var => $val) {
+    $vars[] = $var;
+    $vals[] = $val;
 }
 
+$vars[] = "ProjStatus";
+
+$vals[] = "Open";
+
+add($vars, $vals, "tblProj");
 ?>

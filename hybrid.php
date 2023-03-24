@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang='en'>
 	<head>
-		<title>Hybrid</title>
+		<title>Events</title>
 		<?php 
-			include("./function/Functions.php");
-			
 			function parr($arr){
 			
 				echo  "<pre>";
@@ -13,10 +11,12 @@
 			
 			}
 			
-			pconn();
+			$conn = mysqli_connect('localhost', 'root', '1234567a', 'tdb');
 
-			//Create a list of all events on the server
-			setQTime();
+			date_default_timezone_set('America/New_York');
+		
+			$QTime = date('Y-m-d');
+			$NowTime = date("Y-m-d H:i:s");
 			
 			$dataStartDate = date( "Y-m-d", strtotime( "$QTime -30 day" ) );
 			
@@ -26,6 +26,7 @@
 				INNER JOIN tblCont ON tblEvents.ProID = tblCont.ContID 
 				WHERE date(tblEvents.STime) >='$dataStartDate' 
 				ORDER BY Stime DESC";
+				
 
 			$result_events = mysqli_query($conn, $sql_events);
 
@@ -39,7 +40,7 @@
 				$arr_events1[3][] = $row['ActDesc'];
 				
 			}
-			
+
 			$arr_events = array();
 			
 			$row_cnt = mysqli_num_rows($result_events);
@@ -52,7 +53,7 @@
 				
 				}
 			}
-			  
+			
 			//Create list of last time each act/cont type was used
 
 			$arr_lastuse = array();
@@ -126,11 +127,28 @@
 				$arr_act[1][] = $row['ActDesc'];
 				$arr_act[2][] = $row['PCode'];
 				$arr_act[3][] = $row['UCode'];
-				$arr_act[4][] = $row['WklyHrs'];
-				$arr_act[5][] = $row['WklyMins'];
 			}
+			
+			//Create list of all activities
+			$arr_act_all = array();
+			
+			$sql_act_all = "SELECT *
+				FROM tblAct 
+				ORDER BY ActID";
 
-			//Create list of sub-activities
+			$result_act_all = mysqli_query($conn, $sql_act_all); 
+			
+			while ($row = mysqli_fetch_array($result_act_all)) {
+
+				$arr_act_all[0][] = $row['ActID'];
+				$arr_act_all[1][] = $row['ActDesc'];
+				$arr_act_all[2][] = $row['PCode'];
+				$arr_act_all[3][] = $row['UCode'];
+				$arr_act_all[6][] = $row['Status'];
+				
+			}
+			
+			//Create list of active sub-activities
 
 			$arr_cont = array();
 
@@ -148,8 +166,27 @@
 				$arr_cont[1][] = $row['ContDesc'];
 				$arr_cont[2][] = $row['ProjID'];
 			}
+			
+			//Create list of all sub-activities
 
-			//Create list of projects
+			$arr_cont_all = array();
+
+			$sql_cont_all = "SELECT tblCont.ProjID, tblCont.ContID, tblCont.ContDesc, tblCont.Active, tblProj.ProjStatus 
+				FROM tblCont 
+				INNER JOIN tblProj ON tblCont.ProjID=tblProj.ProjID 
+				ORDER BY ProjID, ContID";
+
+			$result_cont_all = mysqli_query($conn, $sql_cont_all);
+
+			while ($row = mysqli_fetch_array($result_cont_all)) {
+
+				$arr_cont_all[0][] = $row['ContID'];
+				$arr_cont_all[1][] = $row['ContDesc'];
+				$arr_cont_all[2][] = $row['ProjID'];
+				$arr_cont_all[3][] = $row['Active'];
+			}
+
+			//Create list of active projects
 
 			$arr_proj = array();
 
@@ -165,6 +202,24 @@
 				$arr_proj[0][] = $row['ProjID'];
 				$arr_proj[1][] = $row['ProjDesc'];
 				$arr_proj[2][] = $row['PCode'];
+			}
+			
+			//Create list of all projects
+
+			$arr_proj_all = array();
+
+			$sql_proj_all = "SELECT * 
+				FROM tblProj 
+				ORDER BY ProjID";
+
+			$result_proj_all = mysqli_query($conn, $sql_proj_all);
+
+			while ($row = mysqli_fetch_array($result_proj_all)) {
+
+				$arr_proj_all[0][] = $row['ProjID'];
+				$arr_proj_all[1][] = $row['ProjDesc'];
+				$arr_proj_all[2][] = $row['PCode'];
+				$arr_proj_all[3][] = $row['ProjStatus'];
 			}
 
 			//Create list of PLSU Codes
@@ -182,6 +237,7 @@
 				$arr_pu[0][] = $row['PUCode'];
 				$arr_pu[1][] = $row['PUCodeDesc'];
 				$arr_pu[2][] = $row['Color'];
+				$arr_pu[3][] = $row['Active'];
 			}
 			
 			mysqli_close($conn);
@@ -191,8 +247,16 @@
 		<link href='https://fonts.googleapis.com/css?family=Homenaje' rel='stylesheet'>
 		<link rel="stylesheet" href="styles.css">
 		<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
-		<script src="./scripts/newManualEventScripts.js"></script>
+		<script src="./scripts/manualEventScripts.js"></script>
 		<script src="./scripts/timeScripts.js"></script>
+		<script src="./scripts/modifyFormScripts.js"></script>
+		<script src="./scripts/modifyMenu.js"></script>
+		<script src="./scripts/displayEvents.js"></script>
+		<!-- <script src="./scripts/newDisplayEvents.js"></script> -->
+		<script src="./scripts/localEventButtons.js"></script>
+		<script src="./scripts/svgChart.js"></script>
+		<script src="./scripts/mood.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js" integrity="sha256-Nn+JGDrq3PuTxcDfJmmI0Srj5LpfOFlKqEiPwQK7y40=" crossorigin="anonymous"></script>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 	</head>
@@ -211,16 +275,16 @@
 					<p id="DateTime"></p>
 				</li>
 				<li>
-					<a href="#" onclick="runaddCells()">Manual</a>
+					<a href="#" onclick="manualEventForm.btnLPU()">Manual</a>
 				</li>
 				<li>
 					<a href="#" onclick="PriorEvent()">Prior</a>
 				</li>
 				<li>
-					<a href="../timedbo/goals/FormDailyGoalsJQ.php">Goals</a>
+					<a href="#" onclick="postAll()">Sync</a>
 				</li>
 				<li>
-					<a href="#" onclick="displayActDurs()">Test</a>
+					<a href="#" onclick="displayModifyMenu()">Modify</a>
 				</li>
 				<li>
 					<a href="#" onclick="AddTime(-1)">-1m</a> 
@@ -338,9 +402,13 @@
 			<p id="selP"></p>
 			<p id="selFT"></p>
 			<h2 id="pmEvent"></h2>
-
-			<table id="etbl"></table>
+			
 			<ul id="eventBtnListContainer" class="btnGroup"></ul>
+			
+			<div id="modifyFormWrapper">
+				<div id="modifyFormContainer"></div>
+				<iframe id="modifyFormResult" name="modifyFormResult" class="hidden" scrolling="no"></iframe>
+			</div>
 
 			<a href="#" class="groupHeading" onclick="$('#tblRoutine').toggleClass('hidden')">Routine</a>
 
@@ -392,7 +460,7 @@
 
 			<div id="moodListContainer"></div>
 
-			<p id="listContainer"></p>
+			<div id="listContainer"></div>
 
 			<p id="csel"></p>
 
@@ -408,11 +476,12 @@
 			const defaultBGColor = $( "body" ).css( "background-color" );
 			const defaultBtnColor = $( "button" ).css( "color" );
 			const defaultBtnBGColor = $( "button" ).css( "background-color" );
-			const svgWidth = $( "svg").css("width");
-			const svgWidthNum = svgWidth.substring(0, ((svgWidth.length)-2));
+	
+			const svgWidthNum = screen.width;
+
 			const btnWidthNum = 110;
 
-			let text, ELen, MoodsLen, i, datetimeValue, datetimeText, millisecTime, etmv, etmt, eft, eid;
+			let text, ELen, MoodsLen, i, datetimeValue, datetimeText, millisecTime, origTime, etmt, eft, eid;
 			
 			//set local storage variables **need to add a way to skip this if offline**
 			let lastuse = <?php echo json_encode( $arr_lastuse ) ?>;
@@ -424,6 +493,14 @@
 			localStorage.setItem("LSEvents", JSON.stringify(data_events));
 			
 			let LEvents = JSON.parse(localStorage.getItem("LSEvents"));
+			
+			const objLEvents = {}
+			
+			for(i=0; i<LEvents.length; i++) {
+				
+				objLEvents[LEvents[i][0]] = {"startTime": Date.parse(LEvents[i][0]), "act": LEvents[i][1], "subProj": LEvents[i][2]}
+			
+			}
 			
 			//Moods
 			
@@ -441,14 +518,20 @@
 			
 			let LActs = JSON.parse(localStorage.getItem("LSActs"));
 			
-			//Sub-Activities
+			let data_acts_all = <?php echo json_encode( $arr_act_all ) ?>;
 			
-			let data_cont = <?php echo json_encode( $arr_cont ) ?>;
+			localStorage.setItem("LSActsAll", JSON.stringify(data_acts_all));
 			
-			localStorage.setItem("LSConts", JSON.stringify(data_cont));
+			let LActsAll = JSON.parse(localStorage.getItem("LSActsAll"));
+			
+			const objLAct = {}
+			
+			for(i=0; i<LActsAll[0].length; i++){
 
-			let LConts = JSON.parse(localStorage.getItem("LSConts"));
-			
+				objLAct[LActsAll[0][i]]={"ActID": LActsAll[0][i], "ActDesc": LActsAll[1][i], "PCode": LActsAll[2][i], "UCode": LActsAll[3][i], "Status": LActsAll[6][i]}
+								
+			}
+
 			//Projects
 
 			let data_proj = <?php echo json_encode( $arr_proj ) ?>;
@@ -457,6 +540,42 @@
 			
 			let LProj = JSON.parse(localStorage.getItem("LSProj"));
 			
+			let data_proj_all = <?php echo json_encode( $arr_proj_all) ?>;
+			
+			localStorage.setItem("LSProjAll", JSON.stringify(data_proj_all));
+			
+			let LProjAll= JSON.parse(localStorage.getItem("LSProjAll"));
+			
+			const objLProj = {}
+			
+			for(i=0; i<LProjAll[0].length; i++){
+
+				objLProj[LProjAll[0][i]]={"ProjID": LProjAll[0][i], "ProjDesc": LProjAll[1][i], "ProfileCode": LProjAll[2][i], "ProjStatus": LProjAll[3][i]}
+								
+			}
+			
+			//Sub-Projects
+			
+			let data_cont = <?php echo json_encode( $arr_cont ) ?>;
+			
+			localStorage.setItem("LSConts", JSON.stringify(data_cont));
+
+			let LConts = JSON.parse(localStorage.getItem("LSConts"));
+			
+			let data_cont_all = <?php echo json_encode( $arr_cont_all ) ?>;
+			
+			localStorage.setItem("LSContAll", JSON.stringify(data_cont_all));
+			
+			let LContAll = JSON.parse(localStorage.getItem("LSContAll"));
+			
+			const objLCont = {}
+
+			for(i=0; i<LContAll[0].length; i++){
+
+				objLCont[LContAll[0][i]]={"ContID": LContAll[0][i], "ContDesc": LContAll[1][i], "ProjID": LContAll[2][i], "Active": LContAll[3][i]}
+
+			}
+
 			//Use Codes & Colors
 
 			let data_pu = <?php echo json_encode( $arr_pu ) ?>;
@@ -465,6 +584,13 @@
 			
 			let LPU = JSON.parse(localStorage.getItem("LSPU"));
 			
+			const objLPU = {}
+
+			for(i=0; i<LPU[0].length; i++){
+
+				objLPU[LPU[0][i]]={"PUCode": LPU[0][i], "PUCodeDesc": LPU[1][i], "Active": LPU[3][i], "Color": LPU[2][i]};
+				
+			}
 
 			setTime();
 
@@ -540,77 +666,31 @@
 
 			localEventButton('T04', 'TRAINING.2', 'WF Training', "tblwork", "n");
 
-			localEventButton('M10', 'MEET.01', 'Team Mtg', "tblwork", "n");
+			localEventButton('M10', 'MEET.1', 'Team Mtg', "tblwork", "n");
 
 			localEventButton('A07', 'ADMIN', 'Tech Support', "tblwork", "n");
-
-			localEventButton('W15', 'ISSUE.00', 'Issue Memo', "tblwork", "n");
-
-			localEventButton('W04', 'ISSUE.R', 'Issues Reporting', "tblwork", "n");
-
-			localEventButton('W10', 'ISSUE.00', 'Issues: Email', "tblwork", "n");
-
-			localEventButton('M01', 'ISSUE.00', 'Issues: R&C Mtg', "tblwork", "n");
-
-			localEventButton('M02', 'ISSUE.00', 'Issues: Bus Mtg', "tblwork", "n");
-
-			localEventButton('W01', 'RCSA.00', 'RCSA: Agenda', "tblwork", "n");
 
 			localEventButton('M02', 'RCSA.00', 'RCSA: Bus Mtg', "tblwork", "n");
 
 			localEventButton('M01', 'RCSA.00', 'RCSA: R&C Mtg', "tblwork", "n");
 
-			localEventButton('W33', 'RCSA.A', 'RCSA: Risk Asmt', "tblwork", "n");
-
 			localEventButton('W29', 'RCSA.A', 'RCSA: Controls', "tblwork", "n");
-
-			localEventButton('W37', 'RCSA.A', 'RCSA: QA', "tblwork", "n");
 
 			localEventButton('W10', 'RCSA.00', 'RCSA: Email', "tblwork", "n");
 
-			localEventButton('W38', 'RCSA.R', 'RCSA: Status Rep', "tblwork", "n");
-
-			localEventButton('W04', 'RCSA.R', 'RCSA: Rep', "tblwork", "n");
-
-			localEventButton('W29', 'SHRP.01', 'MR Ctr: Controls', "tblwork", "n");
-
 			localEventButton('W10', 'SHRP.01', 'MR Ctr: Email', "tblwork", "n");
 
-			localEventButton('W37', 'SHRP.01', 'MR Ctr: QA', "tblwork", "n");
-
-			localEventButton('W38', 'SHRP.01', 'MR Ctr: Status Rep', "tblwork", "n");
-
 			localEventButton('M01', 'SHRP.01', 'MR Ctr: R&C Mtg', "tblwork", "n");
-
-			localEventButton('W04', 'SHRP.01', 'MR Ctr: Rep', "tblwork", "n");
-
-			localEventButton('W04', 'REP.01', 'Qtrly Report', "tblwork", "n");
-
-			localEventButton('W04', 'REP.00', 'Reporting: General', "tblwork", "n");
-
-			localEventButton('M01', 'REP.00', 'Rep R&C Mtg', "tblwork", "n");
 
 			localEventButton('W10', 'RC.00', 'Reg Ctr Email', "tblwork", "n");
 
 			localEventButton('M01', 'RC.00', 'Reg Ctr R&C Mtg', "tblwork", "n");
-
-			localEventButton('W50', 'POL.00', 'Procedures: Policy', "tblwork", "n");
-
-			localEventButton('M01', 'POL.00', 'Procedures: R&C Mtg', "tblwork", "n");
-
-			localEventButton('W10', 'POL.00', 'Procedures: Email', "tblwork", "n");
-
-			localEventButton('W38', 'POL.00', 'Procedures: Status Rep', "tblwork", "n");
 
 			localEventButton('N02', 'AD', 'Drive (A)', "tblfam", "n");
 
 			localEventButton('S07', 'AD', 'Meal (A)', "tblfam", "n");
 
 			localEventButton('S01', 'Family.1', 'Social (Mom)', "tblfam", "n");
-
-			localEventButton('P30', 'AD', 'Walk (A)', "tblfam", "n");
-
-			localEventButton('P56', 'AD', 'Hiking (A)', "tblfam", "n");
 
 			localEventButton('S01', 'AD', 'Social (A)', "tblfam", "n");
 
@@ -626,9 +706,15 @@
 
 			localEventButton('P30', 'Family.6', 'Walk (A&D)', "tblfam", "n");
 
-			localEventButton('P56', 'Family.6', 'Hiking (A&D)', "tblfam", "n");
-
 			localEventButton('N02', 'PERSONAL.5', 'Drive', "tbltrans", "n");
+			
+			localEventButton('N02', 'TRANS.4', 'Drive Commute (In)', "tbltrans", "n");
+						
+			localEventButton('P30', 'TRANS.4', 'Walk Commute (In)', "tbltrans", "n");
+						
+			localEventButton('P30', 'TRANS.5', 'Walk Commute (Out)', "tbltrans", "n");
+						
+			localEventButton('N02', 'TRANS.5', 'Drive Commute (Out)', "tbltrans", "n");
 
 			localEventButton('P40', 'PERSONAL.5', 'Gas', "tbltrans", "n");
 
@@ -646,7 +732,7 @@
 
 			localEventButton('B02', 'PERSONAL.8', 'Eat', "tblfood", "n");
 
-			localEventButton('B06', 'BREAK', 'Beverage', "tblfood", "n");
+			localEventButton('B06', 'PERSONAL.8', 'Beverage', "tblfood", "n");
 
 			localEventButton('P45', 'PERSONAL.8', 'Pick-up Food', "tblfood", "n");
 
@@ -658,29 +744,29 @@
 
 			localEventButton('P18', 'PERSONAL.4', 'Food Tracking', "tblfood", "n");
 					
-			localEventButton('P35', 'PERSONAL.3', 'Dishes', "tblchores", (4*60*60*24));
+			localEventButton('P35', 'E1.2', 'Dishes', "tblchores", (4*60*60*24));
 
-			localEventButton('P34', 'PERSONAL.3', 'Laundry', "tblchores", (14*60*60*24));
+			localEventButton('P34', 'E1.3', 'Laundry', "tblchores", (14*60*60*24));
 
-			localEventButton('P41', 'PERSONAL.3', 'Trash', "tblchores", (5*60*60*24));
+			localEventButton('P41', 'E1.4', 'Trash', "tblchores", (5*60*60*24));
 
-			localEventButton('P59', 'PERSONAL.3', 'Vacuum', "tblchores", "n");
+			localEventButton('P59', 'E1.6', 'Vacuum', "tblchores", "n");
 
 			localEventButton('P36', 'PERSONAL.7', 'Groceries', "tblchores", "n");
 
 			localEventButton('P22', 'PERSONAL.3', 'Haircut', "tblchores", (30*60*60*24));
 
-			localEventButton('P64', 'PERSONAL.3', 'Mail', "tblchores", (21*60*60*24));
+			localEventButton('P64', 'E1.6', 'Mail', "tblchores", (21*60*60*24));
 
 			localEventButton('P61', 'PERSONAL.3', 'Sheets & Towels', "tblchores", (30*60*60*24));
 
-			localEventButton('P37', 'PERSONAL.3', 'Lawn', "tblchores", "n");
+			localEventButton('P37', 'E1.5', 'Lawn', "tblchores", "n");
 
-			localEventButton('P58', 'PERSONAL.3', 'Clean Kitchen', "tblchores", "n");
+			localEventButton('P58', 'E1.6', 'Clean Kitchen', "tblchores", "n");
 
-			localEventButton('P48', 'PERSONAL.3', 'Clean Car', "tblchores", "n");
+			localEventButton('P48', 'E1.7', 'Clean Car', "tblchores", "n");
 
-			localEventButton('P11', 'PERSONAL.3', 'Clean House', "tblchores", (30*60*60*24));
+			localEventButton('P11', 'E1.6', 'Clean House', "tblchores", (30*60*60*24));
 
 			localEventButton('P39', 'PERSONAL.7', 'Shopping: Home', "tblchores", "n");
 
@@ -710,11 +796,7 @@
 
 			localEventButton('L14', 'PROG.1', 'Python', "tblpersonal", "n");
 
-			localEventButton('L16', 'NORM.F', 'Read: Fashion', "tblpersonal", "n");
-
 			localEventButton('P24', 'PERSONAL.1', 'Internet', "tblpersonal", "n");
-
-			localEventButton('P53', 'PERSONAL.1', 'Crypto', "tblpersonal", "n");
 
 			localEventButton('L16', 'News', 'News', "tblpersonal", "n");
 
@@ -733,188 +815,16 @@
 				
 			});
 
-
-			function btnJQL(act, cont, A2){
-					
-				var U = $("#pu").val();
-				
-				var selPost = $("#selPost").val();
-				
-				setETime();
-				
-				if(U!="U"){
-				
-					LEvents.push([sqTime(datetimeValue), act, cont, A2]);
-					
-					if(selPost==="Y"){
-					
-						JQPost(act, cont, datetimeValue);
-						
-					}
-					
-				}else{
-				
-					LEvents[eid]=([etmv, act, cont, A2]);
-					
-					if(selPost==="Y"){
-						
-						var etmv1 = sqTime(etmv);
-					
-						JQUpdate(act, cont, etmv1);
-						
-					}
-					
-					$("#pmEvent").empty();
-					
-					$("#pu").text("");
-					
-					$("#pu").val("");
-				
-				}
-				
-				resetAll();
-				
-			}
-
-			function btnLMood(a){
-
-				var selPost = $("#selPost").val();
-
-				setETime();
-				
-				LMoods.push([sqTime(datetimeValue), String(a)]);
-				
-				$( "#moodIndicator" ).css("color", moodColor(a));
-				
-				if(selPost==="Y"){
-				
-					MPost(a, datetimeValue);
-				
-				}
-				
-				resetAll();
-			}
-
-			function displayLMoods(){
-
-				resetSVG("svgMoodChart");
-
-				LMoods.sort();
-				
-				LMoods.reverse();
-
-				MoodsLen = LMoods.length;
-				
-				const minDate = Date.now()-86400000;
-				
-				text = "<table class='eventList'>";
-				
-				text += "<thead>";
-				
-					text += "<th colspan=2></th>";
-					text += "<th>Date</th>";
-					text += "<th>Time</th>";
-					text += "<th>Mood</th>";
-					text += "<th>Dur</th>";
-					
-				text += "</thead>";
-				
-				text += "</tbody>";
-					
-				//start eventDuration calc (should be function)
-				
-				for (i = 0; i < MoodsLen; i++) {
-				
-					if(i==0){
-						
-						var eventLength = Date.now()-Date.parse(LMoods[i][0]);
-						
-					}else{
-				
-
-						eventLength = Date.parse(LMoods[i-1][0])-Date.parse(LMoods[i][0]);
-					
-					}
-					
-					formatEventDuration(eventLength);
-					
-					if(i>0){
-					
-						var boxStart = svgboxstartxcoord(Date.parse(LMoods[i-1][0]));
-						
-					}else{
-					
-						var boxStart = svgboxstartxcoord(Date.parse(LMoods[i][0]));
-						
-					}
-					
-					var boxId = "svgMoodChart";
-					var boxStartX = svgboxstartxcoord(Date.parse(LMoods[i][0]));
-					var boxWidth = (eventLength / (24*60*60*1000))*svgWidthNum;
-					var boxFill = moodColor(LMoods[i][1]);
-					
-					if(boxStartX<0){
-					
-						if(boxStart>0){
-						
-							drawbox(boxId, 0, boxStart, boxFill);
-						
-						}
-					
-					}
-				
-					if(boxWidth>0){
-					
-						drawbox(boxId, boxStartX, boxWidth, boxFill);
-
-					}
-					
-					//end eventDuration calc
-					
-					let arr_disp_time = FixTime(LMoods[i][0]);
-					
-					if(Date.parse(LMoods[i][0]) > minDate){
-					
-						text += 
-							"<tr>" +
-								"<td>" +
-									"<input type=button value=+ class=slnk onclick=MPost('"+ LMoods[i][1] + "','" + LMoods[i][0] + "','" + i+"') + />" +
-								"</td><td>" +
-									"<input type=button  value=- class=slnk onclick=delMood("+i+") + />" +
-								"</td><td>" +
-									arr_disp_time[4] +
-								"</td><td>" +
-									arr_disp_time[5] +
-								"</td><td>" +
-									LMoods[i][1] +
-								"</td><td>" +
-									eventDuration +
-								"</td>" +
-							"</tr>";
-							
-					}
-					
-				}
-				
-				text += "</table>";
-
-				svgtext('svgMoodChart');
-				
-				document.getElementById("moodListContainer").innerHTML = text;
-				
-				const a = LMoods[0][1];
-
-				$( "#moodIndicator" ).css("color", moodColor(a));
-				
-			}
-
 			function CheckLEvents(){
 			
+				//create array for missing events
 				let missingEvents = [];
 
+				//sort the list of local events
 				LEvents.sort();
 				
 				LEvents.reverse();
+				
 				
 				ELen = LEvents.length;
 				
@@ -986,135 +896,6 @@
 				alert("Sync Done");
 			}
 
-
-			function displayLEvents(){
-
-				resetSVG('svgEventChart')
-
-				var arrchart = [];
-
-				LEvents.sort();
-				
-				LEvents.reverse();
-
-				ELen = LEvents.length;
-				
-				let selMinDate = $("#selMinDate").val();
-			
-				var minDate = Date.now()-(selMinDate*24*60*60*1000);
-
-				let selMaxDate = $("#selMaxDate").val();
-
-				let maxDate = Date.now()-(selMaxDate*24*60*60*1000);
-				
-				text = "<table class='eventList' width=100%>"
-
-				text += "<thead>";
-				
-				text += "<th colspan=3></th><th>Date</th><th>Time</th><th>Act</th><th>Cont</th><th>Dur</th>";
-
-				text += "</thead><tbody>";
-				
-				for (i = 0; i < ELen; i++) {
-				
-					if(i==0){
-						
-						var eventLength = Date.now()-Date.parse(LEvents[i][0]);
-						
-					}else{
-					
-						eventLength = Date.parse(LEvents[i-1][0])-Date.parse(LEvents[i][0]);
-
-					}
-					
-					formatEventDuration(eventLength);
-					
-					if(i>0){
-					
-						var at = svgboxstartxcoord(Date.parse(LEvents[i-1][0]));
-						
-						
-					}else{
-					
-						var at = svgboxstartxcoord(Date.parse(LEvents[i][0]));
-
-					}
-					
-					var ac0 = "svgEventChart";
-					var ac1 = svgboxstartxcoord(Date.parse(LEvents[i][0]));
-					var ac2 = (eventLength / (24*60*60*1000))*svgWidthNum;
-					
-					var ac3 = findActivityColor(LEvents[i][1]);
-
-					if(ac1<0){
-					
-						if(at>0){
-						
-							drawbox(ac0, 0, at, ac3);
-						
-						}
-					
-					}
-					
-					if(ac1>0){
-					
-						drawbox(ac0, ac1, ac2, ac3);
-
-					}
-				
-					//end eventDuration calc
-					
-					let arr_disp_time = FixTime(LEvents[i][0]);
-					
-					if(Date.parse(LEvents[i][0]) > minDate && Date.parse(LEvents[i][0]) <= maxDate){
-					
-					text += "<tr><td>" +
-					
-					"<input type=button  value=+ class=slnk onclick='JQPost(`"+ LEvents[i][1] + "`,`" + LEvents[i][2] + "`,`" + LEvents[i][0] + "`,`" + i+"`)'/>" + 
-					
-					"</td><td>" 
-					
-					+ 
-					
-					"<input type=button value=- class=slnk onclick='delEvent("+i+")' />" 
-					
-					+ 
-					
-					"</td><td>" 
-					
-					+ 
-					
-					"<input type=button class=slnk value=U onclick='UpdateEvent(`"+ i + "`)' />"
-					
-					+
-					
-					"</td><td>" 
-					
-					+ 
-					
-						arr_disp_time[4] + 
-					"</td><td>" + 
-						arr_disp_time[5] + 
-					"</td><td>" + 
-						LEvents[i][3] +
-					"</td><td>" + 
-						LEvents[i][2] + 
-					"</td><td>" + 
-						eventDuration + 
-					"</td></tr>";
-				
-					}
-				
-				}
-				text += "</tbody>";
-				text += "</table>";
-
-				document.getElementById("eventListContainer").innerHTML = text;
-				
-				svgtext('svgEventChart')
-				
-			}
-
 			function delEvent(i){
 				
 				var q = "Delete "+LEvents[i][0]+": "+LEvents[i][3]+"?";
@@ -1126,59 +907,14 @@
 					var etime = sqTime(LEvents[i][0]);
 				
 					var a = LEvents.splice(i, 1);
+					
+					alert( objLEvents[LEvents[i][0]] )
 				
 					JQDel(etime, 'tblEvents', 'StartTime');
 					
 					resetAll();
 				
 				}
-			}
-
-			function delMood(i){
-				
-				var q = "Delete "+LMoods[i]+"?";
-				
-				var c = confirm(q);
-				
-				if (c == true){
-				
-					var etime = sqTime(LMoods[i][0]); 
-				
-					var a = LMoods.splice(i, 1);
-					
-					JQDel(etime, 'tblMood', 'MoodDT');
-				
-					resetAll();
-				
-				}
-			}
-
-
-			function MPost(mood, dtime, i){
-
-				$.post("./add/AddJQ.php",
-				{
-					v1: dtime,
-					v2: mood,
-					selTbl: 'tblMood'
-				});
-				
-				resetAll();
-				
-			}
-
-			function JQPost(act, cont, dtime, i){
-
-				$.post("./add/AddJQ.php",
-				{
-					v1: act,
-					v2: cont,
-					v3: dtime,
-					SD: 'L',
-					selTbl: 'tblEvents'
-				});
-				
-				resetAll();
 			}
 
 			function resetLEvents(){
@@ -1195,22 +931,6 @@
 					
 				}
 			}
-
-			function resetLMoods(){
-
-				if(LMoods === undefined || LMoods.length == 0) {
-				
-					//do nothing
-				
-				}else{
-
-					localStorage.setItem("LSMoods", JSON.stringify(LMoods));
-				
-					displayLMoods();
-				
-				}
-			}
-
 
 			function displayList(arr){
 
@@ -1238,110 +958,6 @@
 				document.getElementById("listContainer").innerHTML = text;
 			}
 
-			function resetbtn(){
-			
-				let buttons = document.getElementsByTagName('button');
-			
-				if(buttons){
-			
-					for (i = 0; i < buttons.length; i++) {
-			
-						let bact = buttons[i].getAttribute('data-act');
-					
-						let bcont = buttons[i].getAttribute('data-cont');
-
-						let bwarn = buttons[i].getAttribute('data-warn');
-
-						let arrelpTime = findLast(bact, bcont);
-
-						let elpTime = arrelpTime[0];
-						
-						let wTime = arrelpTime[1];
-						
-						let newnode = document.createTextNode(elpTime);
-						
-						buttons[i].replaceChild(newnode, buttons[i].childNodes[2]);
-						
-							
-						if (bwarn!="n"){
-
-							if(bwarn < wTime){
-								
-								$("#"+buttons[i].id).addClass('warn');
-					
-							} else {
-
-								$("#"+buttons[i].id).removeClass('warn');
-							
-							}
-						
-						}
-			
-					}
-			
-				}
-			}
-
-			function localEventButton(act, cont, btnName, list, warn){
-				
-				let arrElapsedTime = findLast(act, cont);
-				
-				let elapsedTime = arrElapsedTime[0];
-
-				let warnTime = arrElapsedTime[1];
-				
-				var bc = $( "button" ).length;
-				
-				var btnid = "btn"+bc;
-				
-				let btn = document.createElement("button");
-
-				btn.id = btnid;
-
-				btn.setAttribute('data-act', act);
-				
-				btn.setAttribute('data-cont', cont);
-				
-				btn.setAttribute('data-warn', warn);
-
-				btn.classList.add("ebtn");
-				
-				let buttonNameTextNode = document.createTextNode(btnName);
-				
-				let elapsedTimeTextNode = document.createTextNode(elapsedTime);
-				
-				btn.appendChild(buttonNameTextNode);
-
-				btn.appendChild(document.createElement("br"));
-				
-				btn.appendChild(elapsedTimeTextNode);
-				
-				let li = document.createElement("li");
-
-				li.appendChild(btn);
-				
-				let selectedList = document.getElementById(list);
-
-				selectedList.appendChild(li);
-				
-				if (warn!="n"){
-
-					if(warn < warnTime){
-
-						$("#"+btnid).addClass('warn');
-					
-					}
-				}
-
-				document.getElementById(btnid). addEventListener("click", function(){
-				
-					btnJQL(act, cont, btnName);
-			
-					resetbtn();
-
-				});
-			}
-
 			//uses the prior event to create a new event record
 
 			function PriorEvent(){
@@ -1366,22 +982,50 @@
 				
 			}
 
-			//updates the contents of a record in the events table
+			//updates the contents of a record in the events table. 
 
 			function UpdateEvent(id){
 
-				var q = "Update: "+LEvents[id][5]+" - "+LEvents[id][3];
+				$( "#pu" ).val( "U" );
+				$( "#selP" ) . val( "Y" );
+				$( "body" ).css( "background-color", "DarkRed" );
+				
+				origTime = LEvents[id][0];
+
+				const formattedOrigTime = FixTime(origTime)
+
+				$( "#selFT" ) . val(formattedOrigTime[1]);
+				$( "#DateTime" ) . val(formattedOrigTime[0]);
+				$( "#DateTime" ) . text(formattedOrigTime[2]);
+				
+				eid = id;
+
+				console.log("origTime="+origTime+" eid="+eid)
+				
+				var q = "Update: "+formattedOrigTime[2]+" - "+LEvents[id][3];
 
 				$("#pmEvent").val(id);
 				$("#pmEvent").text(q);
-				
-				$("#pu").val("U");
-				
-				etmv = LEvents[id][0];
-				
-				eid = id;
-				
+
 				resetAll();
+
+			}
+
+			function jqUpdateEvent(oTime, nTime, act, cont){
+
+				const postData = $.ajax(
+				{	
+					type: "POST",
+					url: "./update/UpdateEvent.php",
+					data: { origTime: oTime, newTime: nTime, newAct: act, newCont: cont },
+					success: function() { 
+						console.log("Updated: "+oTime);
+					}
+				}).fail(function(){
+					alert("Fail");
+				}).always(function(){
+					clearForm()
+				});
 			}
 
 			function clearForm(){
@@ -1391,135 +1035,14 @@
 				$("#pu"). text("");
 				$("#pu"). val("");
 				
-				cncladdCells();
-				
+				manualEventForm.clearDiv();
+
 				setTime();
 				
 				resetAll();
 			}
 
-			//determines the color of each box on the event chart
-
-			function findActivityColor(ActID){
-				
-				var arrAct = LActs[0];
-
-				var ans = $.inArray(ActID, arrAct);
-
-				var PU = LActs[3][ans];
-				
-				var arrLPU = LPU[0];
-				
-				var an2 = $.inArray(PU, arrLPU);
-				
-				var clr = LPU[2][an2];
-				
-				return clr;
-			}
-
-			//sets the colors for the boxes in the mood chart
-
-			function moodColor(mood){
 			
-				switch(Number(mood)){
-				
-					case -1:
-						clr = "red";
-						break;
-					case -0.5:
-						clr = "yellow";
-						break;
-					case 0:
-						clr = "gray";
-						break;
-					case 0.5:
-						clr = "yellowgreen";
-						break;
-					case 1:
-						clr = "green";
-						break;
-				}
-
-				return clr;
-			}
-
-			//determines the starting x coord of each colored box in the svg charts
-
-			function svgboxstartxcoord(time){
-
-				let minTime = new Date();
-				minTime.setHours(0, 0, 0, 0);
-				
-				var svgboxstartxcoord = ((time-minTime)/(24*60*60*1000))*svgWidthNum;
-				
-				return svgboxstartxcoord;
-			}
-
-			//Draws colored boxes in svg charts
-
-			function drawbox(id, x, w, f){
-
-				var element = document.getElementById(id);
-
-				var svg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-
-				svg.setAttribute('x', x);
-				svg.setAttribute('y', 0);
-				svg.setAttribute('width', w);
-				svg.setAttribute('height', 50);
-				svg.setAttribute('fill', f);
-					
-				svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-					
-				element.appendChild(svg);
-			}
-
-			//Adds times to foreground of svg charts
-
-			function svgtext(id){
-
-				var element = document.getElementById(id);
-
-				var svg = document.createElementNS("http://www.w3.org/2000/svg", "text");
-
-				svg.setAttribute('x', 0);
-				svg.setAttribute('y', 27.5);
-				svg.setAttribute('fill', 'white');
-				svg.setAttribute('font-weight', 'bold');
-				svg.setAttribute('font-size', 10);
-
-				var txt = document.createTextNode("12A");
-
-				svg.appendChild(txt);
-
-				var arrTimes = ["12A", "3A", "6A", "9A", "12P", "3P", "6P", "9P"];
-
-				for (c = 1; c <= 7; c++){
-
-				var xv = c*120;
-
-				var ts = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-
-				ts.setAttribute('x', xv);
-				ts.setAttribute('y', 27.5);
-
-				var txt = document.createTextNode(arrTimes[c]);
-				ts.appendChild(txt);
-				svg.appendChild(ts);
-
-				}
-
-				svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
-
-				element.appendChild(svg);
-			}
-
-			function resetSVG(id){
-				
-				id = "#"+id;
-				
-				$(id).empty();
-			}
 
 			function resetAll(){
 				
@@ -1533,16 +1056,6 @@
 				
 			}
 
-			function JQUpdate(act, cont, etime){
-
-				$.post("./update/UpdateJQ.php",
-				{
-					v1: act,
-					v2: cont,
-					v3: etime,
-					selTbl: 'tblEvents'
-				});
-			}
 
 
 			//USED IN FUNCTIONS: delEvent(l#1010) and delMood (l#1029)
@@ -1719,6 +1232,32 @@
 
 				document.getElementById("listContainer").innerHTML = text;
 
+			}
+			
+			function postAll(){
+
+				ELen = LEvents.length;
+				MLen = LMoods.length;
+
+				for (var i=0; i<50; i++) {
+
+					var tvar = LEvents[i][0];
+					var act = LEvents[i][1];
+					var cont = LEvents[i][2];
+	
+					JQPost(act, cont, tvar, i);
+      
+				}
+
+				for (var i=0; i<50; i++) {
+
+					var dtime = LMoods[i][0];
+					var mood = LMoods[i][1];
+	
+					MPost(mood, dtime, i);
+				}
+				
+				alert("Sync Complete")
 			}
 
 		</script>

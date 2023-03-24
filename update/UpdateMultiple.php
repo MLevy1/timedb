@@ -42,7 +42,7 @@ pconn();
 //act
 
 //$sql = "UPDATE tblEvents SET 
-ActID='$newActID' WHERE ActID='$selAct'";
+//ActID='$newActID' WHERE ActID='$selAct'";
 
 //end
 

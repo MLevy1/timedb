@@ -1,24 +1,30 @@
 <?php
-include("../function/DBConn.php");
+	$servername = "localhost:3306";
+	$username = "root";
+	$password = "1234567a";
+	$dbname = "tdb";
 
-$ActID = $_REQUEST["selActID"];
-$ActDesc = $_REQUEST["newActDesc"];
-$ContID = $_REQUEST["selCont"];
-$PCode = $_REQUEST["Pcodesel"];
-$UCode = $_REQUEST["Ucodesel"];
-$WklyHrs = $_REQUEST["newWklyHrs"];
-$WklyMins = $_REQUEST["newWklyMins"];
-$Status = $_REQUEST["newStatus"];
+	$conn = new mysqli($servername, $username, $password, $dbname);
 
-$sql = "UPDATE tblAct SET ActDesc='$ActDesc', PCode='$PCode', UCode='$UCode', WklyHrs='$WklyHrs', WklyMins='$WklyMins', Status='$Status' WHERE ActID='$ActID'";
+	$ActID = $_REQUEST["ActID"] ?? null;
+	$ActDesc = $_REQUEST["ActDesc"] ?? null;
+	$PCode = $_REQUEST["PCode"] ?? null;
+	$UCode = $_REQUEST["UCode"] ?? null;
+	$Status = $_REQUEST["Status"] ?? null;
 
-$result = $conn->query($sql);
+	$sql = "UPDATE tblAct SET ActDesc='$ActDesc', PCode='$PCode', UCode='$UCode', Status='$Status' WHERE ActID='$ActID'";
 
-if ($conn->query($sql) === TRUE) {
-	$conn->close();
-	Header ("Location: ../form/FormAct.php");
-} else {
-	echo "Error updating record: " . $conn->error;
-	$conn->close();
-}
+	$result = $conn->query($sql);
+
+	if ($conn->query($sql) === TRUE) {
+		
+		echo "<p style='color: white; text-align:center'>Done!</p>";
+		$conn->close();
+	
+	} else {
+	
+		echo "Error updating record: " . $conn->error;
+		$conn->close();
+	
+	}
 ?>

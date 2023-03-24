@@ -1,14 +1,3 @@
-function resetTime(){
-
-	const P = $("#selP").val();
-				
-	if(P!="Y"){
-				
-		setTime();
-				
-	}
-}
-
 function TimeArr(){
 	
 	var MTime = new Date();
@@ -96,6 +85,36 @@ function TimeArr(){
 	return arrTime;
 }
 
+function resetTime(){
+
+	//selP shows if the event occurs in the past or not
+
+	const P = $("#selP").val();
+				
+	if(P!="Y"){
+		
+		//if the event does not occur in the past, then setTime is called, which sets everything back to default values as shown below.
+
+		setTime();
+				
+	}
+}
+
+function setTime(){
+	
+	var T = TimeArr();
+	
+	$( "#selP" ) . val("N");
+	
+	$( "#DateTime" ) . val(T[0]);
+	
+	$( "#DateTime" ) . text(T[2]);
+	
+	$("body").css("background-color", defaultBGColor);
+}
+
+
+
 function FixTime(CTime){
 
 	var Y = CTime.substring(0,4);
@@ -163,18 +182,7 @@ function FixTime(CTime){
 
 }
 
-function setTime(){
-	
-	var T = TimeArr();
-	
-	$( "#selP" ) . val("N");
-	
-	$( "#DateTime" ) . val(T[0]);
-	
-	$( "#DateTime" ) . text(T[2]);
-	
-	$("body").css("background-color", defaultBGColor);
-}
+
 
 function AddTime(min){
 	$( "#selP" ) . val("Y");
@@ -188,8 +196,9 @@ function AddTime(min){
 	var D = CTime.substring(8,10);
 	var H = CTime.substring(11,13);
 	var Mn = CTime.substring(14,16);
+	var S = CTime.substring(17,19)
 	
-	var m = new Date(Y,M-1,D,H,Mn);
+	var m = new Date(Y,M-1,D,H,Mn,S);
 	
 	var OM = m.getMinutes();
 	
@@ -249,16 +258,16 @@ function AddTime(min){
 	
 	var millisecs = m.getTime();
 
-	var timeValue = Y+'-'+M +'-'+ D +'T'+ H +':'+ Mn + ':' + '00';
+	var timeValue = Y+'-'+M +'-'+ D +'T'+ H +':'+ Mn + ':' + S;
 	
-	var visibleTime = M +'-'+ D +' '+ hr +':'+ Mn + ':' + '00' + ' ' + AP;
+	var visibleTime = M +'-'+ D +' '+ hr +':'+ Mn + ':' + S + ' ' + AP;
 	
 	$( "#selFT" ) . val(millisecs);
 	$( "#DateTime" ) . val(timeValue);
 	$( "#DateTime" ) . text(visibleTime);	
 }
 
-//USED IN MULTIPLE TIME FUNCTIONS
+//etmv is a time value formatted as YYYY-MM-DDTHH:MM:SS.  This functions removes the T and makes it SQL readable.
 function sqTime(etmv){
 
 	var p1 = etmv.substr(0,10);

@@ -97,6 +97,7 @@ button {
 select {
 	font-size: 20px;
 	color: #ccc;
+	background-color: black;
 }
 
 input {
@@ -156,10 +157,6 @@ table {
 	color: blue;
 }
 
-select {
-	background-color: black;
-}
-
 .dateinput {
 	background-color: black;
 }
@@ -171,9 +168,16 @@ select {
 
 }
 
-svg, table {
+table {
 
 	width: 100%;
+
+}
+
+svg { 
+	
+	width: 100%;
+
 
 }
 
@@ -285,6 +289,120 @@ svg, table {
 .warn {
 
 	background-color: red;
+
+}
+
+iframe {
+
+	/*height: 25px;
+	width: 100px; */
+	
+	height: 300px;
+	width: 300px;
+
+	/*overflow: hidden;*/
+	border: none;
+
+}
+
+#actForm {
+
+	display: flex;	
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+}
+
+
+fieldset {
+
+	display: flex;
+	width: 100%;
+	align-items: center;
+	flex-wrap: wrap;
+	margin: 0;
+	padding: 5px;
+	gap: 5px;
+
+}
+
+label {
+
+	display: flex;
+	width: 100px;
+	align-items: center;
+
+}
+
+input[type="checkbox"] {
+
+	height: 25px;
+	margin: 5px;
+
+}
+
+#ActID {
+
+	width: 10%;
+	text-align: center;
+
+}
+
+#ActDesc {
+
+	width: 50%;
+	text-align: center;
+
+}
+
+
+form h2 {
+
+	width: 100%;
+
+}
+
+.modmenu * {
+
+	background-color: #aaa;
+	color: #333;
+	list-style-type: none;
+	width: 100%;
+	text-align: center;
+	font-weight: bold;
+
+}
+
+.modmenu {
+
+	display: flex;
+	flex-direction: row;
+
+}
+
+.modmenu a {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-right: 0;
+	padding-left: 0;
+}
+
+
+#updateForm #ActID, #UCode {
+
+	width: 40%;
+
+}
+
+.modform p {
+
+	display: flex;
+
+}
+
+.clrBox {
+
+	width: 25px;
 
 }
 

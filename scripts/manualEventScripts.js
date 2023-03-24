@@ -1,386 +1,226 @@
-function runaddCells() {
+const manualEventForm = {
+  
+	selectedPCode: '',
+    selectedSubProj: '',
+    clearDiv: function () {
 
-    //set LV ??? to 0
-    LV=0;
+        const listDiv = document.getElementById("eventBtnListContainer")
 
-    //run emptyps ???
-    emptyps();
+        while(listDiv.firstChild){
 
-    //run function to add manual buttons to the sheet (argument ???)
-    addCells(LPU);	
-}
+            listDiv.removeChild(listDiv.firstChild)
 
-function cncladdCells(){
+        }
 
-    LV=null;
-    key=null;
-    var ckey;
-    
-    $("#etbl").empty();
-    
-    emptyps();
-}
+    },
+    btnLPU: function() {
 
-function addCells(arr){
+        this.clearDiv()
 
-    //determines if the post functions used later should be active [OUT OF PLACE]
-    var selPost = $("#selPost").val();
+        const eventBtnListContainer = document.getElementById("eventBtnListContainer")
 
-    //empty div that contains dynamic buttons
-    $("#etbl").empty();
+		for (i in objLPU){
 
-    //get value from pu: indicates if the  entry will be past event
-    var U = $("#pu").val();
+            if(objLPU[i].Active=="Y" && objLPU[i].PUCodeDesc!="Admin" && objLPU[i].PUCodeDesc!="Meeting") {
+                
+                let eventBtnContainer = document.createElement("li")
+                
+                let eventBtnText = objLPU[i].PUCodeDesc
 
-    //get the size of the first col of the array passed as an argument
-    var L = arr[0].length;
+                let linkTarget = i
 
-    //get the number of cols in the array passed as an argument
-    var aSize = arr.length;
-
-    //create an empty array to place contents of array passed to formula
-    var narr=[];
-
-    //loop from 0 to the number of cols above
-    for(j = 0; j < aSize; j++){
-
-        //add empty col to the empty array
-        narr.push([]);
-
-    }
-
-    //checks if the value of the LV variable is a value other than 0.  if it is, this block is executed
-    if(LV!=0){
-        
-        //#ROW LOOP: loops from 0 to the size of the first col of the array (value of L)
-        for(i = 0; i < L; i++){
-    
-            //checks if the key variable ??? is included in each element of the 3rd col of the array passed to the function
-            if(arr[2][i].includes(key)==true){
-        
-                //#COL LOOP: loops from 0 to the number of cols in the array
-                for(j = 0; j < aSize; j++){
-
-                    //Adds the value in each cell, COL j / ROW i, to the new array
-                    var p = arr[j][i];
-            
-                    narr[j].push(p);
+                eventBtnText = document.createTextNode(eventBtnText)
+                
+                let eventLink = document.createElement("a")
+                
+                eventLink.href = "#"
+                
+                eventLink.addEventListener('click', () => { 
+                
+                    this.btnProj(linkTarget)
+                    this.selectedPCode = linkTarget
                     
-                    //end COL LOOP
-                    }
-
-            //end if
-            } 
-
-        //end ROW LOOP
-        }
-    
-    //end LV if
-    }else{
-        
-        //if no LV is provided, new array is set to the array passed to the function
-        narr=arr;
-
-    //end ELSE
-    }
-
-    //selects the event table
-    var table = document.getElementById("etbl");
-
-    //gets the length of the new array
-    var L = narr[0].length;
-
-    //sets the number of buttons
-    var rbtns = 6;
-
-    //determines the number of rows that will be needed 
-    var rnum = Math.floor(L/rbtns);
-
-    //determines the numbers of buttons in the last row
-    var lrbtns = (L%rbtns);
-
-    //sets button counters to 0
-    var bcnt = 0;
-
-    //block executed when more than 1 row is needed
-    if(rnum>0){
-
-    //block executed for each row needed [r represents the index of the row]
-        for (r = 0; r < rnum; r++) {
-
-    //adds a row to the table [currently hard-coded as "etbl" above]
-            var row = table.insertRow(r);
-
-    //block executed for each button in each row
-            for (c = 0; c < rbtns; c++){
-
-                //sets a variable to the current button count by multiplying the row index [r] by the number of buttons in each row [rbtns] and adding the position in the current row [c]
-                var bcnt = (r*rbtns)+c;
-
-                //sets a variable to the 2nd element in the provided array for the index
-                var bt = narr[1][bcnt];
-
-                //sets a variable to the 1st element in the provided array for the index
-                var bv = narr[0][bcnt];
-
-                //inserts a cell to the current row
-                var cell = row.insertCell(c);
-
-                //sets a variable to the total number of buttons on the page
-                var bc = $( "button" ).length;
-
-                //uses the number of buttons to create a new button id
-                var btnid = "btn"+bc;
-
-                //creates a new button element
-                var btn = document.createElement("BUTTON");
-
-                //assigns the id created above to the new button 
-                btn.id = btnid;
-
-                //creates a text node based on the second element in the supplied array
-                var t = document.createTextNode(bt);
-
-                //adds the text node to the new button
-                btn.appendChild(t);
-
-                //adds a value to the button based on the first element of the array
-                btn.value = bv;
-
-                //appends the button to the newly created cell
-                cell.appendChild(btn);
-                
-                //adds a function to the button 
-                document.getElementById(btnid). addEventListener("click", function(){
-
-                    var cs = this.value;
-
-                    var cv = this.innerHTML;
-
-                    $("#etbl").empty();
-
-                    switch(LV){
-
-                        case 0:
-
-                            $("#csel").text(cs);
-
-                            key=cs;
-
-                            ckey=cs;
-
-                            LV++;
-
-                            addCells(LProj);
-
-                            break;
-
-                        case 1:
-
-                            $("#psel").text(cs);
-
-                            key=cs;
-
-                            LV++;
-
-                            addCells(LConts);
-
-                            break;
-
-                        case 2:
-
-                            $("#spsel").text(cs)
-
-                            key=ckey;
-
-                            LV++;
-
-                            addCells(LActs);
-
-                            break;
-
-                        case 3:
-
-                            $("#asel").text(cs);
-
-                            var cont = $("#spsel").text();
-
-                            var act = cs;
-
-                            var a2 = cv;
-
-                            LV=0;
-
-                            $("#etbl").empty();
-
-                            setETime();
-
-                            if(U!="U"){
-
-                                LEvents.push([datetimeValue, act, cont, a2, 'N', datetimeText, millisecTime]);
-                                
-                                if(selPost==="Y"){
-                                
-                                JQPost(act, cont, datetimeValue);
-                                
-                                }
-                                
-                                resetAll();
-
-                            }else{
-
-                                LEvents[eid]=([etmv, act, cont, a2, 'N', etmt, eft]);
-                                
-                                        if(selPost==="Y"){
-            
-                                            var etmv1 = sqTime(etmv);
-        
-                                            JQUpdate(act, cont, etmv1);
-            
-                                        }
-                                
-                                resetAll();
-
-                            }
-
-                            $("#pmEvent").empty();
-                
-                            $("#pu").text("");
-                
-                            $("#pu").val("");
-
-                            emptyps();
-
-                            resetAll();
-                            
-                            break;
-                    }
                 });
+                
+                eventLink.appendChild(eventBtnText)
+                            
+                eventBtnContainer.appendChild(eventLink)
+            
+                eventBtnListContainer.appendChild(eventBtnContainer)
             }
-        }
-    }
-    
-    //LAST ROW
-    
-    if(lrbtns>0){
-    
-        if(rnum==0){
-    
-            lrbtns--;
-    
-        }
+	
+		}
 
-        var row = table.insertRow();
+    },
+    btnProj: function(selectedPCode) {
 
-        for (c = 0; c <= lrbtns; c++){
+        this.clearDiv()
 
-            var lbcnt = bcnt+c;
+        const eventBtnListContainer = document.getElementById("eventBtnListContainer")
 
-            var bt = narr[1][lbcnt];
+        for (i in objLProj) {
 
-            var bv = narr[0][lbcnt];
+            if(objLProj[i].ProfileCode==selectedPCode && objLProj[i].ProjStatus!="Closed"){
 
-            var cell= row.insertCell(c);
+                let eventBtnContainer = document.createElement("li");
 
-            var bc = $( "button" ).length;
+                let eventBtnText = objLProj[i].ProjDesc;
 
-            var btnid = "btn"+bc;
-
-            var btn = document.createElement("BUTTON");
-
-            btn.id = btnid;
-
-            var t = document.createTextNode(bt);
-
-            btn.appendChild(t);
-
-            btn.value = bv;
-
-            cell.appendChild(btn);
-            document.getElementById(btnid). addEventListener("click", function(){
-
-                var cs = this.value;
-
-                var cv = this.innerHTML;
-
-                $("#etbl").empty();
-
-                switch(LV){
-
-                    case 0:
-
-                        $("#csel").text(cs);
-
-                        key=cs;
-
-                        ckey=cs;
-
-                        LV++;
-
-                        addCells(LProj);
-
-                        break;
-
-                    case 1:
-
-                        $("#psel").text(cs);
-
-                        key=cs;
-
-                        LV++;
-
-                        addCells(LConts);
-
-                        break;
-
-                    case 2:
-
-                        $("#spsel").text(cs)
-
-                        key=ckey;
-
-                        LV++;
-
-                        addCells(LActs);
-
-                        break;
-
-                    case 3:
-
-                        $("#asel").text(cs);
-
-                        var cont = $("#spsel").text();
-
-                        var act = cs;
-
-                        var a2 = cv;
-
-                        LV=0;
-
-                        $("#etbl").empty();
-
-                        setETime();
-
-                        if(U!="U"){
-
-                            LEvents.push([datetimeValue, act, cont, a2, 'N', datetimeText, millisecTime]);
-                            
-                            if(selPost==="Y"){
-                            
-                            JQPost(act, cont, datetimeValue);
-
-                            }
-
-                        }else{
-
-                            LEvents[eid]=([etmv, act, cont, a2, 'N', etmt, eft]);
-
-        if(selPost==="Y"){
+                let linkTarget = i
+                
+                eventBtnText = document.createTextNode(eventBtnText)
             
-            var etmv1 = sqTime(etmv);
+                let eventLink = document.createElement("a")
+            
+                eventLink.href = "#"
+                
+                eventLink.addEventListener('click', () => { 
+                
+                    this.btnSubProj(linkTarget)
+                    
+                });
+                
+                eventLink.appendChild(eventBtnText)
+                            
+                eventBtnContainer.appendChild(eventLink)
+            
+                eventBtnListContainer.appendChild(eventBtnContainer)
+    
+
+            }
+
+        }
+
+    },
+    btnSubProj: function(selectedProj){
+
+        this.clearDiv()
+
+        const eventBtnListContainer = document.getElementById("eventBtnListContainer")
+
+        for (i in objLCont) {
+
+            if(objLCont[i].ProjID==selectedProj && objLCont[i].Active!="N"){
+
+                let eventBtnContainer = document.createElement("li");
+
+                let eventBtnText = objLCont[i].ProjID + ": " + objLCont[i].ContDesc;
+
+                let linkTarget = i
+                
+                eventBtnText = document.createTextNode(eventBtnText)
+            
+                let eventLink = document.createElement("a")
+            
+                eventLink.href = "#"
+                
+                eventLink.addEventListener('click', () => { 
+                
+                    this.btnAct(this.selectedPCode)
+                    this.selectedSubProj = linkTarget;
+                    
+                });
+                
+                eventLink.appendChild(eventBtnText)
+                            
+                eventBtnContainer.appendChild(eventLink)
+            
+                eventBtnListContainer.appendChild(eventBtnContainer)
+    
+
+            }
+
+        }
+
+    },
+    btnAct: function(selectedPCode){
+
+        this.clearDiv()
+
+        const eventBtnListContainer = document.getElementById("eventBtnListContainer")
+
+        for (i in objLAct) {
+
+            if(objLAct[i].PCode.includes(selectedPCode) && objLAct[i].Status!="Inactive"){
+
+                let eventBtnContainer = document.createElement("li");
+
+                let eventBtnText = objLAct[i].ActDesc
+
+                let linkTarget = i
+                
+                eventBtnText = document.createTextNode(eventBtnText)
+            
+                let eventLink = document.createElement("a")
+            
+                eventLink.href = "#"
+                
+                eventLink.addEventListener('click', () => { 
+                
+                    this.addEvent(linkTarget, this.selectedSubProj)
+                                        
+                });
+                
+                eventLink.appendChild(eventBtnText)
+                            
+                eventBtnContainer.appendChild(eventLink)
+            
+                eventBtnListContainer.appendChild(eventBtnContainer)
+    
+
+            }
+
+        }
+
+    },
+    addEvent: function(act, subproj) {
+
+        this.clearDiv()
+
+        const updateIndicator = document.getElementById("pu").value
+
+        const postsIndicator = document.getElementById("selPost").value 
+
+        //sets the time of the event being entered (determines if event occurs in the past )
+        setETime();
+            
+
+        if(updateIndicator!="U"){
+
+            const startTime = sqTime(datetimeValue)
+
+            objLEvents[startTime] = {
+                "startTime": millisecTime, 
+                "act": act, 
+                "subProj": subproj
+            }
         
-            JQUpdate(act, cont, etmv1);
+            LEvents.push([sqTime(datetimeValue), act, subproj, objLAct[act].ActDesc]);
+
+            if(postsIndicator==="Y"){
+                
+                JQPost(act, subproj, sqTime(datetimeValue));
+
+            }
+                
+            resetAll();
+
+        } else {
+
+            //important to remember that ANY event being updated HAS to be a "Past Event"
+     
+            LEvents[eid]=([sqTime(datetimeValue), act, subproj, objLAct[act].ActDesc]);
+
+            objLEvents[LEvents[eid][0]] = {"startTime": millisecTime, "act": act, "subProj": subproj}
+
+            if(postsIndicator==="Y"){
+
+                jqUpdateEvent(origTime, sqTime(datetimeValue), act, subproj);
+
+            }
             
+            resetAll();
+
         }
 
         $("#pmEvent").empty();
@@ -389,26 +229,10 @@ function addCells(arr){
 
         $("#pu").val("");
 
-                        }
+        resetAll();
 
-                        emptyps();
-                        
-                        resetAll();
-
-                        break;
-
-                }
-
-            });
-        }
+        this.clearDiv()
 
     }
-}
-
-function emptyps(){
-
-    $("#csel").empty();
-    $("#psel").empty();
-    $("#spsel").empty();
-    $("#asel").empty();
+			
 }
