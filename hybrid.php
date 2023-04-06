@@ -485,11 +485,11 @@
 			let text, ELen, MoodsLen, i, datetimeValue, datetimeText, millisecTime, origTime, etmt, eft, eid;
 			
 			//set local storage variables
-			let data_lastuse = <?php echo json_encode( $arr_lastuse ) ?>;
+			let lastUse = <?php echo json_encode( $arr_lastuse ) ?>;
 			
-			localStorage.setItem("LSlastuse", JSON.stringify(data_lastuse))
+			localStorage.setItem("LSlastuse", JSON.stringify(lastUse))
 
-			let lastUse = JSON.parse(localStorage.getItem("LSlastuse"))
+			lastUse = JSON.parse(localStorage.getItem("LSlastuse"))
 			
 			const objLastUse = {}
 			
@@ -501,11 +501,11 @@
 
 			//Events
 
-			let data_events = <?php echo json_encode( $arr_events ) ?>;
+			let LEvents = <?php echo json_encode( $arr_events ) ?>;
 
-			localStorage.setItem("LSEvents", JSON.stringify(data_events));
+			localStorage.setItem("LSEvents", JSON.stringify(LEvents));
 			
-			let LEvents = JSON.parse(localStorage.getItem("LSEvents"));
+			LEvents = JSON.parse(localStorage.getItem("LSEvents"));
 			
 			const objLEvents = {}
 			
@@ -517,11 +517,11 @@
 			
 			//Moods
 			
-			let data_moods = <?php echo json_encode( $arr_moods ) ?>;
+			let LMoods = <?php echo json_encode( $arr_moods ) ?>;
 			
-			localStorage.setItem("LSMoods", JSON.stringify(data_moods));
+			localStorage.setItem("LSMoods", JSON.stringify(LMoods));
 
-			let LMoods = JSON.parse(localStorage.getItem("LSMoods"));
+			LMoods = JSON.parse(localStorage.getItem("LSMoods"));
 			
 			const objLMoods = {}
 			
@@ -533,15 +533,17 @@
 			
 			//Activities
 
+			/*
 			let data_acts = <?php echo json_encode( $arr_act ) ?>;
 			
 			localStorage.setItem("LSActs", JSON.stringify(data_acts));
 			
 			let LActs = JSON.parse(localStorage.getItem("LSActs"));
+			*/
+
+			let LActsAll = <?php echo json_encode( $arr_act_all ) ?>;
 			
-			let data_acts_all = <?php echo json_encode( $arr_act_all ) ?>;
-			
-			localStorage.setItem("LSActsAll", JSON.stringify(data_acts_all));
+			localStorage.setItem("LSActsAll", JSON.stringify(LActsAll));
 			
 			let LActsAll = JSON.parse(localStorage.getItem("LSActsAll"));
 			
@@ -555,17 +557,19 @@
 
 			//Projects
 
+			/*
 			let data_proj = <?php echo json_encode( $arr_proj ) ?>;
 			
 			localStorage.setItem("LSProj", JSON.stringify(data_proj));
 			
 			let LProj = JSON.parse(localStorage.getItem("LSProj"));
+			*/
+
+			let LProjAll = <?php echo json_encode( $arr_proj_all) ?>;
 			
-			let data_proj_all = <?php echo json_encode( $arr_proj_all) ?>;
+			localStorage.setItem("LSProjAll", JSON.stringify(LProjAll));
 			
-			localStorage.setItem("LSProjAll", JSON.stringify(data_proj_all));
-			
-			let LProjAll= JSON.parse(localStorage.getItem("LSProjAll"));
+			LProjAll= JSON.parse(localStorage.getItem("LSProjAll"));
 			
 			const objLProj = {}
 			
@@ -576,18 +580,19 @@
 			}
 			
 			//Sub-Projects
-			
+			/*
 			let data_cont = <?php echo json_encode( $arr_cont ) ?>;
 			
 			localStorage.setItem("LSConts", JSON.stringify(data_cont));
 
 			let LConts = JSON.parse(localStorage.getItem("LSConts"));
+			*/
+
+			let LContAll = <?php echo json_encode( $arr_cont_all ) ?>;
 			
-			let data_cont_all = <?php echo json_encode( $arr_cont_all ) ?>;
+			localStorage.setItem("LSContAll", JSON.stringify(LContAll));
 			
-			localStorage.setItem("LSContAll", JSON.stringify(data_cont_all));
-			
-			let LContAll = JSON.parse(localStorage.getItem("LSContAll"));
+			LContAll = JSON.parse(localStorage.getItem("LSContAll"));
 			
 			const objLCont = {}
 
@@ -599,11 +604,11 @@
 
 			//Use Codes & Colors
 
-			let data_pu = <?php echo json_encode( $arr_pu ) ?>;
+			let LPU = <?php echo json_encode( $arr_pu ) ?>;
 				
-			localStorage.setItem("LSPU", JSON.stringify(data_pu));
+			localStorage.setItem("LSPU", JSON.stringify(LPU));
 			
-			let LPU = JSON.parse(localStorage.getItem("LSPU"));
+			LPU = JSON.parse(localStorage.getItem("LSPU"));
 			
 			const objLPU = {}
 
@@ -615,11 +620,11 @@
 
 			//local event button groups
 
-			let data_lbg = <?php echo json_encode( $arr_lbg ) ?>
+			let Llbg = <?php echo json_encode( $arr_lbg ) ?>
 				 
-			localStorage.setItem("LSlbg", JSON.stringify(data_lbg))
+			localStorage.setItem("LSlbg", JSON.stringify(Llbg))
 
-			let Llbg = JSON.parse(localStorage.getItem("LSlbg"))
+			Llbg = JSON.parse(localStorage.getItem("LSlbg"))
 
 			const objLocalButtonGroups = {}
 
@@ -631,11 +636,11 @@
 
 			//local event buttons
 			
-			let data_lb = <?php echo json_encode( $arr_lb ) ?>
+			let Llb = <?php echo json_encode( $arr_lb ) ?>
 				 
-			localStorage.setItem("LSlb", JSON.stringify(data_lb))
+			localStorage.setItem("LSlb", JSON.stringify(Llb))
 
-			let Llb = JSON.parse(localStorage.getItem("LSlb"))
+			Llb = JSON.parse(localStorage.getItem("LSlb"))
 
 			const objLocalEventButtons = {}
 
@@ -721,32 +726,6 @@
 				}
 			}
 
-			function displayList(arr){
-
-				S = arr. length;
-				
-				L = arr[0].length;
-				
-				text = "<table>";
-				
-				for (i = 0; i < L; i++) {
-					
-					text += "<tr>";
-					
-					for (j = 0; j < S; j++){
-					
-						text += "<td>" + arr[j][i] + "</td>";
-						
-					}
-					
-					text += "</tr>";
-				
-				}
-				
-				text += "</table>";
-				document.getElementById("listContainer").innerHTML = text;
-			}
-
 			//uses the prior event to create a new event record
 
 			function PriorEvent(){
@@ -770,37 +749,6 @@
 				resetAll();
 				
 			}
-
-			//updates the contents of a record in the events table. 
-
-			/*
-			function UpdateEvent(id){
-
-				$( "#pu" ).val( "U" );
-				$( "#selP" ) . val( "Y" );
-				$( "body" ).css( "background-color", "DarkRed" );
-				
-				origTime = LEvents[id][0];
-
-				const formattedOrigTime = FixTime(origTime)
-
-				$( "#selFT" ) . val(formattedOrigTime[1]);
-				$( "#DateTime" ) . val(formattedOrigTime[0]);
-				$( "#DateTime" ) . text(formattedOrigTime[2]);
-				
-				eid = id;
-
-				console.log("origTime="+origTime+" eid="+eid)
-				
-				var q = "Update: "+formattedOrigTime[2]+" - "+LEvents[id][3];
-
-				$("#pmEvent").val(id);
-				$("#pmEvent").text(q);
-
-				resetAll();
-
-			}
-			*/
 
 			function jqUpdateEvent(oTime, nTime, act, cont){
 
