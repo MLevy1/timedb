@@ -54,6 +54,12 @@ const modifyForms = {
 					case "pu":
 						modifyForms.displayModifyPUForm(curr)	
 						break
+					case "lbg":
+						modifyForms.displayModifyLocalBtnGroupForm(curr)	
+						break
+					case "lb":
+						modifyForms.displayModifyLocalBtnForm(curr)
+						break
 				}
 			});
 			a.appendChild(document.createTextNode("U"))
@@ -71,6 +77,22 @@ const modifyForms = {
 			cell.style.backgroundColor = clr
 			cell.classList.add("clrBox")
 		}
+	},
+	addDropDown: function(obj, elementName, dispField){
+	
+		const selectElement = document.createElement("select");
+			selectElement.name = elementName;
+			selectElement.id = elementName;
+			selectElement.options[0] = new Option("Select an option", "");
+					
+			for(i in obj){
+				
+				selectElement . options [selectElement.options.length] = new Option (obj[i][dispField], i);
+					
+			}
+			
+		return selectElement
+			
 	},
 	displayList: function(obj){
 
@@ -227,6 +249,86 @@ const modifyForms = {
 		d.appendChild(newPUBtn)
 			
 		d.appendChild(tbl)
+	},
+	displayLocalBtnGroupForm: function(){
+
+		modifyForms.clearDiv()
+
+		const tbl = modifyForms.displayList(objLocalButtonGroups)
+
+		modifyForms.addUpdateButtons(tbl, "lbg")
+
+		sd = document.createElement("div")
+		
+		d = document.getElementById("modifyFormContainer")
+		
+		const cancelBtn = modifyForms.cancelBtn()
+
+		const newLBGBtn = document.createElement("input");
+			newLBGBtn.id = "add";
+			newLBGBtn.type = "button";
+			newLBGBtn.value = "Add New";
+			newLBGBtn.onclick = () => {
+				modifyForms.displayNewLocalBtnGroupForm()
+			};
+
+		d.appendChild(cancelBtn)
+
+		d.appendChild(newLBGBtn)
+			
+		d.appendChild(tbl)
+
+	},
+	displayLocalBtnForm: function(){
+
+		modifyForms.clearDiv()
+
+		const objLB = {}
+
+		for(i in objLocalEventButtons){
+
+			objLB[i] = {idtbllocaleventbtns: [i], Activity: objLAct[objLocalEventButtons[i]["actID"]].ActDesc, SubProject: objLCont[objLocalEventButtons[i]["contid"]].ContDesc, ButtonGroup: objLocalButtonGroups[objLocalEventButtons[i]["localButtonGroup"]].btnGroupName}
+			
+			if(objLocalEventButtons[i].hasOwnProperty('warn')==true){
+
+				objLB[i].warn = objLocalEventButtons[i].warn
+
+			} else {
+
+				objLB[i].warn = "N/A"
+
+			}
+
+		}
+
+		
+
+		const tbl = modifyForms.displayList(objLB)
+
+		//const tbl = modifyForms.displayList(objLocalEventButtons)
+
+		modifyForms.addUpdateButtons(tbl, "lb")
+
+		sd = document.createElement("div")
+		
+		d = document.getElementById("modifyFormContainer")
+		
+		const cancelBtn = modifyForms.cancelBtn()
+
+		const newLBBtn = document.createElement("input");
+			newLBBtn.id = "add";
+			newLBBtn.type = "button";
+			newLBBtn.value = "Add New";
+			newLBBtn.onclick = () => {
+				modifyForms.displayNewLocalBtnForm()
+			};
+
+		d.appendChild(cancelBtn)
+
+		d.appendChild(newLBBtn)
+			
+		d.appendChild(tbl)
+
 	},
 	displayModifyActForm: function(act) {
 	
@@ -599,7 +701,7 @@ const modifyForms = {
 	
 				objLProj[document.getElementById("ProjID").value] = {ProjID: document.getElementById("ProjID").value, ProjDesc: document.getElementById("ProjDesc").value, ProfileCode: document.getElementById("PCode").value, ProjStatus: "Active" }
 				
-				formElement.reset()
+				//formElement.reset()
 			})
 	
 			const cancelBtn = modifyForms.cancelBtn()
@@ -674,7 +776,7 @@ const modifyForms = {
 
 			submitBtn.addEventListener("click", () => {
 
-				objLCont[document.getElementById("ContID").value] = {ContID: document.getElementById("ContID"), ContDesc: document.getElementById("ContDesc").value, ProjID: document.getElementById("ProjID").value, Active: "Active" }
+				objLCont[document.getElementById("ContID").value] = {ContID: document.getElementById("ContID").value, ContDesc: document.getElementById("ContDesc").value, ProjID: document.getElementById("ProjID").value, Active: "Y" }
 
 			})
 
@@ -746,7 +848,7 @@ const modifyForms = {
 
 				objLCont[document.getElementById("ContID").value] = {ContID: document.getElementById("ContID"), ContDesc: document.getElementById("ContDesc").value, ProjID: document.getElementById("ProjID").value, Active: "Active" }
 
-				formElement.reset()
+				//formElement.reset()
 	
 			})
 		
@@ -828,7 +930,7 @@ const modifyForms = {
 
 				objLCont[document.getElementById("PUCode").value] = {PUCode: document.getElementById("PUCode"), PUCodeDesc: document.getElementById("PUCodeDesc").value, Color: document.getElementById("Color").value }
 
-				formElement.reset()
+				//formElement.reset()
 	
 			})
 
@@ -895,6 +997,333 @@ const modifyForms = {
 
 			modifyFormContainer.appendChild(formElement);
 		}
+	},
+	displayModifyLocalBtnGroupForm: function(lbg){
+		
+		modifyForms.clearDiv()
+
+		const modifyFormContainer = document.getElementById("modifyFormContainer");
+		
+		const modifyFormResult = document.getElementById("modifyFormResult");
+	
+		if(document.getElementById("modifyFormContainer").innerHTML!=""){
+	
+		} else {
+			
+			modifyFormResult.classList.remove("hidden");
+		
+			const formElement = document.createElement("form");
+				formElement.method = "post";
+				formElement.action = "./update/updateLBG.php";
+				formElement.target = "modifyFormResult";
+
+				
+			const formTitle = document.createElement("h2");
+				formTitle.appendChild(document.createTextNode("Update Local Button Group"));
+				formElement.appendChild(formTitle);
+	
+			const inputElementBtnGroup = document.createElement("input");
+				inputElementBtnGroup.type = "text"
+				inputElementBtnGroup.name = "btnGroup";
+				inputElementBtnGroup.id = "btnGroup";
+				inputElementBtnGroup.classList.add("modform")
+				inputElementBtnGroup.value = objLocalButtonGroups[lbg].btnGroup
+				inputElementBtnGroup.readOnly = true
+
+			formElement.appendChild(inputElementBtnGroup);
+			
+			const inputElementBtnGroupName = document.createElement("input");
+			inputElementBtnGroupName.type = "text";
+			inputElementBtnGroupName.name = "btnGroupName";
+			inputElementBtnGroupName.id = "btnGroupName";
+			inputElementBtnGroupName.value = objLocalButtonGroups[lbg].btnGroupName
+			
+			formElement.appendChild(inputElementBtnGroupName);
+					
+			const submitBtn = document.createElement("input");
+				submitBtn.id = "btnSubmit";
+				submitBtn.type = "submit";
+				submitBtn.value = "Submit";
+			formElement.appendChild(submitBtn);
+
+			submitBtn.addEventListener("click", () => {
+
+				objLocalButtonGroups[document.getElementById("btnGroup").value] = {btnGroup: document.getElementById("btnGroup"), btnGroupName: document.getElementById("btnGroupName").value }
+
+				//formElement.reset()
+	
+			})
+
+			const cancelBtn = modifyForms.cancelBtn()
+	
+			formElement.appendChild(cancelBtn);
+
+			modifyFormContainer.appendChild(formElement);
+		}	
+	},
+	displayNewLocalBtnGroupForm: function(){
+
+		modifyForms.clearDiv()
+
+		const modifyFormContainer = document.getElementById("modifyFormContainer");
+
+		const modifyFormResult = document.getElementById("modifyFormResult");
+	
+		if(document.getElementById("modifyFormContainer").innerHTML!=""){
+	
+		} else {
+	
+			modifyFormResult.classList.remove("hidden");
+		
+			const formElement = document.createElement("form");
+				formElement.method = "post";
+				formElement.action = "./add/addLBG.php";
+				formElement.target = "modifyFormResult";
+				
+			const formTitle = document.createElement("h2");
+				formTitle.appendChild(document.createTextNode("New Local Button Group"));
+				formElement.appendChild(formTitle);
+	
+			const inputElementBtnGroup = document.createElement("input");
+				inputElementBtnGroup.type = "text";
+				inputElementBtnGroup.name = "btnGroup";
+				inputElementBtnGroup.id = "btnGroup";
+				inputElementBtnGroup.placeholder = "Button Group ID";
+			formElement.appendChild(inputElementBtnGroup);
+			
+			const inputElementBtnGroupName = document.createElement("input");
+				inputElementBtnGroupName.type = "text";
+				inputElementBtnGroupName.name = "btnGroupName";
+				inputElementBtnGroupName.placeholder = "Button Group Name";
+				inputElementBtnGroupName.id = "btnGroupName";
+			formElement.appendChild(inputElementBtnGroupName);
+				
+			
+			const submitBtn = document.createElement("input");
+				submitBtn.type = "submit";
+				submitBtn.value = "Submit";
+			formElement.appendChild(submitBtn);
+			
+			submitBtn.addEventListener("click", () => {
+	
+				//objLProj[document.getElementById("ProjID").value] = {ProjID: document.getElementById("ProjID").value, ProjDesc: document.getElementById("ProjDesc").value, ProfileCode: document.getElementById("PCode").value, ProjStatus: "Active" }
+				
+				//formElement.reset()
+			})
+			
+			const cancelBtn = modifyForms.cancelBtn()
+
+			formElement.appendChild(cancelBtn);
+
+			modifyFormContainer.appendChild(formElement);
+		}
+
+	},
+	displayModifyLocalBtnForm: function(lb){
+
+		modifyForms.clearDiv()
+
+		const modifyFormContainer = document.getElementById("modifyFormContainer");
+		
+		const modifyFormResult = document.getElementById("modifyFormResult");
+	
+		if(document.getElementById("modifyFormContainer").innerHTML!=""){
+	
+		} else {
+			
+			modifyFormResult.classList.remove("hidden");
+		
+			const formElement = document.createElement("form");
+				formElement.method = "post";
+				formElement.action = "./update/updateLB.php";
+				formElement.target = "modifyFormResult";
+				
+			const formTitle = document.createElement("h2");
+				formTitle.appendChild(document.createTextNode("Update Local Button"));
+				formElement.appendChild(formTitle);
+	
+			const inputElementId = document.createElement("input");
+				inputElementId.type = "text"
+				inputElementId.name = "idtbllocaleventbtns";
+				inputElementId.id = "idtbllocaleventbtns";
+				inputElementId.classList.add("modform")
+				inputElementId.value = objLocalEventButtons[lb].idtbllocaleventbtns
+				inputElementId.readOnly = true
+
+			formElement.appendChild(inputElementId);
+						
+			const inputElementActId = document.createElement("input");
+				inputElementActId.type = "text";
+				inputElementActId.name = "actID";
+				inputElementActId.id = "actID";
+				inputElementActId.value = objLocalEventButtons[lb].actID
+			
+			formElement.appendChild(inputElementActId);
+
+			const inputElementContId = document.createElement("input");
+				inputElementContId.type = "text";
+				inputElementContId.name = "contID";
+				inputElementContId.id = "contID";
+				inputElementContId.value = objLocalEventButtons[lb].contid
+		
+			formElement.appendChild(inputElementContId);
+
+			const inputElementLocalBtnGroup = document.createElement("input");
+				inputElementLocalBtnGroup.type = "text";
+				inputElementLocalBtnGroup.name = "localbtngroup";
+				inputElementLocalBtnGroup.id = "localbtngroup";
+				inputElementLocalBtnGroup.value = objLocalEventButtons[lb].localButtonGroup
+
+			formElement.appendChild(inputElementLocalBtnGroup);
+
+			const inputElementWarn = document.createElement("input");
+				inputElementWarn.type = "text";
+				inputElementWarn.name = "warn";
+				inputElementWarn.id = "warn";
+				inputElementWarn.placeholder = "Warning Time";
+				inputElementWarn.value = objLocalEventButtons[lb].warn
+
+			formElement.appendChild(inputElementWarn);
+
+			const submitBtn = document.createElement("input");
+				submitBtn.id = "btnSubmit";
+				submitBtn.type = "submit";
+				submitBtn.value = "Submit";
+			formElement.appendChild(submitBtn);
+
+			submitBtn.addEventListener("click", () => {
+
+				objLocalEventButtons[document.getElementById("idtbllocaleventbtns").value] = {idtbllocaleventbtns: document.getElementById("idtbllocaleventbtns"), actID: document.getElementById("actID").value, contid: document.getElementById("contID").value, localButtonGroup: document.getElementById("localbtngroup").value, warn: document.getElementById("warn").value }
+
+				//formElement.reset()
+	
+			})
+
+			const cancelBtn = modifyForms.cancelBtn()
+	
+			formElement.appendChild(cancelBtn);
+
+			modifyFormContainer.appendChild(formElement);
+		}
+
+	},
+	displayNewLocalBtnForm: function(){
+		
+		modifyForms.clearDiv()
+
+		const modifyFormContainer = document.getElementById("modifyFormContainer");
+		
+		const modifyFormResult = document.getElementById("modifyFormResult");
+	
+		if(document.getElementById("modifyFormContainer").innerHTML!=""){
+	
+		} else {
+			
+			modifyFormResult.classList.remove("hidden");
+		
+			const formElement = document.createElement("form");
+				formElement.method = "post";
+				formElement.action = "./add/addLB.php";
+				formElement.target = "modifyFormResult";
+				
+			const formTitle = document.createElement("h2");
+				formTitle.appendChild(document.createTextNode("New Local Button"));
+				formElement.appendChild(formTitle);
+			
+			const nextIndex = Math.max(...Object.keys(objLocalEventButtons))+1
+
+			const objSelAct = {}
+			const arrAct = []
+			
+			for (i in objLAct){
+			
+				if(objLAct[i]["Status"]=="Active") {
+				
+					arrAct.push([objLAct[i]["ActDesc"], i])
+				
+				}
+			
+			}
+			
+			arrAct.sort()
+			
+			for(i=0; i<arrAct.length; i++){
+			
+				objSelAct[arrAct[i][1]] = {actID: arrAct[i][1], ActDesc: arrAct[i][0]}
+			
+			}
+			
+			
+			const inputElementActId = modifyForms.addDropDown(objSelAct,  "actID", "ActDesc")
+			formElement.appendChild(inputElementActId);
+			
+			const objSelCont = {}
+			const arrCont = []
+			
+			for (i in objLCont){
+			
+				if(objLCont[i].Active=="Y" && objLProj[objLCont[i]["ProjID"]]["ProjStatus"]!="Closed"){
+				
+					arrCont.push([objLProj[objLCont[i]["ProjID"]]["ProjDesc"]+": "+objLCont[i]["ContDesc"], i])
+				
+				}
+				
+			}
+			
+			arrCont.sort()
+			
+			for(i=0; i<arrCont.length; i++){
+			
+				objSelCont[arrCont[i][1]] = {contID: arrCont[i][1], contDesc: arrCont[i][0]}
+			
+			}
+			
+			const inputElementContId = modifyForms.addDropDown(objSelCont,  "contID", "contDesc")
+			formElement.appendChild(inputElementContId);
+
+			const inputElementLocalBtnGroup = modifyForms.addDropDown(objLocalButtonGroups,  "localbtngroup", "btnGroupName")
+			formElement.appendChild(inputElementLocalBtnGroup);
+
+			const inputElementWarn = document.createElement("input");
+				inputElementWarn.type = "text";
+				inputElementWarn.name = "warn";
+				inputElementWarn.placeholder = "Warning Time";
+				inputElementWarn.id = "warn";
+			formElement.appendChild(inputElementWarn);
+					
+			const submitBtn = document.createElement("input");
+				submitBtn.id = "btnSubmit";
+				submitBtn.type = "submit";
+				submitBtn.value = "Submit";
+			formElement.appendChild(submitBtn);
+
+			submitBtn.addEventListener("click", () => {
+
+				objLocalEventButtons[nextIndex] = {idtbllocaleventbtns: nextIndex, actID: document.getElementById("actID").value, contid: document.getElementById("contID").value, localButtonGroup: document.getElementById("localbtngroup").value, warn: document.getElementById("warn").value }
+
+				//formElement.reset()
+	
+			})
+
+			const nextBtn = document.createElement("input");
+			nextBtn.type = "button";
+			nextBtn.value = "Next";
+			nextBtn.onclick = () => {
+				modifyForms.clearDiv()
+				document.getElementById("modifyFormResult").classList.add('hidden');
+				modifyForms.displayLocalBtnForm()
+			};
+	
+			formElement.appendChild(nextBtn)
+
+			const cancelBtn = modifyForms.cancelBtn()
+	
+			formElement.appendChild(cancelBtn);
+
+			modifyFormContainer.appendChild(formElement);
+		}
+
 	}
+
 }
 

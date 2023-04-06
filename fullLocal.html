@@ -1,0 +1,3729 @@
+<!DOCTYPE html>
+<html lang='en'>
+	<head>
+		<title>Events</title>
+
+        <link rel="stylesheet" href="styles.css">
+		
+		<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js" integrity="sha256-Nn+JGDrq3PuTxcDfJmmI0Srj5LpfOFlKqEiPwQK7y40=" crossorigin="anonymous"></script>
+        <link href='https://fonts.googleapis.com/css?family=Homenaje' rel='stylesheet'>
+		
+        <!-- manualEventScripts.js -->
+        <script>
+
+            const manualEventForm = {
+                
+                selectedPCode: '',
+                selectedSubProj: '',
+                clearDiv: function () {
+
+                    const listDiv = document.getElementById("eventBtnListContainer")
+
+                    while(listDiv.firstChild){
+
+                        listDiv.removeChild(listDiv.firstChild)
+
+                    }
+
+                },
+                btnLPU: function() {
+
+                    this.clearDiv()
+
+                    const eventBtnListContainer = document.getElementById("eventBtnListContainer")
+
+                    for (i in objLPU){
+
+                        if(objLPU[i].Active=="Y" && objLPU[i].PUCodeDesc!="Admin" && objLPU[i].PUCodeDesc!="Meeting") {
+                            
+                            let eventBtnContainer = document.createElement("li")
+                            
+                            let eventBtnText = objLPU[i].PUCodeDesc
+
+                            let linkTarget = i
+
+                            eventBtnText = document.createTextNode(eventBtnText)
+                            
+                            let eventLink = document.createElement("a")
+                            
+                            eventLink.href = "#"
+                            eventLink.classList.add("manualEventBtn")
+                            
+                            eventLink.addEventListener('click', () => { 
+                            
+                                this.btnProj(linkTarget)
+                                this.selectedPCode = linkTarget
+                                
+                            });
+                            
+                            eventLink.appendChild(eventBtnText)
+                                        
+                            eventBtnContainer.appendChild(eventLink)
+                        
+                            eventBtnListContainer.appendChild(eventBtnContainer)
+                        }
+                
+                    }
+
+                },
+                btnProj: function(selectedPCode) {
+
+                    this.clearDiv()
+
+                    const eventBtnListContainer = document.getElementById("eventBtnListContainer")
+
+                    for (i in objLProj) {
+
+                        if(objLProj[i].ProfileCode==selectedPCode && objLProj[i].ProjStatus!="Closed"){
+
+                            let eventBtnContainer = document.createElement("li");
+
+                            let eventBtnText = objLProj[i].ProjDesc;
+
+                            let linkTarget = i
+                            
+                            eventBtnText = document.createTextNode(eventBtnText)
+                        
+                            let eventLink = document.createElement("a")
+                        
+                            eventLink.href = "#"
+                            eventLink.classList.add("manualEventBtn")
+
+                            eventLink.addEventListener('click', () => { 
+                            
+                                this.btnSubProj(linkTarget)
+                                
+                            });
+                            
+                            eventLink.appendChild(eventBtnText)
+                                        
+                            eventBtnContainer.appendChild(eventLink)
+                        
+                            eventBtnListContainer.appendChild(eventBtnContainer)
+                
+
+                        }
+
+                    }
+
+                },
+                btnSubProj: function(selectedProj){
+
+                    this.clearDiv()
+
+                    const eventBtnListContainer = document.getElementById("eventBtnListContainer")
+
+                    for (i in objLCont) {
+
+                        if(objLCont[i].ProjID==selectedProj && objLCont[i].Active!="N"){
+
+                            let eventBtnContainer = document.createElement("li");
+
+                            let eventBtnText = objLCont[i].ProjID + ": " + objLCont[i].ContDesc;
+
+                            let linkTarget = i
+                            
+                            eventBtnText = document.createTextNode(eventBtnText)
+                        
+                            let eventLink = document.createElement("a")
+                        
+                            eventLink.href = "#"
+                            eventLink.classList.add("manualEventBtn")
+                            
+                            eventLink.addEventListener('click', () => { 
+                            
+                                this.btnAct(this.selectedPCode)
+                                this.selectedSubProj = linkTarget;
+                                
+                            });
+                            
+                            eventLink.appendChild(eventBtnText)
+                                        
+                            eventBtnContainer.appendChild(eventLink)
+                        
+                            eventBtnListContainer.appendChild(eventBtnContainer)
+                
+
+                        }
+
+                    }
+
+                },
+                btnAct: function(selectedPCode){
+
+                    this.clearDiv()
+
+                    const eventBtnListContainer = document.getElementById("eventBtnListContainer")
+
+                    for (i in objLAct) {
+
+                        if(objLAct[i].PCode.includes(selectedPCode) && objLAct[i].Status!="Inactive"){
+
+                            let eventBtnContainer = document.createElement("li");
+
+                            let eventBtnText = objLAct[i].ActDesc
+
+                            let linkTarget = i
+                            
+                            eventBtnText = document.createTextNode(eventBtnText)
+                        
+                            let eventLink = document.createElement("a")
+                        
+                            eventLink.href = "#"
+                            eventLink.classList.add("manualEventBtn")
+                            
+                            eventLink.addEventListener('click', () => { 
+                            
+                                this.addEvent(linkTarget, this.selectedSubProj)
+                                                    
+                            });
+                            
+                            eventLink.appendChild(eventBtnText)
+                                        
+                            eventBtnContainer.appendChild(eventLink)
+                        
+                            eventBtnListContainer.appendChild(eventBtnContainer)
+                
+
+                        }
+
+                    }
+
+                },
+                addEvent: function(act, subproj) {
+
+                    this.clearDiv()
+
+                    const updateIndicator = document.getElementById("pu").value
+
+                    const postsIndicator = document.getElementById("selPost").value 
+
+                    const localBtnId = act+"_"+subproj
+
+                    buttons = document.getElementsByClassName('localBtn');
+
+                    //sets the time of the event being entered (determines if event occurs in the past )
+                    setETime();
+
+                    if(objLastUse.hasOwnProperty(localBtnId)==true){
+
+                        objLastUse[localBtnId]["lastTime"] = Math.round(luxon.DateTime.now().toSeconds())
+
+                    } else {
+
+                        objLastUse[localBtnId] = {actID: act, contID: subproj, elapsedSecs: 0, lastTime: Math.round(luxon.DateTime.now().toSeconds())}
+
+                    }
+
+                    if(buttons.hasOwnProperty(localBtnId)==true){
+
+                        buttons[localBtnId]["lastTime"] = Math.round(luxon.DateTime.now().toSeconds())
+
+                    } 
+
+                    if(updateIndicator!="U"){
+
+                        const startTime = sqTime(datetimeValue)
+
+                        objLEvents[startTime] = { "startTime": millisecTime, "act": act, "subProj": subproj }
+                    
+                        LEvents.push([sqTime(datetimeValue), act, subproj, objLAct[act].ActDesc]);
+
+                        if(postsIndicator==="Y"){
+                            
+                            JQPost(act, subproj, sqTime(datetimeValue));
+
+                        }
+                        
+                    } else {
+
+                        //important to remember that ANY event being updated HAS to be a "Past Event"
+                            
+                        LEvents[eid]=([sqTime(datetimeValue), act, subproj, objLAct[act].ActDesc]);
+
+                        objLEvents[LEvents[eid][0]] = {startTime: Number(millisecTime), act: act, subProj: subproj}
+
+                        if(postsIndicator==="Y"){
+
+                            jqUpdateEvent(origTime, sqTime(datetimeValue), act, subproj);
+
+                        }
+
+                    }
+                        
+                    objEventsView.showEventList()
+
+                    $("#pmEvent").empty();
+
+                    $("#pu").text("");
+
+                    $("#pu").val("");
+
+                    localEventButtonForm.resetLocalBtn()
+
+                    resetAll();
+
+                    this.clearDiv()
+
+                }
+                        
+            }
+
+        </script>
+
+        <!-- timeScripts.js -->
+		<script>
+            function TimeArr(){
+	
+                var MTime = new Date();
+                
+                MTime = MTime.getTime();
+                
+                var vTZ = $( "#selTZ" ).val();
+                
+                var AM = parseInt(vTZ)*60*60*1000;
+                
+                MTime = MTime+AM;
+                
+                var m =  new Date(MTime);
+                
+                var millisecs = m.getTime();
+                
+                var Y = m.getFullYear();
+                
+                var M = m.getMonth()+1;
+                
+                var D = m.getDate();
+                
+                var H = m.getHours();
+                
+                var Mn = m.getMinutes();
+                
+                var Sec = m.getSeconds();
+                
+                M = zerofix(M);
+                
+                Mn = zerofix(Mn);
+
+                if(H<0){
+                
+                    H=24+H;
+                
+                    D=(D-1);
+                
+                }
+                
+                H = zerofix(H);
+                
+                if(H>=24){
+                
+                    H=(H-24);
+
+                    D=(D+1);
+                    
+                }
+                
+                if(H<12){
+                
+                    var AP = "AM";
+                    
+                }else{
+                
+                    AP = "PM";
+                    
+                }
+                
+                if(H==0){
+                
+                    var hr = 12;
+                    
+                }else if(H<13){
+                
+                    hr = H;
+                    
+                }else{
+                
+                    hr = H-12;
+                    
+                }
+                
+                D = zerofix(D);
+                
+                Sec = zerofix(Sec);
+                
+                let timeValue= Y+'-'+M +'-'+ D +'T'+ H +':'+ Mn + ':' + Sec;
+                
+                let visibleTime = M +'-'+ D +' '+ hr +':'+ Mn + ':' + Sec + ' ' + AP;
+                
+                let arrTime = [timeValue, millisecs, visibleTime];
+
+                return arrTime;
+            }
+
+            function resetTime(){
+
+                const P = $("#selP").val();
+                            
+                if(P!="Y"){
+                    
+                    setTime();
+                            
+                }
+            }
+
+            function setTime(){
+                
+                var T = TimeArr();
+                
+                $( "#selP" ) . val("N");
+                
+                $( "#DateTime" ) . val(T[0]);
+                
+                $( "#DateTime" ) . text(T[2]);
+                
+                $("body").css("background-color", defaultBGColor);
+            }
+
+            function FixTime(CTime){
+
+                var Y = CTime.substring(0,4);
+                var M = CTime.substring(5,7);
+                var D = CTime.substring(8,10);
+                var H = CTime.substring(11,13);
+                var Mn = CTime.substring(14,16);
+                let S = CTime.substring(17);
+                
+                var m = new Date(Y,M-1,D,H,Mn,S);
+                
+                var D = m.getDate();
+                
+                D = zerofix(D);
+                
+                var H = m.getHours();
+
+                H = zerofix(H);
+                
+                var Mn = m.getMinutes();
+                
+                Mn = zerofix(Mn);
+
+                if(H<12){
+                
+                    var AP = "AM";
+                    
+                }else{
+                
+                    AP = "PM";
+                    
+                }
+                
+                if(H===0){
+                
+                    var hr = 12;
+                    
+                }else if(H<13){
+                
+                    hr = H;
+                    
+                }else{
+                
+                    hr = H-12;
+                    
+                }
+                
+                var millisecs = m.getTime();
+
+                var timeValue = Y+'-'+M +'-'+ D +'T'+ H +':'+ Mn + ':' + S;
+                
+                var visibleTime = M +'-'+ D +' '+ hr +':'+ Mn + ':' + S + ' ' + AP;
+                
+                var SvrTime = Y+'-'+M +'-'+ D +' '+ H +':'+ Mn + ':' + S;
+                
+                let dispDate = M+'-'+D;
+                
+                let dispTime = hr +':'+ Mn + ':' + S + ' ' + AP;
+
+                var arrTime = [timeValue, millisecs, visibleTime, SvrTime, dispDate, dispTime];
+
+                return arrTime;
+
+            }
+
+            function AddTime(min){
+                $( "#selP" ) . val("Y");
+                
+                $("body").css("background-color", "DarkRed");
+
+                var CTime = $( "#DateTime" ) . val();
+                
+                var Y = CTime.substring(0,4);
+                var M = CTime.substring(5,7);
+                var D = CTime.substring(8,10);
+                var H = CTime.substring(11,13);
+                var Mn = CTime.substring(14,16);
+                var S = CTime.substring(17,19)
+                
+                var m = new Date(Y,M-1,D,H,Mn,S);
+                
+                var OM = m.getMinutes();
+                
+                var NM = OM + min;
+                
+                m.setMinutes(NM);
+                
+                var Y = m.getFullYear();
+                var M = m.getMonth();
+                
+                M++;
+                
+                if(M===0){
+                    
+                    M=12;
+                    Y=(Y-1);
+                    
+                }
+                
+                M = zerofix(M);
+                
+                var D = m.getDate();
+                
+                D = zerofix(D);
+                
+                var H = m.getHours();
+
+                H = zerofix(H);
+                
+                var Mn = m.getMinutes();
+                
+                Mn = zerofix(Mn);
+
+                if(H<12){
+                
+                    var AP = "AM";
+                    
+                }else{
+                
+                    AP = "PM";
+                    
+                }
+                
+                if(H===0){
+                
+                    var hr = 12;
+                    
+                }else if(H<13){
+                
+                    hr = H;
+                    
+                }else{
+                
+                    hr = H-12;
+                    
+                }
+                
+                var millisecs = m.getTime();
+
+                var timeValue = Y+'-'+M +'-'+ D +'T'+ H +':'+ Mn + ':' + S;
+                
+                var visibleTime = M +'-'+ D +' '+ hr +':'+ Mn + ':' + S + ' ' + AP;
+                
+                $( "#selFT" ) . val(millisecs);
+                $( "#DateTime" ) . val(timeValue);
+                $( "#DateTime" ) . text(visibleTime);	
+            }
+
+            //etmv is a time value formatted as YYYY-MM-DDTHH:MM:SS.  This functions removes the T and makes it SQL readable.
+            function sqTime(etmv){
+
+                var p1 = etmv.substr(0,10);
+                        
+                var p2 = etmv.substr(11);
+                        
+                var etmv1 = (p1 + " " + p2);
+
+                return etmv1;
+            }
+
+            //adds a zero to the beginning of a number. needed for seconds and mins in all time functions
+            function zerofix(timeval){
+
+                if(timeval<10){
+
+                    ntimeval = "0"+timeval;
+                
+                }else{
+                
+                ntimeval = timeval;
+                
+                }
+                
+                return ntimeval;
+            }
+
+            function setETime(){
+
+                var T = TimeArr();
+                
+                var PE = $( "#selP" ) . val();
+                
+                if(PE=="Y"){
+                
+                    datetimeValue = $( "#DateTime" ) . val();
+                    datetimeText = $( "#DateTime" ) . text();
+                    millisecTime = $( "#selFT" ) . val();
+                    
+                }else{
+                
+                    datetimeValue = T[0];
+                    millisecTime = T[1];
+                    datetimeText = T[2];
+                }
+            }
+
+            function formatEventDuration(eventLength){
+                                
+                eventLengthHours = eventLength/(1000*60*60);
+                
+                eventLengthHoursRounded = Math.floor(eventLengthHours);
+                
+                eventLengthMins = (eventLengthHours-eventLengthHoursRounded)*60;
+                
+                eventLengthMinsRounded = Math.floor(eventLengthMins);
+                
+                eventLengthMinsRounded = zerofix(eventLengthMinsRounded);
+                
+                eventLengthSecsRounded = Math.floor((eventLengthMins-eventLengthMinsRounded)*60);
+                
+                eventLengthSecsRounded = zerofix(eventLengthSecsRounded);
+                
+                eventDuration = eventLengthHoursRounded + ":" + eventLengthMinsRounded + ":" + eventLengthSecsRounded;
+
+                return eventDuration;
+                
+            }
+
+        </script>
+
+        <!-- modifyFormScripts.js -->
+		<script>
+
+            const modifyForms = {
+
+                cancelBtn: function(){
+                    const cancelBtn = document.createElement("input");
+                    cancelBtn.type = "button";
+                    cancelBtn.value = "Exit";
+                    cancelBtn.onclick = () => {
+                        modifyForms.clearDiv()
+                        document.getElementById("modifyFormResult").classList.add('hidden');
+                    };
+
+                    return cancelBtn
+                },
+                clearDiv: function () {
+
+                    const listDiv = document.getElementById("modifyFormContainer")
+
+                    while(listDiv.firstChild){
+
+                        listDiv.removeChild(listDiv.firstChild)
+
+                    }
+
+                },
+                createCell: function(cellText){
+                    td = document.createElement("td")
+                    td. appendChild(document. createTextNode(cellText))
+                    
+                    return td
+                },
+                addUpdateButtons: function(tbl, modForm){
+                    
+                    let rows = tbl.rows
+
+                    for (let i = 0; i < rows.length; i++) {
+                        let row = rows[i]
+                        let curr = rows[i].cells[0].innerHTML
+                        let cell = row.insertCell(-1)
+                        
+                        a = document.createElement("a")
+                        a.href="#"
+                        a.addEventListener('click', () => { 
+                            switch(modForm) {
+
+                                case "act":
+                                    modifyForms.displayModifyActForm(curr)
+                                    break
+                                case "proj":
+                                    modifyForms.displayModifyProjForm(curr)
+                                    break
+                                case "sub-proj":
+                                    modifyForms.displayModifySubProjForm(curr)
+                                    break
+                                case "pu":
+                                    modifyForms.displayModifyPUForm(curr)	
+                                    break
+                                case "lbg":
+                                    modifyForms.displayModifyLocalBtnGroupForm(curr)	
+                                    break
+                                case "lb":
+                                    modifyForms.displayModifyLocalBtnForm(curr)
+                                    break
+                            }
+                        });
+                        a.appendChild(document.createTextNode("U"))
+                        cell.appendChild(a)
+                    }
+                },
+                addColorBox: function(tbl){
+                    
+                    let rows = tbl.rows
+
+                    for (let i = 0; i < rows.length; i++) {
+                        let row = rows[i]
+                        let clr = rows[i].cells[3].innerHTML
+                        let cell = row.insertCell(-1)
+                        cell.style.backgroundColor = clr
+                        cell.classList.add("clrBox")
+                    }
+                },
+                addDropDown: function(obj, elementName, dispField){
+
+                    const selectElement = document.createElement("select");
+                        selectElement.name = elementName;
+                        selectElement.id = elementName;
+                        selectElement.options[0] = new Option("Select an option", "");
+                                
+                        for(i in obj){
+                            
+                            selectElement . options [selectElement.options.length] = new Option (obj[i][dispField], i);
+                                
+                        }
+                        
+                    return selectElement
+                        
+                },
+                displayList: function(obj){
+
+                    const tbl = document.createElement("table")
+                    tbl.id = "tblModForm"
+                    const thead = document.createElement("thead")
+                    
+                    const heads = Object.keys((obj[Object.keys(obj)[1]]))
+
+                    heads.forEach(element => {
+                        let th = document.createElement("th")
+
+                        th.appendChild(document.createTextNode(element))
+                        thead.appendChild(th)
+                    });
+
+                    tbl.appendChild(thead)
+                    
+                    const tbody = document.createElement("tbody")
+
+                    for (i in obj){
+
+                        let tr = document.createElement("tr")
+
+                        heads.forEach(h => {
+
+                            let inp = obj[i][h]
+
+                            let td = modifyForms.createCell(inp)	
+
+                            tr.appendChild(td)
+
+                        })
+                                    
+                        tbody.appendChild(tr)
+                    
+                    }
+
+                    tbl.appendChild(tbody)
+
+                    return tbl
+
+                },
+                displayActForm: function(){
+
+                    modifyForms.clearDiv()
+
+                    const tbl = modifyForms.displayList(objLAct)
+
+                    modifyForms.addUpdateButtons(tbl, "act")
+
+                    sd = document.createElement("div")
+                    
+                    d = document.getElementById("modifyFormContainer")
+                    
+                    const cancelBtn = modifyForms.cancelBtn()
+
+                    const newActBtn = document.createElement("input");
+                        newActBtn.id = "add";
+                        newActBtn.type = "button";
+                        newActBtn.value = "Add New";
+                        newActBtn.onclick = () => {
+                            
+                            modifyForms.displayNewActForm()
+                        };
+
+                    d.appendChild(cancelBtn)
+
+                    d.appendChild(newActBtn)
+                        
+                    d.appendChild(tbl)
+
+                },
+                displayProjForm: function(){
+
+                    modifyForms.clearDiv()
+
+                    const tbl = modifyForms.displayList(objLProj)
+
+                    modifyForms.addUpdateButtons(tbl, "proj")
+
+                    d = document.getElementById("modifyFormContainer")
+                    
+                    const cancelBtn = modifyForms.cancelBtn()
+
+                    const newProjBtn = document.createElement("input");
+                        newProjBtn.id = "add";
+                        newProjBtn.type = "button";
+                        newProjBtn.value = "Add New";
+                        newProjBtn.onclick = () => {
+                            
+                            modifyForms.displayNewProjForm()
+                        };
+
+                    d.appendChild(cancelBtn)
+
+                    d.appendChild(newProjBtn)
+                        
+                    d.appendChild(tbl)
+
+                },
+                displaySubActForm: function(){
+                    
+                    modifyForms.clearDiv()
+
+                    const tbl = modifyForms.displayList(objLCont)
+
+                    modifyForms.addUpdateButtons(tbl, "sub-proj")
+
+                    d = document.getElementById("modifyFormContainer")
+                    
+                    const cancelBtn = modifyForms.cancelBtn()
+
+                    const newSPBtn = document.createElement("input");
+                        newSPBtn.id = "add";
+                        newSPBtn.type = "button";
+                        newSPBtn.value = "Add New";
+                        newSPBtn.onclick = () => {
+                            modifyForms.displayNewSubProjForm()
+                        };
+
+                    d.appendChild(cancelBtn)
+
+                    d.appendChild(newSPBtn)
+                        
+                    d.appendChild(tbl)
+
+                },
+                displayPUForm: function(){
+
+                    modifyForms.clearDiv()
+
+                    const tbl = modifyForms.displayList(objLPU)
+
+                    modifyForms.addColorBox(tbl)
+
+                    modifyForms.addUpdateButtons(tbl, "pu")
+
+                    d = document.getElementById("modifyFormContainer")
+                    
+                    const cancelBtn = modifyForms.cancelBtn()
+
+                    const newPUBtn = document.createElement("input");
+                        newPUBtn.id = "add";
+                        newPUBtn.type = "button";
+                        newPUBtn.value = "Add New";
+                        newPUBtn.onclick = () => {
+                            d.remove()
+                            modifyForms.displayNewPUForm()
+                        };
+
+                    d.appendChild(cancelBtn)
+
+                    d.appendChild(newPUBtn)
+                        
+                    d.appendChild(tbl)
+                },
+                displayLocalBtnGroupForm: function(){
+
+                    modifyForms.clearDiv()
+
+                    const tbl = modifyForms.displayList(objLocalButtonGroups)
+
+                    modifyForms.addUpdateButtons(tbl, "lbg")
+
+                    sd = document.createElement("div")
+                    
+                    d = document.getElementById("modifyFormContainer")
+                    
+                    const cancelBtn = modifyForms.cancelBtn()
+
+                    const newLBGBtn = document.createElement("input");
+                        newLBGBtn.id = "add";
+                        newLBGBtn.type = "button";
+                        newLBGBtn.value = "Add New";
+                        newLBGBtn.onclick = () => {
+                            modifyForms.displayNewLocalBtnGroupForm()
+                        };
+
+                    d.appendChild(cancelBtn)
+
+                    d.appendChild(newLBGBtn)
+                        
+                    d.appendChild(tbl)
+
+                },
+                displayLocalBtnForm: function(){
+
+                    modifyForms.clearDiv()
+
+                    const objLB = {}
+
+                    for(i in objLocalEventButtons){
+
+                        objLB[i] = {idtbllocaleventbtns: [i], Activity: objLAct[objLocalEventButtons[i]["actID"]].ActDesc, SubProject: objLCont[objLocalEventButtons[i]["contid"]].ContDesc, ButtonGroup: objLocalButtonGroups[objLocalEventButtons[i]["localButtonGroup"]].btnGroupName}
+                        
+                        if(objLocalEventButtons[i].hasOwnProperty('warn')==true){
+
+                            objLB[i].warn = objLocalEventButtons[i].warn
+
+                        } else {
+
+                            objLB[i].warn = "N/A"
+
+                        }
+
+                    }
+
+                    
+
+                    const tbl = modifyForms.displayList(objLB)
+
+                    //const tbl = modifyForms.displayList(objLocalEventButtons)
+
+                    modifyForms.addUpdateButtons(tbl, "lb")
+
+                    sd = document.createElement("div")
+                    
+                    d = document.getElementById("modifyFormContainer")
+                    
+                    const cancelBtn = modifyForms.cancelBtn()
+
+                    const newLBBtn = document.createElement("input");
+                        newLBBtn.id = "add";
+                        newLBBtn.type = "button";
+                        newLBBtn.value = "Add New";
+                        newLBBtn.onclick = () => {
+                            modifyForms.displayNewLocalBtnForm()
+                        };
+
+                    d.appendChild(cancelBtn)
+
+                    d.appendChild(newLBBtn)
+                        
+                    d.appendChild(tbl)
+
+                },
+                displayModifyActForm: function(act) {
+
+                    modifyForms.clearDiv()
+
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+                        
+                    } else {
+
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./update/updateAct.php";
+                            formElement.target = "modifyFormResult";
+                            formElement.id = "updateForm";
+                            
+                        const formTitle = document.createElement("h2");
+                            formTitle.appendChild(document.createTextNode("Update Activity"));
+                            formElement.appendChild(formTitle);
+                            
+                        const inputElementActId = document.createElement("input");
+                            inputElementActId.name = "ActID"
+                            inputElementActId.id = "ActID"
+                            inputElementActId.classList.add("modform")
+                            inputElementActId.value = act
+                            inputElementActId.readOnly = true
+                                        
+                            formElement.appendChild(inputElementActId);
+                                
+                        const inputElementActivityName = document.createElement("input")
+                            inputElementActivityName.type = "text"
+                            inputElementActivityName.name = "ActDesc"
+                            inputElementActivityName.value = objLAct[act].ActDesc
+                            inputElementActivityName.id = "ActDesc"
+                            formElement.appendChild (inputElementActivityName)
+                                
+                        const inputElementUseCode = document.createElement("select");
+                            inputElementUseCode.name = "UCode";
+                            inputElementUseCode.id = "UCode";
+                            inputElementUseCode.options[0] = new Option("Select a Use Code", "");
+                                
+                            for(i in objLPU){
+                                inputElementUseCode . options [inputElementUseCode.options.length] = new Option (objLPU[i].PUCodeDesc, i);
+                            }
+                            
+                            inputElementUseCode.value = objLAct[act].UCode
+                            
+                            formElement.appendChild (inputElementUseCode);
+                        
+                        const inputElementProfileCode = document.createElement("input");
+                            inputElementProfileCode.type = "text"
+                            inputElementProfileCode.name = "PCode"
+                            inputElementProfileCode.value = objLAct[act].PCode
+                            inputElementProfileCode.id = "PCode"
+                            formElement.appendChild (inputElementProfileCode)
+                        
+                        const inputElementActivityStatus = document.createElement("input");
+                            inputElementActivityStatus.type = "text";
+                            inputElementActivityStatus.name = "Status";
+                            inputElementActivityStatus.value = objLAct[act].Status
+                            inputElementActivityStatus.id = "Status";
+                            formElement.appendChild ( inputElementActivityStatus );
+                            
+                        const submitBtn = document.createElement("input");
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                        formElement.appendChild(submitBtn);
+
+                        submitBtn.addEventListener("click", () => {
+
+                            objLAct[document.getElementById("ActID").value] = {ActID: document.getElementById("ActID").value, ActDesc: document.getElementById("ActDesc").value, PCode: document.getElementById("PCode").value, Status: document.getElementById("Status").value, UCode: document.getElementById("UCode").value }
+                            
+                        })
+                    
+
+                        const cancelBtn = modifyForms.cancelBtn()
+
+                        formElement.appendChild(cancelBtn);
+
+                        modifyFormContainer.appendChild(formElement);
+                    }	
+                },
+                displayNewActForm: function(){
+                    
+                    modifyForms.clearDiv()
+
+                    const actIds ={};
+                    
+                    for (a in objLAct) {
+                        actIds[a.substring(0, 1)] = Number(a.substring(1));
+                    
+                    }
+                    
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                    } else {
+
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./add/addAct.php";
+                            formElement.target = "modifyFormResult";
+                            formElement.id = "actForm";
+                            
+                        const formTitle = document.createElement("h2");
+                            formTitle.appendChild(document.createTextNode("New Activity"));
+                            formElement.appendChild(formTitle);
+                            
+                        const inputElementUseCode = document.createElement("select");
+                            inputElementUseCode.name = "UCode";
+                            inputElementUseCode.placeholder = "Use Code";
+                            inputElementUseCode.id = "UCode";
+                            inputElementUseCode.options[0] = new Option("Select a Use Code", "");
+                                
+                        for(i in objLPU){
+                            inputElementUseCode.options[inputElementUseCode.options.length] = new Option(objLPU[i].PUCodeDesc, i);
+                        }
+
+                        inputElementUseCode.addEventListener('change', () => { 
+                            
+                            let lastNum;
+                            
+                            const pcode = inputElementUseCode.value;
+                            
+                            if(actIds[inputElementUseCode.value]){
+                            
+                                lastNum = (actIds[inputElementUseCode.value]);
+                            
+                            } else { 
+                            
+                                lastNum = 0;
+                            
+                            }
+                            
+                            let nextNum = lastNum+1;
+                            
+                            if( nextNum < 10  ) {
+                            
+                                nextNum = "0"+nextNum;
+                            
+                            } else {
+                            
+                                nextNum = String(nextNum);
+                            
+                            }
+                            
+                            nextNum = pcode+nextNum;
+                            
+                            const actIdInput  = document.getElementById("ActID");
+                            
+                            actIdInput.value=nextNum;
+                            
+                        });
+                        
+                        formElement. appendChild(inputElementUseCode);
+                                
+                        const inputElementActId = document.createElement("input");
+                            inputElementActId.type = "text";
+                            inputElementActId.name = "ActID";
+                            inputElementActId.id = "ActID";
+                            inputElementActId.placeholder = "ActID";
+                            formElement.appendChild(inputElementActId);
+                        
+                        const inputElementActivityName = document.createElement("input");
+                        
+                            inputElementActivityName.type = "text";
+                            inputElementActivityName.name = "ActDesc";
+                            inputElementActivityName.placeholder = "Activity Name";
+                            inputElementActivityName.id = "ActDesc";
+                            formElement.appendChild(inputElementActivityName);
+                        
+                        const fieldsetElement = document.createElement("fieldset");
+                        
+                        const legendElement = document.createElement("legend");
+                            legendElement.appendChild(document.createTextNode("Profile Codes"));
+                            fieldsetElement.appendChild(legendElement);
+
+                        for(i in objLPU){
+                            let checkbox = document.createElement("input");
+                                checkbox.type = "checkbox";
+                                checkbox.id = "PCode-"+i;
+                                checkbox.name = "PCode[]";
+                                checkbox.value = i;
+                            let label = document.createElement("label");
+                                label.htmlFor = i;
+                                label.appendChild(document.createTextNode(objLPU[i].PUCodeDesc));
+                            
+                            label.appendChild(checkbox);
+                            fieldsetElement.appendChild(label);
+                        }
+                        
+                        formElement.appendChild(fieldsetElement);
+                                    
+                        const submitBtn = document.createElement("input");
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                            formElement.appendChild(submitBtn);
+
+                        submitBtn.addEventListener("click", () => {
+
+                            let cntCheckedBoxes = document.querySelectorAll('input[name="PCode[]"]:checked').length
+
+                            let varCode = "";
+
+                            for (i=0; i<cntCheckedBoxes; i++) {
+
+                                varCode += document.querySelectorAll('input[name="PCode[]"]:checked')[i].value;
+
+                            }
+
+                            objLAct[document.getElementById("ActID").value] = {ActID: document.getElementById("ActID").value, ActDesc: document.getElementById("ActDesc").value, PCode: varCode, Status: "Active", UCode: document.getElementById("UCode").value }
+                            //formElement.reset()
+
+                        })
+
+                        const cancelBtn = modifyForms.cancelBtn()
+
+                        formElement.appendChild(cancelBtn);
+
+                        modifyFormContainer.appendChild(formElement);
+                    }	
+                },
+                displayModifyProjForm: function(proj){
+                    
+                    modifyForms.clearDiv()
+
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+                    
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                    } else {
+
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./update/updateProj.php";
+                            formElement.target = "modifyFormResult";
+                            formElement.id = "projForm";
+                            
+                        const formTitle = document.createElement("h2")
+                            formTitle.appendChild(document.createTextNode("Update Project"))
+                            formElement.appendChild(formTitle)
+
+                        const inputElementProjId = document.createElement("input")
+                            inputElementProjId.type = "text"	
+                            inputElementProjId.name = "ProjID"
+                            inputElementProjId.id = "ProjID"
+                            inputElementProjId.value = objLProj[proj].ProjID
+                            inputElementProjId.readOnly = true
+                            
+                        formElement.appendChild(inputElementProjId);
+                        
+                        const inputElementProjName = document.createElement("input");
+                            inputElementProjName.type = "text";
+                            inputElementProjName.name = "ProjDesc";
+                            inputElementProjName.value = objLProj[proj].ProjDesc
+                            inputElementProjName.id = "ProjDesc";
+                            formElement.appendChild(inputElementProjName);
+
+
+                        const inputElementProjStatus = document.createElement("input");
+                            inputElementProjStatus.type = "text";
+                            inputElementProjStatus.name = "ProjStatus";
+                            inputElementProjStatus.value = objLProj[proj].ProjStatus
+                            inputElementProjStatus.id = "ProjStatus";
+                            formElement.appendChild(inputElementProjStatus);
+                            
+                        const inputElementProfileCode = document.createElement("select");
+                            inputElementProfileCode.name = "PCode";
+                            inputElementProfileCode.placeholder = "Profile Code";
+                            inputElementProfileCode.id = "PCode";
+                            inputElementProfileCode.options[0] = new Option("Select a Profile Code", "");
+                                
+                            for(i in objLPU){
+                                inputElementProfileCode.options[inputElementProfileCode.options.length] = new Option(objLPU[i].PUCodeDesc, i);
+                            }
+
+                            inputElementProfileCode.value = objLProj[proj].ProfileCode
+
+                            formElement.appendChild(inputElementProfileCode);
+                        
+                        const submitBtn = document.createElement("input");
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                        formElement.appendChild(submitBtn);
+                            
+                        submitBtn.addEventListener("click", () => {
+
+                            objLProj[document.getElementById("ProjID").value] = {ProjID: document.getElementById("ProjID").value, ProjDesc: document.getElementById("ProjDesc").value, ProfileCode: document.getElementById("PCode").value, ProjStatus: document.getElementById("ProjStatus").value }
+
+                        })
+                    
+                        const cancelBtn = modifyForms.cancelBtn()
+                        
+                        formElement.appendChild(cancelBtn);
+                        
+                        modifyFormContainer.appendChild(formElement);
+                    }
+                    
+                },
+                displayNewProjForm: function(){
+
+                    modifyForms.clearDiv()
+
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                    } else {
+
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./add/addProj.php";
+                            formElement.target = "modifyFormResult";
+                            formElement.id = "projForm";
+                            
+                        const formTitle = document.createElement("h2");
+                            formTitle.appendChild(document.createTextNode("New Project"));
+                            formElement.appendChild(formTitle);
+
+                        const inputElementProjId = document.createElement("input");
+                            inputElementProjId.type = "text";
+                            inputElementProjId.name = "ProjID";
+                            inputElementProjId.id = "ProjID";
+                            inputElementProjId.placeholder = "ProjID";
+                        formElement.appendChild(inputElementProjId);
+                        
+                        const inputElementProjName = document.createElement("input");
+                            inputElementProjName.type = "text";
+                            inputElementProjName.name = "ProjDesc";
+                            inputElementProjName.placeholder = "Project Name";
+                            inputElementProjName.id = "ProjDesc";
+                        formElement.appendChild(inputElementProjName);
+                            
+                        const inputElementProfileCode = document.createElement("select");
+                            inputElementProfileCode.name = "PCode";
+                            inputElementProfileCode.placeholder = "Profile Code";
+                            inputElementProfileCode.id = "PCode";
+                            inputElementProfileCode.options[0] = new Option("Select a Profile Code", "");
+                                
+                            for(i in objLPU){
+                                
+                                inputElementProfileCode.options[inputElementProfileCode.options.length] = new Option(objLPU[i].PUCodeDesc, i);
+                            }
+                            
+                        formElement.appendChild(inputElementProfileCode);
+                        
+                        const submitBtn = document.createElement("input");
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                        formElement.appendChild(submitBtn);
+                        
+                        submitBtn.addEventListener("click", () => {
+
+                            objLProj[document.getElementById("ProjID").value] = {ProjID: document.getElementById("ProjID").value, ProjDesc: document.getElementById("ProjDesc").value, ProfileCode: document.getElementById("PCode").value, ProjStatus: "Active" }
+                            
+                            //formElement.reset()
+                        })
+
+                        const cancelBtn = modifyForms.cancelBtn()
+
+                        formElement.appendChild(cancelBtn);
+
+                        modifyFormContainer.appendChild(formElement);
+                    }
+                    
+                },
+                displayModifySubProjForm: function(sp){
+
+                    modifyForms.clearDiv()
+
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+                    
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                    } else {
+
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./update/updateSubProj.php";
+                            formElement.target = "modifyFormResult";
+                            formElement.id = "newSubProjForm";
+                            
+                        const formTitle = document.createElement("h2");
+                            formTitle.appendChild(document.createTextNode("Update Sub Project"));
+                            formElement.appendChild(formTitle);
+
+                        const inputElementSubProjId = document.createElement("input")
+                            inputElementSubProjId.type = "text"
+                            inputElementSubProjId.name = "ContID"
+                            inputElementSubProjId.id = "ContID"
+                            inputElementSubProjId.value = objLCont[sp].ContID
+                            inputElementSubProjId.readOnly = true
+                        
+                        formElement.appendChild(inputElementSubProjId)
+                        
+                            const inputElementProjId = document.createElement("input")
+                            inputElementProjId.type = "text"
+                            inputElementProjId.name = "ProjID"
+                            inputElementProjId.id = "ProjID"
+                            inputElementProjId.value = objLCont[sp].ProjID
+                            inputElementProjId.readOnly = true
+                        
+                        formElement.appendChild(inputElementProjId)
+
+                        const inputElementSubProjName = document.createElement("input");
+                            inputElementSubProjName.type = "text";
+                            inputElementSubProjName.name = "ContDesc";
+                            inputElementSubProjName.value = objLCont[sp].ContDesc
+                            inputElementSubProjName.id = "ContDesc";
+                        formElement.appendChild(inputElementSubProjName);
+                            
+                        const inputElementActive = document.createElement("input");
+                            inputElementActive.type = "text";
+                            inputElementActive.name = "Active";
+                            inputElementActive.value = objLCont[sp].Active
+                            inputElementActive.id = "Active";
+                        formElement.appendChild(inputElementActive);
+
+                        const submitBtn = document.createElement("input");
+                            submitBtn.id = "btnSubmit";
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                        formElement.appendChild(submitBtn);
+
+                        submitBtn.addEventListener("click", () => {
+
+                            objLCont[document.getElementById("ContID").value] = {ContID: document.getElementById("ContID").value, ContDesc: document.getElementById("ContDesc").value, ProjID: document.getElementById("ProjID").value, Active: "Y" }
+
+                        })
+
+                        const cancelBtn = modifyForms.cancelBtn()
+
+                        formElement.appendChild(cancelBtn);
+
+                        modifyFormContainer.appendChild(formElement);
+                    }	
+                    
+                },
+                displayNewSubProjForm: function(){
+                    modifyForms.clearDiv()
+
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+                    
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                    } else {
+
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./add/addSubProj.php";
+                            formElement.target = "modifyFormResult";
+                            formElement.id = "newSubProjForm";
+                            
+                        const formTitle = document.createElement("h2");
+                            formTitle.appendChild(document.createTextNode("New Sub Project"));
+                            formElement.appendChild(formTitle);
+
+                        const inputElementProjId = document.createElement("select");
+                            inputElementProjId.name = "ProjID";
+                            inputElementProjId.id = "ProjID";
+                            inputElementProjId.options[0] = new Option("Select a Project", "");
+                                
+                            for(i in objLProj){
+                                if(objLProj[i].ProjStatus!="Closed"){
+                                    inputElementProjId.options[inputElementProjId.options.length] = new Option(objLProj[i].ProjDesc, i);
+                                }
+                            }
+                            
+                            formElement.appendChild(inputElementProjId);
+
+                        const inputElementSubProjId = document.createElement("input");
+                            inputElementSubProjId.type = "text";
+                            inputElementSubProjId.name = "ContID";
+                            inputElementSubProjId.id = "ContID";
+                            inputElementSubProjId.placeholder = "Sub-Proj ID";
+                            formElement.appendChild(inputElementSubProjId);
+                        
+                        const inputElementSubProjName = document.createElement("input");
+                            inputElementSubProjName.type = "text";
+                            inputElementSubProjName.name = "ContDesc";
+                            inputElementSubProjName.placeholder = "Sub Project Name";
+                            inputElementSubProjName.id = "ContDesc";
+                            formElement.appendChild(inputElementSubProjName);
+                                    
+                        const submitBtn = document.createElement("input");
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                            formElement.appendChild(submitBtn);
+
+                        
+                        submitBtn.addEventListener("click", () => {
+
+                            objLCont[document.getElementById("ContID").value] = {ContID: document.getElementById("ContID"), ContDesc: document.getElementById("ContDesc").value, ProjID: document.getElementById("ProjID").value, Active: "Active" }
+
+                            //formElement.reset()
+
+                        })
+                    
+                        
+
+                        const cancelBtn = modifyForms.cancelBtn()
+                        
+                        formElement.appendChild(cancelBtn);
+                                
+                        modifyFormContainer.appendChild(formElement);
+                    }	
+
+                },
+                displayModifyPUForm: function(pu){
+                    modifyForms.clearDiv()
+
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+                    
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                    } else {
+
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./update/updatePU.php";
+                            formElement.target = "modifyFormResult";
+                            formElement.id = "modifyPUForm";
+                            
+                        const formTitle = document.createElement("h2");
+                            formTitle.appendChild(document.createTextNode("Update PU Code"));
+                            formElement.appendChild(formTitle);
+
+                        const inputElementPUCode = document.createElement("input");
+                            inputElementPUCode.type = "text"
+                            inputElementPUCode.name = "PUCode";
+                            inputElementPUCode.id = "PUCode";
+                            inputElementPUCode.classList.add("modform")
+                            inputElementPUCode.value = objLPU[pu].PUCode
+                            inputElementPUCode.readOnly = true
+
+
+                        formElement.appendChild(inputElementPUCode);
+                        
+                        const inputElementPUCodeDesc = document.createElement("input");
+                            inputElementPUCodeDesc.type = "text";
+                            inputElementPUCodeDesc.name = "PUCodeDesc";
+                            inputElementPUCodeDesc.id = "PUCodeDesc";
+                            inputElementPUCodeDesc.value = objLPU[pu].PUCodeDesc
+                        
+                        formElement.appendChild(inputElementPUCodeDesc);
+
+                        const inputElementColor = document.createElement("input");
+                            inputElementColor.type = "color";
+                            inputElementColor.name = "Color";
+                            inputElementColor.value = objLPU[pu].Color
+                            inputElementColor.id = "Color";
+                        formElement.appendChild(inputElementColor);
+
+                        const inputElementActive = document.createElement("select");
+                            inputElementActive.name = "Active";
+                            inputElementActive.value = objLPU[pu].Active
+                            inputElementActive.id = "Active";
+                            inputElementActive.options[0] = new Option("Y");
+                            inputElementActive.options[1] = new Option("N");
+
+                        formElement.appendChild(inputElementActive);
+                            
+                        const submitBtn = document.createElement("input");
+                            submitBtn.id = "btnSubmit";
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                        formElement.appendChild(submitBtn);
+
+                        submitBtn.addEventListener("click", () => {
+
+                            objLCont[document.getElementById("PUCode").value] = {PUCode: document.getElementById("PUCode"), PUCodeDesc: document.getElementById("PUCodeDesc").value, Color: document.getElementById("Color").value }
+
+                            //formElement.reset()
+
+                        })
+
+                        const cancelBtn = modifyForms.cancelBtn()
+
+                        formElement.appendChild(cancelBtn);
+
+                        modifyFormContainer.appendChild(formElement);
+                    }	
+
+                },
+                displayNewPUForm: function(){
+                    modifyForms.clearDiv()
+
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+                    
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                    } else {
+
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./add/addPU.php";
+                            formElement.target = "modifyFormResult";
+                            formElement.id = "addPUForm";
+                            
+                        const formTitle = document.createElement("h2");
+                            formTitle.appendChild(document.createTextNode("New PU Code"));
+                            formElement.appendChild(formTitle);
+
+                        const inputElementPUCode = document.createElement("input");
+                            inputElementPUCode.type = "text";
+                            inputElementPUCode.name = "PUCode";
+                            inputElementPUCode.id = "PUCode";
+                            inputElementPUCode.placeholder = "PU Code";
+                        formElement.appendChild(inputElementPUCode);
+                        
+                        const inputElementPUCodeDesc = document.createElement("input");
+                            inputElementPUCodeDesc.type = "text";
+                            inputElementPUCodeDesc.name = "PUCodeDesc";
+                            inputElementPUCodeDesc.placeholder = "PU Code Description";
+                            inputElementPUCodeDesc.id = "PUCodeDesc";
+                        formElement.appendChild(inputElementPUCodeDesc);
+                            
+                        const inputElementColor = document.createElement("input");
+                            inputElementColor.type = "text";
+                            inputElementColor.name = "Color";
+                            inputElementColor.placeholder = "Color";
+                            inputElementColor.id = "Color";
+                            formElement.appendChild(inputElementColor);
+                        
+                        const submitBtn = document.createElement("input");
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                            formElement.appendChild(submitBtn);
+
+                            const cancelBtn = modifyForms.cancelBtn()
+
+                            formElement.appendChild(cancelBtn);
+
+                        modifyFormContainer.appendChild(formElement);
+                    }
+                },
+                displayModifyLocalBtnGroupForm: function(lbg){
+                    
+                    modifyForms.clearDiv()
+
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+                    
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                    } else {
+                        
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./update/updateLBG.php";
+                            formElement.target = "modifyFormResult";
+
+                            
+                        const formTitle = document.createElement("h2");
+                            formTitle.appendChild(document.createTextNode("Update Local Button Group"));
+                            formElement.appendChild(formTitle);
+
+                        const inputElementBtnGroup = document.createElement("input");
+                            inputElementBtnGroup.type = "text"
+                            inputElementBtnGroup.name = "btnGroup";
+                            inputElementBtnGroup.id = "btnGroup";
+                            inputElementBtnGroup.classList.add("modform")
+                            inputElementBtnGroup.value = objLocalButtonGroups[lbg].btnGroup
+                            inputElementBtnGroup.readOnly = true
+
+                        formElement.appendChild(inputElementBtnGroup);
+                        
+                        const inputElementBtnGroupName = document.createElement("input");
+                        inputElementBtnGroupName.type = "text";
+                        inputElementBtnGroupName.name = "btnGroupName";
+                        inputElementBtnGroupName.id = "btnGroupName";
+                        inputElementBtnGroupName.value = objLocalButtonGroups[lbg].btnGroupName
+                        
+                        formElement.appendChild(inputElementBtnGroupName);
+                                
+                        const submitBtn = document.createElement("input");
+                            submitBtn.id = "btnSubmit";
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                        formElement.appendChild(submitBtn);
+
+                        submitBtn.addEventListener("click", () => {
+
+                            objLocalButtonGroups[document.getElementById("btnGroup").value] = {btnGroup: document.getElementById("btnGroup"), btnGroupName: document.getElementById("btnGroupName").value }
+
+                            //formElement.reset()
+
+                        })
+
+                        const cancelBtn = modifyForms.cancelBtn()
+
+                        formElement.appendChild(cancelBtn);
+
+                        modifyFormContainer.appendChild(formElement);
+                    }	
+                },
+                displayNewLocalBtnGroupForm: function(){
+
+                    modifyForms.clearDiv()
+
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                    } else {
+
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./add/addLBG.php";
+                            formElement.target = "modifyFormResult";
+                            
+                        const formTitle = document.createElement("h2");
+                            formTitle.appendChild(document.createTextNode("New Local Button Group"));
+                            formElement.appendChild(formTitle);
+
+                        const inputElementBtnGroup = document.createElement("input");
+                            inputElementBtnGroup.type = "text";
+                            inputElementBtnGroup.name = "btnGroup";
+                            inputElementBtnGroup.id = "btnGroup";
+                            inputElementBtnGroup.placeholder = "Button Group ID";
+                        formElement.appendChild(inputElementBtnGroup);
+                        
+                        const inputElementBtnGroupName = document.createElement("input");
+                            inputElementBtnGroupName.type = "text";
+                            inputElementBtnGroupName.name = "btnGroupName";
+                            inputElementBtnGroupName.placeholder = "Button Group Name";
+                            inputElementBtnGroupName.id = "btnGroupName";
+                        formElement.appendChild(inputElementBtnGroupName);
+                            
+                        
+                        const submitBtn = document.createElement("input");
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                        formElement.appendChild(submitBtn);
+                        
+                        submitBtn.addEventListener("click", () => {
+
+                            //objLProj[document.getElementById("ProjID").value] = {ProjID: document.getElementById("ProjID").value, ProjDesc: document.getElementById("ProjDesc").value, ProfileCode: document.getElementById("PCode").value, ProjStatus: "Active" }
+                            
+                            //formElement.reset()
+                        })
+                        
+                        const cancelBtn = modifyForms.cancelBtn()
+
+                        formElement.appendChild(cancelBtn);
+
+                        modifyFormContainer.appendChild(formElement);
+                    }
+
+                },
+                displayModifyLocalBtnForm: function(lb){
+
+                    modifyForms.clearDiv()
+
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+                    
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                    } else {
+                        
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./update/updateLB.php";
+                            formElement.target = "modifyFormResult";
+                            
+                        const formTitle = document.createElement("h2");
+                            formTitle.appendChild(document.createTextNode("Update Local Button"));
+                            formElement.appendChild(formTitle);
+
+                        const inputElementId = document.createElement("input");
+                            inputElementId.type = "text"
+                            inputElementId.name = "idtbllocaleventbtns";
+                            inputElementId.id = "idtbllocaleventbtns";
+                            inputElementId.classList.add("modform")
+                            inputElementId.value = objLocalEventButtons[lb].idtbllocaleventbtns
+                            inputElementId.readOnly = true
+
+                        formElement.appendChild(inputElementId);
+                                    
+                        const inputElementActId = document.createElement("input");
+                            inputElementActId.type = "text";
+                            inputElementActId.name = "actID";
+                            inputElementActId.id = "actID";
+                            inputElementActId.value = objLocalEventButtons[lb].actID
+                        
+                        formElement.appendChild(inputElementActId);
+
+                        const inputElementContId = document.createElement("input");
+                            inputElementContId.type = "text";
+                            inputElementContId.name = "contID";
+                            inputElementContId.id = "contID";
+                            inputElementContId.value = objLocalEventButtons[lb].contid
+                    
+                        formElement.appendChild(inputElementContId);
+
+                        const inputElementLocalBtnGroup = document.createElement("input");
+                            inputElementLocalBtnGroup.type = "text";
+                            inputElementLocalBtnGroup.name = "localbtngroup";
+                            inputElementLocalBtnGroup.id = "localbtngroup";
+                            inputElementLocalBtnGroup.value = objLocalEventButtons[lb].localButtonGroup
+
+                        formElement.appendChild(inputElementLocalBtnGroup);
+
+                        const inputElementWarn = document.createElement("input");
+                            inputElementWarn.type = "text";
+                            inputElementWarn.name = "warn";
+                            inputElementWarn.id = "warn";
+                            inputElementWarn.placeholder = "Warning Time";
+                            inputElementWarn.value = objLocalEventButtons[lb].warn
+
+                        formElement.appendChild(inputElementWarn);
+
+                        const submitBtn = document.createElement("input");
+                            submitBtn.id = "btnSubmit";
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                        formElement.appendChild(submitBtn);
+
+                        submitBtn.addEventListener("click", () => {
+
+                            objLocalEventButtons[document.getElementById("idtbllocaleventbtns").value] = {idtbllocaleventbtns: document.getElementById("idtbllocaleventbtns"), actID: document.getElementById("actID").value, contid: document.getElementById("contID").value, localButtonGroup: document.getElementById("localbtngroup").value, warn: document.getElementById("warn").value }
+
+                            //formElement.reset()
+
+                        })
+
+                        const cancelBtn = modifyForms.cancelBtn()
+
+                        formElement.appendChild(cancelBtn);
+
+                        modifyFormContainer.appendChild(formElement);
+                    }
+
+                },
+                displayNewLocalBtnForm: function(){
+                    
+                    modifyForms.clearDiv()
+
+                    const modifyFormContainer = document.getElementById("modifyFormContainer");
+                    
+                    const modifyFormResult = document.getElementById("modifyFormResult");
+
+                    if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                    } else {
+                        
+                        modifyFormResult.classList.remove("hidden");
+                    
+                        const formElement = document.createElement("form");
+                            formElement.method = "post";
+                            formElement.action = "./add/addLB.php";
+                            formElement.target = "modifyFormResult";
+                            
+                        const formTitle = document.createElement("h2");
+                            formTitle.appendChild(document.createTextNode("New Local Button"));
+                            formElement.appendChild(formTitle);
+                        
+                        const nextIndex = Math.max(...Object.keys(objLocalEventButtons))+1
+
+                        const objSelAct = {}
+                        const arrAct = []
+                        
+                        for (i in objLAct){
+                        
+                            if(objLAct[i]["Status"]=="Active") {
+                            
+                                arrAct.push([objLAct[i]["ActDesc"], i])
+                            
+                            }
+                        
+                        }
+                        
+                        arrAct.sort()
+                        
+                        for(i=0; i<arrAct.length; i++){
+                        
+                            objSelAct[arrAct[i][1]] = {actID: arrAct[i][1], ActDesc: arrAct[i][0]}
+                        
+                        }
+                        
+                        
+                        const inputElementActId = modifyForms.addDropDown(objSelAct,  "actID", "ActDesc")
+                        formElement.appendChild(inputElementActId);
+                        
+                        const objSelCont = {}
+                        const arrCont = []
+                        
+                        for (i in objLCont){
+                        
+                            if(objLCont[i].Active=="Y" && objLProj[objLCont[i]["ProjID"]]["ProjStatus"]!="Closed"){
+                            
+                                arrCont.push([objLProj[objLCont[i]["ProjID"]]["ProjDesc"]+": "+objLCont[i]["ContDesc"], i])
+                            
+                            }
+                            
+                        }
+                        
+                        arrCont.sort()
+                        
+                        for(i=0; i<arrCont.length; i++){
+                        
+                            objSelCont[arrCont[i][1]] = {contID: arrCont[i][1], contDesc: arrCont[i][0]}
+                        
+                        }
+                        
+                        const inputElementContId = modifyForms.addDropDown(objSelCont,  "contID", "contDesc")
+                        formElement.appendChild(inputElementContId);
+
+                        const inputElementLocalBtnGroup = modifyForms.addDropDown(objLocalButtonGroups,  "localbtngroup", "btnGroupName")
+                        formElement.appendChild(inputElementLocalBtnGroup);
+
+                        const inputElementWarn = document.createElement("input");
+                            inputElementWarn.type = "text";
+                            inputElementWarn.name = "warn";
+                            inputElementWarn.placeholder = "Warning Time";
+                            inputElementWarn.id = "warn";
+                        formElement.appendChild(inputElementWarn);
+                                
+                        const submitBtn = document.createElement("input");
+                            submitBtn.id = "btnSubmit";
+                            submitBtn.type = "submit";
+                            submitBtn.value = "Submit";
+                        formElement.appendChild(submitBtn);
+
+                        submitBtn.addEventListener("click", () => {
+
+                            objLocalEventButtons[nextIndex] = {idtbllocaleventbtns: nextIndex, actID: document.getElementById("actID").value, contid: document.getElementById("contID").value, localButtonGroup: document.getElementById("localbtngroup").value, warn: document.getElementById("warn").value }
+
+                            //formElement.reset()
+
+                        })
+
+                        const nextBtn = document.createElement("input");
+                        nextBtn.type = "button";
+                        nextBtn.value = "Next";
+                        nextBtn.onclick = () => {
+                            modifyForms.clearDiv()
+                            document.getElementById("modifyFormResult").classList.add('hidden');
+                            modifyForms.displayLocalBtnForm()
+                        };
+
+                        formElement.appendChild(nextBtn)
+
+                        const cancelBtn = modifyForms.cancelBtn()
+
+                        formElement.appendChild(cancelBtn);
+
+                        modifyFormContainer.appendChild(formElement);
+                    }
+
+                }
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </script>
+
+        <!-- modifyMenu.js -->
+		<script>
+
+            const addMenuItem = (menu, menuItem, clickHandler = () =>void(0)) => {
+
+                const linkMenuContainer = document.createElement("li");
+
+                const linkMenu = document.createElement("a");
+                linkMenu.href = "#";
+                linkMenu.addEventListener('click', () => { 
+
+                    menu.remove();
+                    clickHandler();
+                    
+                });
+
+                linkMenu.appendChild(document.createTextNode(menuItem));
+                            
+                linkMenuContainer.appendChild(linkMenu);
+
+                menu.appendChild(linkMenuContainer);
+
+            }
+
+            const displayModifyMenu = () => {
+
+                const modifyFormContainer = document.getElementById("modifyFormContainer");
+                    
+                if(document.getElementById("modifyFormContainer").innerHTML!=""){
+
+                } else {
+
+                    const menuContainer = document.createElement("ul");
+
+                    menuContainer.classList.add("modmenu");
+                    
+                    //Activities
+                    
+                    addMenuItem(menuContainer, "Activities", modifyForms.displayActForm);
+                    
+                    //Projects
+
+                    addMenuItem(menuContainer, "Projects", modifyForms.displayProjForm);
+                    
+                    //Sub-Projects(Cont IDs)
+
+                    addMenuItem(menuContainer, "Sub-Projects", modifyForms.displaySubActForm);
+                    
+                    addMenuItem(menuContainer, "PU Codes", modifyForms.displayPUForm);
+                    
+                    addMenuItem(menuContainer, "Local Button Groups", modifyForms.displayLocalBtnGroupForm);
+                    
+                    addMenuItem(menuContainer, "Local Buttons", modifyForms.displayLocalBtnForm);
+
+                    //exit menu
+
+                    addMenuItem(menuContainer, "Exit");
+                    
+                    modifyFormContainer.appendChild(menuContainer);
+                }
+            }
+
+        </script>
+
+        <!-- newDisplayEvents.js -->
+		<script>
+
+            const objEventsView = {
+            
+                tableHeaders: [" ", " ", " ", "Start Time", "Activty", "Sub-Project", "Duration"],
+                clearDiv: function () {
+
+                    const listDiv = document.getElementById("eventListContainer")
+
+                    while(listDiv.firstChild){
+
+                        listDiv.removeChild(listDiv.firstChild)
+
+                    }
+
+                },
+                makeEventObj: function(){
+                
+                    const minDate = luxon.DateTime.now()- ((1000*60*60*24)  * document.getElementById("selMinDate").value )
+                
+                    const objLEvents =  {}
+                        
+                    for(i=0; i<LEvents.length; i++) {
+                        
+                        if(Date.parse(LEvents[i][0]) > minDate) {
+                            
+                            objLEvents[LEvents[i][0]] = {startTime: Date.parse(LEvents[i][0]), act: LEvents[i][1], subProj: LEvents[i][2]}
+                            
+                            if(i!=0){
+                            
+                                objLEvents[LEvents[i][0]]["endTime"] = Date.parse(LEvents[i-1][0])
+                                objLEvents[LEvents[i][0]]["dur"] =  Date.parse(LEvents[i-1][0])-Date.parse(LEvents[i][0])
+
+                            }else{
+                            
+                                objLEvents[LEvents[i][0]]["endTime"] = Date.now()
+                                objLEvents[LEvents[i][0]]["dur"] =  Date.now()-Date.parse(LEvents[i][0])
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                    return objLEvents
+                        
+                },
+                showEventList: function(){
+                    
+                    const objLEvents = this.makeEventObj()
+                    
+                    console.log(objLEvents)
+
+                    const eventList = document.createElement("table")
+
+                    const thead = document.createElement("thead")
+                    
+                    this.tableHeaders.forEach(element => {
+                    
+                        let th = document.createElement("th")
+                        let thtext = document.createTextNode(element)
+                        th.appendChild(thtext)
+                        thead.appendChild(th)
+
+                    }); 
+
+                    eventList.appendChild(thead)
+
+                    const tbody = document.createElement("tbody")
+
+                    let startTime
+                    let act
+                    let subProj
+                
+                    for (i in objLEvents) {
+                        
+                        let eventId = i
+                        sqlTime = luxon.DateTime.fromMillis(objLEvents[i].startTime).toSQL({ includeOffset: false })
+                        startTime = luxon.DateTime.fromMillis(objLEvents[i].startTime).toFormat("MM-dd hh:mm:ss a")
+                        act = objLAct[objLEvents[i].act].ActDesc
+                        subProj = objLCont[objLEvents[i].subProj].ContDesc
+                        dur = luxon.Duration.fromMillis(objLEvents[i].dur).toFormat("h:mm:ss")
+                        
+                        let trow = document.createElement("tr")
+                        trow.id = 'row'+i
+                        let tcell = document.createElement("td")
+                        let aLink = document.createElement("a")
+                        aLink.href = "#"
+                        aLink.addEventListener("click", () => {
+                            this.postEvent(act, subProj, sqlTime)
+                        })
+                        aLink.appendChild(document.createTextNode("+"))
+                        tcell.appendChild(aLink)
+
+                        trow.appendChild(tcell)
+                        
+                        tcell = document.createElement("td")
+                        let dLink = document.createElement("a")
+                        dLink.id = "d"+eventId
+                        dLink.href = "#"
+                        dLink.addEventListener("click", () => {
+                            this.deleteEvent(eventId)
+                        })
+                        dLink.appendChild(document.createTextNode("-"))
+                        tcell.appendChild(dLink)
+                        
+                        trow.appendChild(tcell)
+
+                        tcell = document.createElement("td")
+                        let uLink = document.createElement("a")
+                        uLink.id = "u"+eventId
+                        uLink.href = "#"
+                        uLink.addEventListener("click", () => {
+                            alert(eventId)
+                            this.updateEvent(eventId)
+                        })
+                        uLink.appendChild(document.createTextNode("U"))
+                        tcell.appendChild(uLink)
+                    
+                        trow.appendChild(tcell)
+
+
+                        tcell = document.createElement("td")
+                        let tcelltext = document.createTextNode(startTime)
+                        tcell.appendChild(tcelltext)
+                        trow.appendChild(tcell)
+                        
+                        tcell = document.createElement("td")
+                        tcelltext = document.createTextNode(act)
+                        tcell.appendChild(tcelltext)
+                        trow.appendChild(tcell)
+
+                        tcell = document.createElement("td")
+                        tcelltext = document.createTextNode(subProj)
+                        tcell.appendChild(tcelltext)
+                        trow.appendChild(tcell)
+
+                        tcell = document.createElement("td")
+                        tcelltext = document.createTextNode(dur)
+                        tcell.appendChild(tcelltext)
+                        trow.appendChild(tcell)
+
+                        tbody.appendChild(trow)
+                    }
+                    
+                    eventList.appendChild(tbody)
+
+                    eventList.classList.add("eventList");
+
+                    return eventList
+
+                },
+                postEvent: function(act, subProj, sqlTime){
+
+                    $.post("./add/AddJQ.php",
+                    {
+                        v1: act,
+                        v2: subProj,
+                        v3: sqlTime,
+                        SD: 'L',
+                        selTbl: 'tblEvents'
+                    })
+                },
+                updateEvent: function(eventId){
+
+                    $( "#pu" ).val( "U" );
+                    $( "#selP" ) . val( "Y" );
+                    $( "body" ).css( "background-color", "DarkRed" );
+                            
+                    origTime = eventId;
+
+                    const formattedOrigTime = FixTime(origTime)
+
+                    $( "#selFT" ) . val(formattedOrigTime[1]);
+                    $( "#DateTime" ) . val(formattedOrigTime[0]);
+                    $( "#DateTime" ) . text(formattedOrigTime[2]);
+                            
+                    eid = LEvents.findIndex(element => element.includes(eventId))
+
+                    var q = "Update: "+formattedOrigTime[2]+" - "+ objLAct[objLEvents[eventId].act].ActDesc + " " + objLCont[objLEvents[eventId].subProj].ContDesc
+
+                    $("#pmEvent").val(eventId);
+                    $("#pmEvent").text(q);
+
+                    resetAll();
+
+                },
+                deleteEvent: function(i){
+
+                    const objEvent = objLEvents[i]
+
+                    const sqlTime = luxon.DateTime.fromMillis(objEvent.startTime).toSQL({ includeOffset: false })
+
+                    const q = "Delete "+sqlTime+": "+objEvent.act+">"+objEvent.subProj+"?";
+
+                    const c = confirm(q);
+                    
+                    if (c == true){
+
+                        delete objLEvents[i]
+
+                        const a = LEvents.splice(i, 1)
+
+                        const rowElement = document.getElementById('row'+i)
+                        
+                        rowElement.remove()
+
+                        JQDel(sqlTime, 'tblEvents', 'StartTime');
+
+                        this.showEventList()
+
+                    localEventButtonForm.resetLocalBtn()
+                        
+                        resetAll();
+                    
+                    }
+
+                },
+
+            }
+
+
+            function displayLEvents(){
+
+                resetSVG('svgEventChart')
+
+                LEvents.sort();
+                
+                LEvents.reverse();
+
+                ELen = LEvents.length;
+
+                for (i = 0; i < ELen; i++) {
+
+                    if(i==0){
+                        
+                        var eventLength = Date.now()-Date.parse(LEvents[i][0]);
+                        
+                    }else{
+                    
+                        eventLength = Date.parse(LEvents[i-1][0])-Date.parse(LEvents[i][0]);
+
+                    }
+                    
+                    formatEventDuration(eventLength);
+                
+                    if(i>0){
+                    
+                        var boxStart = svgboxstartxcoord(Date.parse(LEvents[i-1][0]));
+                        
+                        
+                    }else{
+                    
+                        var boxStart = svgboxstartxcoord(Date.parse(LEvents[i][0]));
+
+                    }
+                    
+                    var boxId = "svgEventChart";
+                    var boxStartX = svgboxstartxcoord(Date.parse(LEvents[i][0]));
+                    var boxWidth = (eventLength / (24*60*60*1000))*svgWidthNum;
+                    
+                    var boxFill = findActivityColor(LEvents[i][1]);
+
+                    if(boxStartX<0){
+                    
+                        if(boxStart>0){
+                        
+                            drawbox(boxId, 0, boxStart, boxFill);
+                        
+                        }
+                    
+                    }
+                    
+                    if(boxStartX>0){
+                    
+                        drawbox(boxId, boxStartX, boxWidth, boxFill);
+
+                    }
+                }
+                
+                objEventsView.clearDiv()
+
+                document.getElementById("eventListContainer").appendChild(objEventsView.showEventList());
+
+                svgtext('svgEventChart');
+
+                displayActDurs();
+            }
+
+
+        </script>
+
+        <!-- localEventButtons.js -->
+		<script>
+
+            const localEventButtonForm = {
+
+                makeLocalEventBtnGroup: function(){
+
+                    const eventBtnListContainer = document.getElementById("localBtnListContainer") 
+
+                    for (i in objLocalButtonGroups) {
+
+                        let lbgText = objLocalButtonGroups[i].btnGroupName
+                        
+                        let localButtonGroupContainer = document.createElement("ul")
+                        localButtonGroupContainer.id = objLocalButtonGroups[i].btnGroup
+                        localButtonGroupContainer.classList.add("hidden")
+                        localButtonGroupContainer.classList.add("btnGroup")
+
+                        let jqGroupRef = "#"+localButtonGroupContainer.id
+
+                        let localButtonGroupHeader = document.createElement("a")
+                        localButtonGroupHeader.classList.add("groupHeading")
+                        localButtonGroupHeader.href = "#"
+                        lbgText = document.createTextNode(lbgText)
+                        localButtonGroupHeader.addEventListener('click', () => {
+
+                            $(jqGroupRef).toggleClass('hidden')
+
+                        })
+                        localButtonGroupHeader.appendChild(lbgText)
+                        eventBtnListContainer.appendChild(localButtonGroupHeader)
+                                
+                        eventBtnListContainer.appendChild(localButtonGroupContainer)
+                                    
+                        this.makeLocalEventBtn(localButtonGroupContainer.id)
+
+                    }
+                },
+                makeLocalEventBtn: function(lbg){
+                    const eventBtnListContainer = document.getElementById(lbg)
+
+                    for (i in objLocalEventButtons) {
+
+                        if (objLocalEventButtons[i]["localButtonGroup"]==lbg){
+
+                            let eventBtnContainer = document.createElement("li");
+                            
+                            let actID = objLocalEventButtons[i]["actID"]
+                            let contID = objLocalEventButtons[i]["contid"]
+                            
+                            let btnID = actID+"_"+contID
+                            
+                            let warnSecs, lastUseTime, lastTime, unfmtLastUseTime
+
+                            if(objLocalEventButtons[i]["warn"]){
+                                warnSecs = objLocalEventButtons[i]["warn"]*24*60*60
+                            }
+
+                            if(objLastUse.hasOwnProperty(btnID)==true){
+                                lastTime = objLastUse[btnID]["lastTime"]
+                                unfmtLastUseTime = Math.round(luxon.DateTime.now().toSeconds()-lastTime)
+                                lastUseTime = ELTime(unfmtLastUseTime)
+                                
+                            } else {
+
+                                lastTime = lastUseTime = "N/A"
+                                
+                            }
+                            
+                            let eventBtnText = objLAct[actID]["ActDesc"] + ": " + objLCont[contID]["ContDesc"] + " " + lastUseTime
+                                            
+                            eventBtnText = document.createTextNode(eventBtnText)
+                        
+                            let eventLink = document.createElement("a")
+
+                            eventLink.classList.add("localBtn")
+
+                            if(warnSecs){
+
+                                if(warnSecs<unfmtLastUseTime){
+                                    eventLink.classList.add("warn")
+                                }
+                            }
+
+                            eventLink.id = btnID
+                            eventLink.actID = actID
+                            eventLink.contID = contID
+                            eventLink.lastTime = lastTime
+                            eventLink.warnSecs = warnSecs
+                        
+                            eventLink.appendChild(eventBtnText)
+
+                            eventLink.href = "#"
+                            
+                            eventLink.addEventListener('click', () => { 
+                            
+                                manualEventForm.addEvent(actID, contID)
+
+                                this.resetLocalBtn()
+                                                    
+                            })
+
+                            eventBtnContainer.appendChild(eventLink)
+                        
+                            eventBtnListContainer.appendChild(eventBtnContainer)
+                        }
+
+                    }
+                },
+                resetLocalBtn: function(){
+
+                    let newLastUseTime
+                    
+                    buttons = document.getElementsByClassName('localBtn');
+
+                    for (i = 0; i < buttons.length; i++) {
+
+                        if(buttons[i].lastTime!="N/A") {
+
+                            newUFLastUseTime = Math.round(luxon.DateTime.now().toSeconds() - buttons[i].lastTime)
+                            newLastUseTime = ELTime(newUFLastUseTime)
+
+                            if(buttons[i].hasOwnProperty("warnSecs")){
+                                warnSecs = buttons[i]["warnSecs"]
+
+                                if(warnSecs<newUFLastUseTime){
+                                    
+                                    if(buttons[i].classList.contains("warn")!=true){
+
+                                        buttons[i].classList.add("warn")
+
+                                    }
+
+                                } else {
+
+                                    if(buttons[i].classList.contains("warn")==true){
+
+                                        buttons[i].classList.remove("warn")
+
+                                    } 
+                                }
+                            }
+
+                    
+                        
+                        } else {
+                        
+                            newLastUseTime = "N/A"
+                        
+                        }
+                        
+                        eventBtnText = objLAct[buttons[i]["actID"]]["ActDesc"] + ": " + objLCont[buttons[i]["contID"]]["ContDesc"] + " " + newLastUseTime
+
+                        eventBtnText = document.createTextNode(eventBtnText)
+                        
+                        buttons[i].replaceChild(eventBtnText, buttons[i].childNodes[0]);
+
+                    }
+
+                    //alert("DONE")
+                }
+                }
+
+
+                function ELTime(secs) {
+                            
+                var days = secs / (60*60*24);
+                                
+                if(days>=1){
+                                
+                    return Math.round(days) + "d";
+                                
+                } else {
+                                
+                    var hrs = secs / (60*60);
+                                    
+                    if(hrs>=1){
+                                        
+                        return Math.round(hrs) + "h";
+                                            
+                    } else {
+                                        
+                        var mins = secs / 60;
+                                            
+                        if(mins>=1){
+                                                
+                            return Math.round(mins) + "m";
+                                            
+                        } else {
+                                            
+                            return secs + "s";
+                            
+                        }
+                    }
+                }
+                }
+
+                function JQPost(act, cont, dtime){
+
+                    $.post("./add/AddJQ.php",
+                    {
+                        v1: act,
+                        v2: cont,
+                        v3: dtime,
+                        SD: 'L',
+                        selTbl: 'tblEvents'
+                    });
+
+                    resetAll();
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </script>
+
+        <!-- svgChart.js -->
+		<script>
+
+            const objSVGEventChart = {
+
+                chartDiv: 0,
+                svgHeight: 50,
+                textColor: "white",
+                fontWeight: "bold",
+                displayTimes: [12, 3, 6, 9, 12, 3, 6, 9],
+                svgWidth: screen.width,
+                moodColor: function(mood){
+
+                    switch(Number(mood)){
+                    
+                        case -1:
+                            clr = "red";
+                            break;
+                        case -0.5:
+                            clr = "yellow";
+                            break;
+                        case 0:
+                            clr = "gray";
+                            break;
+                        case 0.5:
+                            clr = "yellowgreen";
+                            break;
+                        case 1:
+                            clr = "green";
+                            break;
+                    }
+
+                    return clr;
+                },
+                makeListObj: function(obj, type){
+
+                    for(i in obj){
+                        objSVGList[i] = {startTime: obj[i][startTime], startX: this.getStartXCoord(obj[1][startTime]), width: (obj.dur/(24*60*60*1000)*this.svgWidth)}
+                    }
+                    if(type=="mood"){
+                        objSVGList[i]["fill"] = this.moodColor(obj[i].mood)
+                    } else {
+                        objSVGList[i]["fill"] = objLPU[objAct[ActID].UCode].Color
+                    }
+
+                },
+                drawBox: function(id, x, w, f){
+
+                    var element = document.getElementById(id);
+
+                    var svg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+                    svg.setAttribute('x', x);
+                    svg.setAttribute('y', 0);
+                    svg.setAttribute('width', w);
+                    svg.setAttribute('height', this.svgHeight);
+                    svg.setAttribute('fill', f);
+                        
+                    svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+                        
+                    element.appendChild(svg);
+
+
+                },
+                addText: function(id){
+
+                    const element = document.getElementById(id);
+
+                    const svgTextElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+
+                    svgTextElement.setAttribute('x', 0);
+                    svgTextElement.setAttribute('y', 27.5);
+                    svgTextElement.setAttribute('fill', 'white');
+                    svgTextElement.setAttribute('font-weight', 'bold');
+                    svgTextElement.setAttribute('font-size', 10);
+
+                    let textNode = document.createTextNode("12A");
+
+                    svgTextElement.appendChild(textNode);
+
+                    this.displayTimes.forEach(t => {
+
+                        let xCoord = t*120;
+
+                        const tspanElement = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+
+                        tspanElement.setAttribute('x', xCoord);
+                        tspanElement.setAttribute('y', 27.5);
+
+                        textNode = document.createTextNode(t);
+                        tspanElement.appendChild(textNode);
+                        svgTextElement.appendChild(ts);
+
+
+                    });
+                    
+                    svgTextElement.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+
+                    element.appendChild(svgTextElement);
+
+
+                },
+                getStartXCoord: function(startTime){
+
+                    let minTime = new Date();
+
+                    minTime.setHours(0, 0, 0, 0);
+                    
+                    var svgboxstartxcoord = ((startTime-minTime)/(24*60*60*1000))*svgWidthNum;
+                    
+                    return svgboxstartxcoord;
+                },
+                showChart: function(){
+
+                    if(i>0){
+                            
+                        var boxStart = svgboxstartxcoord(Date.parse(LMoods[i-1][0]));
+                    
+                    }else{
+
+                        var boxStart = svgboxstartxcoord(Date.parse(LMoods[i][0]));
+                    
+                    }
+
+                    //var boxId = "svgMoodChart";
+                    var boxStartX = svgboxstartxcoord(Date.parse(LMoods[i][0]));
+                    var boxWidth = (eventLength / (24*60*60*1000))*svgWidthNum;
+                    var boxFill = moodColor(LMoods[i][1]);
+                    
+                    if(boxStartX<0){
+                    
+                        if(boxStart>0){
+                        
+                            drawbox(boxId, 0, boxStart, boxFill);
+                        
+                        }
+                    
+                    }
+
+                    if(boxWidth>0){
+                    
+                        drawbox(Chartid, boxStartX, boxWidth, boxFill);
+
+                    }
+                }
+
+            }
+
+            //determines the color of each box on the event chart
+            //**CAN BE REPLACED BY objLPU[objAct[ActID].UCode].Color**
+            function findActivityColor(ActID){
+
+                var arrAct = LActs[0];
+
+                var ans = $.inArray(ActID, arrAct);
+
+                var PU = LActs[3][ans];
+
+                var arrLPU = LPU[0];
+
+                var an2 = $.inArray(PU, arrLPU);
+
+                var clr = LPU[2][an2];
+
+                return clr;
+            }
+
+            //sets the colors for the boxes in the mood chart
+
+            function moodColor(mood){
+
+                switch(Number(mood)){
+
+                    case -1:
+                        clr = "red";
+                        break;
+                    case -0.5:
+                        clr = "yellow";
+                        break;
+                    case 0:
+                        clr = "gray";
+                        break;
+                    case 0.5:
+                        clr = "yellowgreen";
+                        break;
+                    case 1:
+                        clr = "green";
+                        break;
+                }
+
+                return clr;
+            
+            }
+
+            //determines the starting x coord of each colored box in the svg charts
+
+            function svgboxstartxcoord(time){
+
+                let minTime = new Date();
+            
+                minTime.setHours(0, 0, 0, 0);
+
+                var svgboxstartxcoord = ((time-minTime)/(24*60*60*1000))*svgWidthNum;
+
+                return svgboxstartxcoord;
+            
+            }
+
+            //Draws colored boxes in svg charts
+
+            function drawbox(id, x, w, f){
+
+                var element = document.getElementById(id);
+
+                var svg = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+                svg.setAttribute('x', x);
+                svg.setAttribute('y', 0);
+                svg.setAttribute('width', w);
+                svg.setAttribute('height', 50);
+                svg.setAttribute('fill', f);
+                    
+                svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+                    
+                element.appendChild(svg);
+            }
+
+            //Adds times to foreground of svg charts
+
+            function svgtext(id){
+
+                var element = document.getElementById(id);
+
+                var svg = document.createElementNS("http://www.w3.org/2000/svg", "text");
+
+                svg.setAttribute('x', 0);
+                svg.setAttribute('y', 20);
+                svg.setAttribute('fill', 'white');
+                svg.setAttribute('font-weight', 'bold');
+                svg.setAttribute('font-size', 10);
+
+                let spacing = svgWidthNum / 24
+
+                arrTimes = [12, "|", "|", 3, "|", "|", 6, "|", "|", 9, "|", "|", 12, "|", "|", 3, "|", "|", 6, "|", "|", 9, "|", "|", 12]
+
+                for (c = 0; c < arrTimes.length; c++){
+
+                    var xv = c*spacing;
+
+                    var ts = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+
+                    ts.setAttribute('x', xv);
+                    ts.setAttribute('y', 20);
+
+                    var txt = document.createTextNode(arrTimes[c]);
+                    ts.appendChild(txt);
+                    svg.appendChild(ts);
+
+                }
+
+                svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+
+                element.appendChild(svg);
+
+            }
+
+            function resetSVG(id){
+
+                id = "#"+id;
+
+                $(id).empty();
+            }
+
+            function displaySVGChart(){
+
+                if(i>0){
+                    
+                    var at = svgboxstartxcoord(Date.parse(LEvents[i-1][0]));
+                    
+                    
+                }else{
+
+                    var at = svgboxstartxcoord(Date.parse(LEvents[i][0]));
+
+                }
+
+                var ac0 = "svgEventChart";
+                var ac1 = svgboxstartxcoord(Date.parse(LEvents[i][0]));
+                var ac2 = (eventLength / (24*60*60*1000))*svgWidthNum;
+
+                var ac3 = findActivityColor(LEvents[i][1]);
+
+                if(ac1<0){
+
+                    if(at>0){
+                    
+                        drawbox(ac0, 0, at, ac3);
+                    
+                    }
+
+                }
+
+                if(ac1>0){
+
+                    drawbox(ac0, ac1, ac2, ac3);
+
+                }
+
+            }
+
+        </script>
+
+        <!-- mood.js -->
+		<script>
+
+            function displayLMoods(){
+
+                resetSVG("svgMoodChart");
+
+                LMoods.sort();
+
+                LMoods.reverse();
+
+                MoodsLen = LMoods.length;
+
+                const minDate = Date.now()-86400000;
+
+                text = "<table class='eventList'>";
+
+                text += "<thead>";
+
+                    text += "<th colspan=2></th>";
+                    text += "<th>Date</th>";
+                    text += "<th>Time</th>";
+                    text += "<th>Mood</th>";
+                    text += "<th>Dur</th>";
+                    
+                text += "</thead>";
+
+                text += "</tbody>";
+                    
+                //start eventDuration calc (should be function)
+
+                for (i = 0; i < MoodsLen; i++) {
+
+                    if(i==0){
+                        
+                        var eventLength = Date.now()-Date.parse(LMoods[i][0]);
+                        
+                    }else{
+
+
+                        eventLength = Date.parse(LMoods[i-1][0])-Date.parse(LMoods[i][0]);
+                    
+                    }
+                    
+                    formatEventDuration(eventLength);
+                    
+                    if(i>0){
+                    
+                        var boxStart = svgboxstartxcoord(Date.parse(LMoods[i-1][0]));
+                        
+                    }else{
+                    
+                        var boxStart = svgboxstartxcoord(Date.parse(LMoods[i][0]));
+                        
+                    }
+                    
+                    var boxId = "svgMoodChart";
+                    var boxStartX = svgboxstartxcoord(Date.parse(LMoods[i][0]));
+                    var boxWidth = (eventLength / (24*60*60*1000))*svgWidthNum;
+                    var boxFill = moodColor(LMoods[i][1]);
+                    
+                    if(boxStartX<0){
+                    
+                        if(boxStart>0){
+                        
+                            drawbox(boxId, 0, boxStart, boxFill);
+                        
+                        }
+                    
+                    }
+
+                    if(boxWidth>0){
+                    
+                        drawbox(boxId, boxStartX, boxWidth, boxFill);
+
+                    }
+                    
+                    //end eventDuration calc
+                    
+                    let arr_disp_time = FixTime(LMoods[i][0]);
+                    
+                    if(Date.parse(LMoods[i][0]) > minDate){
+                    
+                        text += 
+                            "<tr>" +
+                                "<td>" +
+                                    "<input type=button value=+ class=slnk onclick=MPost('"+ LMoods[i][1] + "','" + LMoods[i][0] + "','" + i+"') + />" +
+                                "</td><td>" +
+                                    "<input type=button  value=- class=slnk onclick=delMood("+i+") + />" +
+                                "</td><td>" +
+                                    arr_disp_time[4] +
+                                "</td><td>" +
+                                    arr_disp_time[5] +
+                                "</td><td>" +
+                                    LMoods[i][1] +
+                                "</td><td>" +
+                                    eventDuration +
+                                "</td>" +
+                            "</tr>";
+                            
+                    }
+                    
+                }
+
+                text += "</table>";
+
+                svgtext('svgMoodChart');
+
+                document.getElementById("moodListContainer").innerHTML = text;
+
+                const a = LMoods[0][1];
+
+                $( "#moodIndicator" ).css("color", moodColor(a));
+
+            }
+
+            function btnLMood(a){
+
+                var selPost = $("#selPost").val();
+
+                setETime();
+
+                LMoods.push([sqTime(datetimeValue), String(a)]);
+
+                $( "#moodIndicator" ).css("color", moodColor(a));
+
+                if(selPost==="Y"){
+
+                    MPost(a, datetimeValue);
+
+                }
+
+                resetAll();
+            }
+
+            function MPost(mood, dtime, i){
+
+                $.post("./add/AddJQ.php",
+                {
+                    v1: dtime,
+                    v2: mood,
+                    selTbl: 'tblMood'
+                });
+
+                resetAll();
+
+            }
+
+            function delMood(i){
+                            
+                var q = "Delete "+LMoods[i]+"?";
+
+                var c = confirm(q);
+
+                if (c == true){
+
+                    var etime = sqTime(LMoods[i][0]); 
+
+                    var a = LMoods.splice(i, 1);
+                    
+                    JQDel(etime, 'tblMood', 'MoodDT');
+
+                    resetAll();
+
+                }
+            }
+
+            function resetLMoods(){
+
+                if(LMoods === undefined || LMoods.length == 0) {
+
+                    //do nothing
+
+                }else{
+
+                    localStorage.setItem("LSMoods", JSON.stringify(LMoods));
+
+                    displayLMoods();
+
+                }
+            }
+
+        </script>
+
+        <!-- actDuration.js -->
+		<script>
+
+            function displayActDurs(){
+
+                const activityDurationList = {};
+
+                LEvents.sort();
+                            
+                LEvents.reverse();
+                            
+                ELen = LEvents.length;
+                            
+                var minDate = Date.now()-(2*24*60*60*1000);
+                            
+                text = 
+                    "<table class='durationSummary'>" +
+                        "<thead>" +
+                            "<th>Activity</th>" +
+                            "<th>Duration</th>" +
+                        "</thead>" +
+                        "<tbody>";
+                            
+                for (i = 0; i < ELen; i++) {
+                            
+                    if(i==0){
+                    
+                        var eventLength = Date.now()-Date.parse(LEvents[i][0]);
+                    
+                    }else{
+                                
+                        eventLength = Date.parse(LEvents[i-1][0])-Date.parse(LEvents[i][0]);
+                                
+                    }
+                                
+                    //formatEventDuration(eventLength);
+                                
+                    if(Date.parse(LEvents[i][0]) > minDate){
+
+                        //arr1.push([LEvents[i][3], eventLength]);
+
+                        if( activityDurationList. hasOwnProperty(LEvents[i][3])==false){
+                                        
+                            activityDurationList[ LEvents [i][3] ] = eventLength;
+            
+                        } else {
+
+                            activityDurationList [ LEvents[i][3] ] += eventLength;
+                    
+                        }
+                                
+                    }
+                            
+                }
+                            
+                let sortArray = [];
+
+                for (let activityName in activityDurationList) {
+
+                    sortArray.push( [activityName, activityDurationList[activityName]]);
+
+                }
+
+                sortArray.sort(function(a, b){
+                    return b[1]-a[1];
+                })
+
+                let sortedActivityDurationList = {}
+
+                sortArray.forEach(function(item){
+                    sortedActivityDurationList[ item [0]] = item[1];
+                });
+
+                for (let activityName in sortedActivityDurationList) {
+                                
+                    text += "<tr><td>" + activityName + "</td><td>" + formatEventDuration (sortedActivityDurationList [ activityName ]) + "</td></tr>";
+
+                }
+                                
+                text += "</tbody></table>";
+
+                document.getElementById("listContainer").innerHTML = text;
+
+            }
+
+            function displayContDurs(){
+
+                const contDurationList = {};
+
+                LEvents.sort();
+                            
+                LEvents.reverse();
+                            
+                ELen = LEvents.length;
+                            
+                var minDate = Date.now()-(2*24*60*60*1000);
+                            
+                text = 
+                    "<table class='durationSummary'>" +
+                        "<thead>" +
+                            "<th>Sub-Projecf</th>" +
+                            "<th>Duration</th>" +
+                        "</thead>" +
+                        "<tbody>";
+                            
+                for (i = 0; i < ELen; i++) {
+                            
+                    if(i==0){
+                    
+                        var eventLength = Date.now()-Date.parse(LEvents[i][0]);
+                    
+                    }else{
+                                
+                        eventLength = Date.parse(LEvents[i-1][0])-Date.parse(LEvents[i][0]);
+                                
+                    }
+                                
+                    if(Date.parse(LEvents[i][0]) > minDate){
+                        
+                        if( contDurationList. hasOwnProperty(LEvents[i][3])==false){
+                                        
+                            contDurationList[ LEvents [i][3] ] = eventLength;
+                                                                
+                        } else {
+
+                            contDurationList [ LEvents[i][3] ] += eventLength;
+                    
+                        }
+                                
+                    }
+                            
+                }
+                            
+                let sortArray = [];
+
+                for (let contName in contDurationList) {
+
+                    sortArray.push( [contName, contDurationList[contName]]);
+
+                }
+
+                sortArray.sort(function(a, b){
+                    return b[1]-a[1];
+                })
+
+                let sortedContDurationList = {}
+
+                sortArray.forEach(function(item){
+                
+                    sortedContDurationList[ item [0]] = item[1];
+                
+                });
+
+                for (let contName in sortedContDurationList) {
+                            
+                    text += "<tr><td>" + contName + "</td><td>" + formatEventDuration  ( sortedContDurationList [ contName ]) + "</td></tr>";
+
+                }
+                            
+                text += "</tbody></table>";
+
+                document.getElementById("listContainer").innerHTML = text;
+
+            }
+
+        </script>
+
+		<meta charset="UTF-8">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    </head>
+	<body>
+		<div id="pageWrapper">
+		<header>
+			<h1>Events</h1>
+			<sub>v_2023-03-31</sub>
+		</header>
+		<div id="topbar">
+			<ul class="controlGrid" id="formControls">
+				<li>
+					<a href="#" onclick="clearForm()">Reset</a>
+				</li>	
+				<li id="lblEventTime">
+					<p id="DateTime"></p>
+				</li>
+				<li>
+					<a href="#" onclick="manualEventForm.btnLPU()">Manual</a>
+				</li>
+				<li>
+					<a href="#" onclick="PriorEvent()">Prior</a>
+				</li>
+				<li>
+					<a href="#" onclick="postAll()">Sync</a>
+				</li>
+				<li>
+					<a href="#" onclick="displayModifyMenu()">Modify</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(-1)">-1m</a> 
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(-5)">-5m</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(-15)">-15m</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(-60)">-1h</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(-180)">-3h</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(-360)">-6h</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(-1440)">-1d</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(1)">+1m</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(5)">+5m</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(15)">+15m</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(60)">+1h</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(180)">+3h</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(360)">+6h</a>
+				</li>
+				<li>
+					<a href="#" onclick="AddTime(1440)">+1d</a>
+				</li>
+				<li>
+					<a href="#" onclick="btnLMood(-1)">-1</a>
+				</li>
+				<li>
+					<a href="#" onclick="btnLMood(-0.5)">-0.5</a>
+				</li>
+				<li>
+					<a href="#" onclick="btnLMood(0)">0</a>
+				</li> 
+				<li>
+					<a href="#"onclick="btnLMood(0.5)">0.5</a>
+				</li>
+				<li>
+					<a href="#" onclick="btnLMood(1)">1</a>
+				</li> 
+				<li><p id="moodIndicator">&#10033;</p></li>
+				<li>	
+					<a href="#"  onclick="$('.pageSettings').toggle()">Settings</a> </li>
+				<li id="timeZoneLabel" class="pageSettings">
+					<p>Time Zone</p>
+				</li>
+				<li  class="pageSettings">
+					<p>Post?</p>
+				</li>
+				<li id="detailStartLabel"  class="pageSettings">
+					<p>Detail Start (Days Ago)</p>
+				</li>
+				<li id="detailEndLabel"  class="pageSettings">
+					<p>Detail End (Days Ago)</p>
+				</li><li id="timeZoneSelectContainer"  class="pageSettings">
+					<select id="selTZ" class="ssmselect">
+						<option value=0>Eastern</option>
+						<option value=1>Central</option>
+						<option value=2>Mountain</option>
+						<option value=3>Pacific</option>
+						<option value=6>Hawaii</option>
+					</select>
+				</li>
+				<li  class="pageSettings">
+					<select id="selPost">
+						<option>Y</option>
+						<option>N</option>
+					</select>
+				</li>
+				<li id="detailStartSelectContainer"  class="pageSettings">
+					<select id="selMinDate" class="sTime">
+						<option>2</option>
+						<option>1</option>
+						<option>2</option>
+						<option>7</option>
+						<option>14</option>
+						<option>30</option>
+					</select>
+				</li>
+				<li id="detailEndSelectContainer"  class="pageSettings">
+					<select id="selMaxDate" class="sTime">
+						<option>0</option>
+						<option>1</option>
+						<option>2</option>
+						<option>7</option>
+						<option>14</option>
+						<option>30</option>
+					</select>
+				</li>
+			</ul>
+		</div>
+		<div id="mainSection">
+			<!-- displays U when an event is being updated -->
+			<b><p id="pu"></p></b>
+			
+			<!-- shows if events are being posted to the db or not -->
+			<p id="selP"></p>
+			<p id="selFT"></p>
+			<h2 id="pmEvent"></h2>
+			
+			<div id="modifyFormWrapper">
+				<div id="modifyFormContainer"></div>
+				<iframe id="modifyFormResult" name="modifyFormResult" class="hidden" scrolling="no"></iframe>
+			</div>
+
+			<ul id="eventBtnListContainer" class="btnGroup"></ul>
+
+			<ul id="localBtnListContainer" class="btnGroup"></ul>
+			
+		</div>
+		<div id="footer">
+			<svg id="svgEventChart" height="30"></svg>
+
+			<svg id="svgMoodChart" height="30"></svg>
+
+			<div id="eventListContainer"></div>
+
+			<div id="moodListContainer"></div>
+
+			<div id="listContainer"></div>
+
+			<p id="csel"></p>
+
+			<p id="psel"></p>
+
+			<p id="spsel"></p>
+
+			<p id="asel"></p>
+
+		</div>
+		<script>
+			//get background color from css
+			const defaultBGColor = $( "body" ).css( "background-color" );
+			const defaultBtnColor = $( "button" ).css( "color" );
+			const defaultBtnBGColor = $( "button" ).css( "background-color" );
+	
+			const svgWidthNum = screen.width;
+
+			const btnWidthNum = 110;
+
+			let text, ELen, MoodsLen, i, datetimeValue, datetimeText, millisecTime, origTime, etmt, eft, eid;
+			
+			//set local storage variables
+			let lastUse = JSON.parse(localStorage.getItem("LSlastuse"))
+			
+			const objLastUse = {}
+			
+			for(i=0; i<lastUse[0].length; i++){
+
+				objLastUse[lastUse[0][i]+"_"+lastUse[1][i]] = {actID: lastUse[0][i], contID: lastUse[1][i], elapsedSecs: lastUse[2][i], lastTime: luxon.DateTime.fromSQL(lastUse[3][i]).toSeconds()}
+
+			}
+
+			//Events
+			let LEvents = JSON.parse(localStorage.getItem("LSEvents"));
+			
+			const objLEvents = {}
+			
+			for(i=0; i<LEvents.length; i++) {
+				
+				objLEvents[LEvents[i][0]] = {startTime: Date.parse(LEvents[i][0]), act: LEvents[i][1], subProj: LEvents[i][2]}
+				
+			}
+			
+			//Moods
+			let LMoods = JSON.parse(localStorage.getItem("LSMoods"));
+			
+			const objLMoods = {}
+			
+			for(i=0; i<LMoods.length; i++) {
+			
+				objLMoods[LMoods[i][0]] = { startTime: Date.parse(LMoods[i][0]), mood: LMoods[i][1]}
+			
+			}
+			
+			//Activities
+			let LActs = JSON.parse(localStorage.getItem("LSActs"));
+			
+			let LActsAll = JSON.parse(localStorage.getItem("LSActsAll"));
+			
+			const objLAct = {}
+			
+			for(i=0; i<LActsAll[0].length; i++){
+
+				objLAct[LActsAll[0][i]]={"ActID": LActsAll[0][i], "ActDesc": LActsAll[1][i], "PCode": LActsAll[2][i], "UCode": LActsAll[3][i], "Status": LActsAll[6][i]}
+								
+			}
+
+			//Projects
+			let LProj = JSON.parse(localStorage.getItem("LSProj"));
+			
+			let LProjAll= JSON.parse(localStorage.getItem("LSProjAll"));
+			
+			const objLProj = {}
+			
+			for(i=0; i<LProjAll[0].length; i++){
+
+				objLProj[LProjAll[0][i]]={"ProjID": LProjAll[0][i], "ProjDesc": LProjAll[1][i], "ProfileCode": LProjAll[2][i], "ProjStatus": LProjAll[3][i]}
+								
+			}
+			
+			//Sub-Projects
+		
+			let LConts = JSON.parse(localStorage.getItem("LSConts"));
+		
+			let LContAll = JSON.parse(localStorage.getItem("LSContAll"));
+			
+			const objLCont = {}
+
+			for(i=0; i<LContAll[0].length; i++){
+
+				objLCont[LContAll[0][i]]={"ContID": LContAll[0][i], "ContDesc": LContAll[1][i], "ProjID": LContAll[2][i], "Active": LContAll[3][i]}
+
+			}
+
+			//Use Codes & Colors
+
+			let LPU = JSON.parse(localStorage.getItem("LSPU"));
+			
+			const objLPU = {}
+
+			for(i=0; i<LPU[0].length; i++){
+
+				objLPU[LPU[0][i]]={"PUCode": LPU[0][i], "PUCodeDesc": LPU[1][i], "Active": LPU[3][i], "Color": LPU[2][i]};
+				
+			}
+
+			//local event button groups
+
+			let Llbg = JSON.parse(localStorage.getItem("LSlbg"))
+
+			const objLocalButtonGroups = {}
+
+			for(i=0; i<Llbg[0].length; i++){
+
+				objLocalButtonGroups[Llbg[0][i]]={btnGroup: Llbg[0][i], btnGroupName: Llbg[1][i]}
+
+			}
+
+			//local event buttons
+			
+			let Llb = JSON.parse(localStorage.getItem("LSlb"))
+
+			const objLocalEventButtons = {}
+
+			for(i=0; i<Llb[0].length; i++){
+
+				objLocalEventButtons[Llb[0][i]]={idtbllocaleventbtns: Llb[0][i], actID: Llb[1][i], contid: Llb[2][i], localButtonGroup: Llb[3][i], warn: Llb[4][i]}
+
+			}
+
+			setTime();
+
+			if(LEvents===null){
+
+				LEvents = [];
+			
+			}else{
+
+				displayLEvents();
+
+			}
+
+			if(LMoods===null){
+
+				LMoods = [];
+			
+			}else{
+
+				displayLMoods();
+
+			}
+
+			localEventButtonForm.makeLocalEventBtnGroup()
+
+			function btnclr(){
+
+				$("button").css("background-color", defaultBtnBGColor);
+				
+				$("button").css("color", defaultBtnColor);
+
+				resetAll();
+			}
+
+			$(".sTime").change(function(){
+
+				displayLEvents();
+				
+			});
+
+
+			function delEvent(i){
+				
+				const q = "Delete "+LEvents[i][0]+": "+LEvents[i][3]+"?";
+
+				const c = confirm(q);
+				
+				if (c == true){
+				
+					const etime = sqTime(LEvents[i][0])
+				
+					const a = LEvents.splice(i, 1)
+
+					delete objLEvents[etime]
+				
+					JQDel(etime, 'tblEvents', 'StartTime')
+					
+					resetAll()
+				
+				}
+			}
+
+			function resetLEvents(){
+
+				if(LEvents === undefined || LEvents.length == 0) {
+				
+					//do nothing
+				
+				}else{
+
+					localStorage.setItem("LSEvents", JSON.stringify(LEvents));
+					
+					displayLEvents();
+					
+				}
+			}
+
+			function displayList(arr){
+
+				S = arr. length;
+				
+				L = arr[0].length;
+				
+				text = "<table>";
+				
+				for (i = 0; i < L; i++) {
+					
+					text += "<tr>";
+					
+					for (j = 0; j < S; j++){
+					
+						text += "<td>" + arr[j][i] + "</td>";
+						
+					}
+					
+					text += "</tr>";
+				
+				}
+				
+				text += "</table>";
+				document.getElementById("listContainer").innerHTML = text;
+			}
+
+			//uses the prior event to create a new event record
+
+			function PriorEvent(){
+
+				const selPost = $("#selPost").val();
+
+				const actValue = LEvents[1][1];
+				const contValue = LEvents[1][2];
+				const actText = LEvents[1][3];
+				
+				setETime();
+				
+				LEvents.push([sqTime(datetimeValue), actValue, contValue, actText]);
+				
+				if(selPost==="Y"){
+										
+					JQPost(actValue, contValue, datetimeValue);
+					
+				}
+
+				resetAll();
+				
+			}
+
+			function jqUpdateEvent(oTime, nTime, act, cont){
+
+				const postData = $.ajax(
+				{	
+					type: "POST",
+					url: "./update/UpdateEvent.php",
+					data: { origTime: oTime, newTime: nTime, newAct: act, newCont: cont },
+					success: function() { 
+						console.log("Updated: "+oTime);
+					}
+				}).fail(function(){
+					alert("Fail");
+				}).always(function(){
+					clearForm()
+				});
+			}
+
+			function clearForm(){
+
+				$("#pmEvent").empty();
+
+				$("#pu"). text("");
+				$("#pu"). val("");
+				
+				manualEventForm.clearDiv();
+
+				setTime();
+				
+				resetAll();
+			}
+
+			function resetAll(){
+				
+				resetTime();
+				
+				resetLEvents();
+				
+				resetLMoods();
+				
+			}
+
+			//USED IN FUNCTIONS: delEvent(l#1010) and delMood (l#1029)
+			function JQDel(etime, tbl, index){
+
+			$.post("./del/DelJQ.php",
+				{
+					v1: etime,
+					c1: index,
+					selTbl: tbl
+				});
+			}
+			
+			function postAll(){
+
+				ELen = LEvents.length;
+				MLen = LMoods.length;
+
+				for (var i=0; i<50; i++) {
+
+					var tvar = LEvents[i][0];
+					var act = LEvents[i][1];
+					var cont = LEvents[i][2];
+	
+					JQPost(act, cont, tvar, i);
+      
+				}
+
+				for (var i=0; i<50; i++) {
+
+					var dtime = LMoods[i][0];
+					var mood = LMoods[i][1];
+	
+					MPost(mood, dtime, i);
+				}
+				
+				alert("Sync Complete")
+			}
+
+		</script>
+	</div>
+	</body>
+</html>

@@ -5,6 +5,42 @@ const objSVGEventChart = {
 	textColor: "white",
 	fontWeight: "bold",
 	displayTimes: [12, 3, 6, 9, 12, 3, 6, 9],
+	svgWidth: screen.width,
+	moodColor: function(mood){
+
+		switch(Number(mood)){
+		
+			case -1:
+				clr = "red";
+				break;
+			case -0.5:
+				clr = "yellow";
+				break;
+			case 0:
+				clr = "gray";
+				break;
+			case 0.5:
+				clr = "yellowgreen";
+				break;
+			case 1:
+				clr = "green";
+				break;
+		}
+	
+		return clr;
+	},
+	makeListObj: function(obj, type){
+
+		for(i in obj){
+			objSVGList[i] = {startTime: obj[i][startTime], startX: this.getStartXCoord(obj[1][startTime]), width: (obj.dur/(24*60*60*1000)*this.svgWidth)}
+		}
+		if(type=="mood"){
+			objSVGList[i]["fill"] = this.moodColor(obj[i].mood)
+		} else {
+			objSVGList[i]["fill"] = objLPU[objAct[ActID].UCode].Color
+		}
+
+	},
 	drawBox: function(id, x, w, f){
 
 		var element = document.getElementById(id);
@@ -64,6 +100,7 @@ const objSVGEventChart = {
 	getStartXCoord: function(startTime){
 
 		let minTime = new Date();
+
 		minTime.setHours(0, 0, 0, 0);
 		
 		var svgboxstartxcoord = ((startTime-minTime)/(24*60*60*1000))*svgWidthNum;
@@ -228,8 +265,6 @@ function resetSVG(id){
 	
 	$(id).empty();
 }
-
-
 
 function displaySVGChart(){
 

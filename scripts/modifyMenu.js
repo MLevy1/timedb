@@ -44,6 +44,10 @@ const displayModifyMenu = () => {
 		addMenuItem(menuContainer, "Sub-Projects", modifyForms.displaySubActForm);
 		
 		addMenuItem(menuContainer, "PU Codes", modifyForms.displayPUForm);
+		
+		addMenuItem(menuContainer, "Local Button Groups", modifyForms.displayLocalBtnGroupForm);
+		
+		addMenuItem(menuContainer, "Local Buttons", modifyForms.displayLocalBtnForm);
 	
 		//exit menu
 

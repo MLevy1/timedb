@@ -1,156 +1,194 @@
-function localEventButton(act, cont, btnName, list, warn){
-				
-    let arrElapsedTime = findLast(act, cont);
-    
-    let elapsedTime = arrElapsedTime[0];
+const localEventButtonForm = {
 
-    let warnTime = arrElapsedTime[1];
-    
-    var bc = $( "button" ).length;
-    
-    var btnid = "btn"+bc;
-    
-    let btn = document.createElement("button");
+    makeLocalEventBtnGroup: function(){
+        const eventBtnListContainer = document.getElementById("localBtnListContainer") 
 
-    btn.id = btnid;
+        for (i in objLocalButtonGroups) {
 
-    btn.setAttribute('data-act', act);
-    
-    btn.setAttribute('data-cont', cont);
-    
-    btn.setAttribute('data-warn', warn);
+            let lbgText = objLocalButtonGroups[i].btnGroupName
+            
+            let localButtonGroupContainer = document.createElement("ul")
+            localButtonGroupContainer.id = objLocalButtonGroups[i].btnGroup
+            localButtonGroupContainer.classList.add("hidden")
+            localButtonGroupContainer.classList.add("btnGroup")
+  
+            let jqGroupRef = "#"+localButtonGroupContainer.id
 
-    btn.classList.add("ebtn");
-    
-    let buttonNameTextNode = document.createTextNode(btnName);
-    
-    let elapsedTimeTextNode = document.createTextNode(elapsedTime);
-    
-    btn.appendChild(buttonNameTextNode);
+            let localButtonGroupHeader = document.createElement("a")
+            localButtonGroupHeader.classList.add("groupHeading")
+            localButtonGroupHeader.href = "#"
+            lbgText = document.createTextNode(lbgText)
+            localButtonGroupHeader.addEventListener('click', () => {
 
-    btn.appendChild(document.createElement("br"));
-    
-    btn.appendChild(elapsedTimeTextNode);
-    
-    let li = document.createElement("li");
+                $(jqGroupRef).toggleClass('hidden')
 
-    li.appendChild(btn);
-    
-    let selectedList = document.getElementById(list);
+            })
+            localButtonGroupHeader.appendChild(lbgText)
+            eventBtnListContainer.appendChild(localButtonGroupHeader)
+                      
+            eventBtnListContainer.appendChild(localButtonGroupContainer)
+                        
+            this.makeLocalEventBtn(localButtonGroupContainer.id)
 
-    selectedList.appendChild(li);
-    
-    if (warn!="n"){
-
-        if(warn < warnTime){
-
-            $("#"+btnid).addClass('warn');
-        
         }
-    }
+    },
+    makeLocalEventBtn: function(lbg){
+        const eventBtnListContainer = document.getElementById(lbg)
 
-    document.getElementById(btnid). addEventListener("click", function(){
+        for (i in objLocalEventButtons) {
+
+            if (objLocalEventButtons[i]["localButtonGroup"]==lbg){
+
+                let eventBtnContainer = document.createElement("li");
+                
+                let actID = objLocalEventButtons[i]["actID"]
+                let contID = objLocalEventButtons[i]["contid"]
+                
+                let btnID = actID+"_"+contID
+                
+                let warnSecs, lastUseTime, lastTime, unfmtLastUseTime
+
+                if(objLocalEventButtons[i]["warn"]){
+                    warnSecs = objLocalEventButtons[i]["warn"]*24*60*60
+                }
+
+                if(objLastUse.hasOwnProperty(btnID)==true){
+                    lastTime = objLastUse[btnID]["lastTime"]
+                    unfmtLastUseTime = Math.round(luxon.DateTime.now().toSeconds()-lastTime)
+                    lastUseTime = ELTime(unfmtLastUseTime)
+                    
+                } else {
+
+                    lastTime = lastUseTime = "N/A"
+                    
+                }
+                
+                let eventBtnText = objLAct[actID]["ActDesc"] + ": " + objLCont[contID]["ContDesc"] + " " + lastUseTime
+                                
+                eventBtnText = document.createTextNode(eventBtnText)
+            
+                let eventLink = document.createElement("a")
+
+                eventLink.classList.add("localBtn")
+
+                if(warnSecs){
+ 
+                    if(warnSecs<unfmtLastUseTime){
+                        eventLink.classList.add("warn")
+                    }
+                }
+
+                eventLink.id = btnID
+                eventLink.actID = actID
+                eventLink.contID = contID
+                eventLink.lastTime = lastTime
+                eventLink.warnSecs = warnSecs
+            
+        		eventLink.appendChild(eventBtnText)
+
+                eventLink.href = "#"
+                
+                eventLink.addEventListener('click', () => { 
+                
+			        manualEventForm.addEvent(actID, contID)
+
+                    this.resetLocalBtn()
+                                        
+                })
+
+                eventBtnContainer.appendChild(eventLink)
+            
+                eventBtnListContainer.appendChild(eventBtnContainer)
+            }
     
-        btnJQL(act, cont, btnName);
+        }
+    },
+    resetLocalBtn: function(){
 
-        resetbtn();
-
-    });
-}
-
-
-function resetbtn(){
-			
-    let buttons = document.getElementsByTagName('button');
-
-    if(buttons){
+        let newLastUseTime
+		
+		buttons = document.getElementsByClassName('localBtn');
 
         for (i = 0; i < buttons.length; i++) {
 
-            let bact = buttons[i].getAttribute('data-act');
-        
-            let bcont = buttons[i].getAttribute('data-cont');
+            if(buttons[i].lastTime!="N/A") {
 
-            let bwarn = buttons[i].getAttribute('data-warn');
+                newUFLastUseTime = Math.round(luxon.DateTime.now().toSeconds() - buttons[i].lastTime)
+                newLastUseTime = ELTime(newUFLastUseTime)
 
-            let arrelpTime = findLast(bact, bcont);
+                if(buttons[i].hasOwnProperty("warnSecs")){
+                    warnSecs = buttons[i]["warnSecs"]
 
-            let elpTime = arrelpTime[0];
-            
-            let wTime = arrelpTime[1];
-            
-            let newnode = document.createTextNode(elpTime);
-            
-            buttons[i].replaceChild(newnode, buttons[i].childNodes[2]);
-            
-                
-            if (bwarn!="n"){
+                    if(warnSecs<newUFLastUseTime){
+                        
+                        if(buttons[i].classList.contains("warn")!=true){
 
-                if(bwarn < wTime){
-                    
-                    $("#"+buttons[i].id).addClass('warn');
-        
-                } else {
+                            buttons[i].classList.add("warn")
 
-                    $("#"+buttons[i].id).removeClass('warn');
-                
+                        }
+
+                    } else {
+
+                        if(buttons[i].classList.contains("warn")==true){
+
+                            buttons[i].classList.remove("warn")
+
+                        } 
+                    }
                 }
+
+         
+            
+            } else {
+            
+                newLastUseTime = "N/A"
             
             }
+            
+            eventBtnText = objLAct[buttons[i]["actID"]]["ActDesc"] + ": " + objLCont[buttons[i]["contID"]]["ContDesc"] + " " + newLastUseTime
+
+            eventBtnText = document.createTextNode(eventBtnText)
+            
+            buttons[i].replaceChild(eventBtnText, buttons[i].childNodes[0]);
 
         }
 
-    }
+        //alert("DONE")
+	}
 }
 
-function btnJQL(act, cont){
+
+function ELTime(secs) {
+				
+	var days = secs / (60*60*24);
 					
-    var U = $("#pu").val();
-    
-    var selPost = $("#selPost").val();
-    
-    setETime();
-    
-    if(U!="U"){
-        
-        const startTime = sqTime(datetimeValue)
-
-    	objLEvents[startTime] = {
-            "startTime": millisecTime, 
-            "act": act, 
-            "subProj": cont
-        }
-    
-        LEvents.push([sqTime(datetimeValue), act, cont, objLAct[act].ActDesc]);
-
-        if(selPost==="Y"){
-        
-            JQPost(act, cont, sqTime(datetimeValue));
-            
-        }
-        
-    }else{
-    
-        LEvents[eid]=([sqTime(datetimeValue), act, cont, objLAct[act].ActDesc]);
-
-	objLEvents[LEvents[eid][0]] = { "startTime": millisecTime, "act": act, "subProj": cont }
-        
-        if(selPost==="Y"){
-        
-            jqUpdateEvent(origTime, sqTime(datetimeValue), act, cont);
-            
-        }
-        
-        $("#pmEvent").empty();
-        
-        $("#pu").text("");
-        
-        $("#pu").val("");
-    
-    }
-    
-    resetAll();
-    
+	if(days>=1){
+					
+		return Math.round(days) + "d";
+					
+	} else {
+					
+		var hrs = secs / (60*60);
+						
+		if(hrs>=1){
+							
+			return Math.round(hrs) + "h";
+								
+		} else {
+							
+			var mins = secs / 60;
+								
+			if(mins>=1){
+									
+				return Math.round(mins) + "m";
+								
+			} else {
+								
+				return secs + "s";
+				
+			}
+		}
+	}
 }
 
 function JQPost(act, cont, dtime){

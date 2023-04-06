@@ -7,7 +7,7 @@ function add(&$vars, &$vals, $tbl)
 	$dbname = "tdb";
 
 	$conn = new mysqli($servername, $username, $password, $dbname);
-	
+
 	$cnt_vars = count($vars);
 	$cnt_vals = count($vals);
 	
@@ -40,11 +40,16 @@ function add(&$vars, &$vals, $tbl)
 	if (mysqli_query($conn, $sqlQuery) != TRUE) {
 		echo "Error: " . $sqlQuery . "<br>" . mysqli_error($conn);
 		mysqli_close($conn);
+	}else{
+		echo "<p style='color: yellow; text-align:center'>";
+		echo date("h:i:sa");
+		echo " Done!</p>";
 	}
 
 	mysqli_close($conn);
 
-	echo "<p style='color: white; text-align:center'>Done!</p>";
+	
+
 
 }
 ?>

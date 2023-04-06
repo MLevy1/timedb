@@ -1,10 +1,54 @@
 const objEventsView = {
   
-    minDate: document.getElementById("selMinDate"),
-    maxDate: document.getElementById("selMaxDate"),
-    tableHeaders: ["Actions", "Start Time", "Activty", "Sub-Project"],
+    tableHeaders: [" ", " ", " ", "Start Time", "Activty", "Sub-Project", "Duration"],
+    clearDiv: function () {
+
+        const listDiv = document.getElementById("eventListContainer")
+
+        while(listDiv.firstChild){
+
+            listDiv.removeChild(listDiv.firstChild)
+
+        }
+
+    },
+    makeEventObj: function(){
+	
+		const minDate = luxon.DateTime.now()- ((1000*60*60*24)  * document.getElementById("selMinDate").value )
+	
+		const objLEvents =  {}
+			
+		for(i=0; i<LEvents.length; i++) {
+			
+			if(Date.parse(LEvents[i][0]) > minDate) {
+				
+				objLEvents[LEvents[i][0]] = {startTime: Date.parse(LEvents[i][0]), act: LEvents[i][1], subProj: LEvents[i][2]}
+				
+				if(i!=0){
+				
+					objLEvents[LEvents[i][0]]["endTime"] = Date.parse(LEvents[i-1][0])
+                    objLEvents[LEvents[i][0]]["dur"] =  Date.parse(LEvents[i-1][0])-Date.parse(LEvents[i][0])
+
+				}else{
+				
+					objLEvents[LEvents[i][0]]["endTime"] = Date.now()
+                    objLEvents[LEvents[i][0]]["dur"] =  Date.now()-Date.parse(LEvents[i][0])
+					
+				}
+                
+			}
+			
+		}
+		
+		return objLEvents
+			
+	},
     showEventList: function(){
         
+	    const objLEvents = this.makeEventObj()
+        
+        console.log(objLEvents)
+
         const eventList = document.createElement("table")
 
         const thead = document.createElement("thead")
@@ -33,6 +77,7 @@ const objEventsView = {
             startTime = luxon.DateTime.fromMillis(objLEvents[i].startTime).toFormat("MM-dd hh:mm:ss a")
             act = objLAct[objLEvents[i].act].ActDesc
             subProj = objLCont[objLEvents[i].subProj].ContDesc
+            dur = luxon.Duration.fromMillis(objLEvents[i].dur).toFormat("h:mm:ss")
             
             let trow = document.createElement("tr")
             trow.id = 'row'+i
@@ -44,7 +89,10 @@ const objEventsView = {
             })
             aLink.appendChild(document.createTextNode("+"))
             tcell.appendChild(aLink)
+
+            trow.appendChild(tcell)
             
+            tcell = document.createElement("td")
             let dLink = document.createElement("a")
             dLink.id = "d"+eventId
             dLink.href = "#"
@@ -55,6 +103,20 @@ const objEventsView = {
             tcell.appendChild(dLink)
             
             trow.appendChild(tcell)
+
+            tcell = document.createElement("td")
+            let uLink = document.createElement("a")
+            uLink.id = "u"+eventId
+            uLink.href = "#"
+            uLink.addEventListener("click", () => {
+                alert(eventId)
+                this.updateEvent(eventId)
+            })
+            uLink.appendChild(document.createTextNode("U"))
+            tcell.appendChild(uLink)
+        
+            trow.appendChild(tcell)
+
 
             tcell = document.createElement("td")
             let tcelltext = document.createTextNode(startTime)
@@ -71,12 +133,17 @@ const objEventsView = {
             tcell.appendChild(tcelltext)
             trow.appendChild(tcell)
 
+            tcell = document.createElement("td")
+            tcelltext = document.createTextNode(dur)
+            tcell.appendChild(tcelltext)
+            trow.appendChild(tcell)
+
             tbody.appendChild(trow)
         }
         
         eventList.appendChild(tbody)
 
-	eventList.classList.add("eventList");
+	    eventList.classList.add("eventList");
 
         return eventList
 
@@ -92,7 +159,30 @@ const objEventsView = {
             selTbl: 'tblEvents'
         })
     },
-    updateEvent: function(){},
+    updateEvent: function(eventId){
+
+        $( "#pu" ).val( "U" );
+		$( "#selP" ) . val( "Y" );
+		$( "body" ).css( "background-color", "DarkRed" );
+				
+		origTime = eventId;
+
+		const formattedOrigTime = FixTime(origTime)
+
+		$( "#selFT" ) . val(formattedOrigTime[1]);
+		$( "#DateTime" ) . val(formattedOrigTime[0]);
+		$( "#DateTime" ) . text(formattedOrigTime[2]);
+				
+        eid = LEvents.findIndex(element => element.includes(eventId))
+
+		var q = "Update: "+formattedOrigTime[2]+" - "+ objLAct[objLEvents[eventId].act].ActDesc + " " + objLCont[objLEvents[eventId].subProj].ContDesc
+
+		$("#pmEvent").val(eventId);
+		$("#pmEvent").text(q);
+
+		resetAll();
+
+    },
     deleteEvent: function(i){
 
         const objEvent = objLEvents[i]
@@ -107,10 +197,17 @@ const objEventsView = {
 
             delete objLEvents[i]
 
+            const a = LEvents.splice(i, 1)
+
             const rowElement = document.getElementById('row'+i)
+            
             rowElement.remove()
 
             JQDel(sqlTime, 'tblEvents', 'StartTime');
+
+            this.showEventList()
+
+		localEventButtonForm.resetLocalBtn()
             
             resetAll();
         
@@ -147,38 +244,40 @@ function displayLEvents(){
     
         if(i>0){
         
-            var at = svgboxstartxcoord(Date.parse(LEvents[i-1][0]));
+            var boxStart = svgboxstartxcoord(Date.parse(LEvents[i-1][0]));
             
             
         }else{
         
-            var at = svgboxstartxcoord(Date.parse(LEvents[i][0]));
+            var boxStart = svgboxstartxcoord(Date.parse(LEvents[i][0]));
 
         }
         
-        var ac0 = "svgEventChart";
-        var ac1 = svgboxstartxcoord(Date.parse(LEvents[i][0]));
-        var ac2 = (eventLength / (24*60*60*1000))*svgWidthNum;
+        var boxId = "svgEventChart";
+        var boxStartX = svgboxstartxcoord(Date.parse(LEvents[i][0]));
+        var boxWidth = (eventLength / (24*60*60*1000))*svgWidthNum;
         
-        var ac3 = findActivityColor(LEvents[i][1]);
+        var boxFill = findActivityColor(LEvents[i][1]);
 
-        if(ac1<0){
+        if(boxStartX<0){
         
-            if(at>0){
+            if(boxStart>0){
             
-                drawbox(ac0, 0, at, ac3);
+                drawbox(boxId, 0, boxStart, boxFill);
             
             }
         
         }
         
-        if(ac1>0){
+        if(boxStartX>0){
         
-            drawbox(ac0, ac1, ac2, ac3);
+            drawbox(boxId, boxStartX, boxWidth, boxFill);
 
         }
     }
     
+    objEventsView.clearDiv()
+
     document.getElementById("eventListContainer").appendChild(objEventsView.showEventList());
 
     svgtext('svgEventChart');

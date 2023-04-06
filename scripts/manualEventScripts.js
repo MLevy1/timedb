@@ -34,6 +34,7 @@ const manualEventForm = {
                 let eventLink = document.createElement("a")
                 
                 eventLink.href = "#"
+                eventLink.classList.add("manualEventBtn")
                 
                 eventLink.addEventListener('click', () => { 
                 
@@ -73,7 +74,8 @@ const manualEventForm = {
                 let eventLink = document.createElement("a")
             
                 eventLink.href = "#"
-                
+                eventLink.classList.add("manualEventBtn")
+
                 eventLink.addEventListener('click', () => { 
                 
                     this.btnSubProj(linkTarget)
@@ -113,6 +115,7 @@ const manualEventForm = {
                 let eventLink = document.createElement("a")
             
                 eventLink.href = "#"
+                eventLink.classList.add("manualEventBtn")
                 
                 eventLink.addEventListener('click', () => { 
                 
@@ -154,6 +157,7 @@ const manualEventForm = {
                 let eventLink = document.createElement("a")
             
                 eventLink.href = "#"
+                eventLink.classList.add("manualEventBtn")
                 
                 eventLink.addEventListener('click', () => { 
                 
@@ -181,19 +185,34 @@ const manualEventForm = {
 
         const postsIndicator = document.getElementById("selPost").value 
 
+        const localBtnId = act+"_"+subproj
+
+        buttons = document.getElementsByClassName('localBtn');
+
         //sets the time of the event being entered (determines if event occurs in the past )
         setETime();
-            
+
+        if(objLastUse.hasOwnProperty(localBtnId)==true){
+
+            objLastUse[localBtnId]["lastTime"] = Math.round(luxon.DateTime.now().toSeconds())
+
+        } else {
+
+            objLastUse[localBtnId] = {actID: act, contID: subproj, elapsedSecs: 0, lastTime: Math.round(luxon.DateTime.now().toSeconds())}
+
+        }
+
+        if(buttons.hasOwnProperty(localBtnId)==true){
+
+            buttons[localBtnId]["lastTime"] = Math.round(luxon.DateTime.now().toSeconds())
+
+        } 
 
         if(updateIndicator!="U"){
 
             const startTime = sqTime(datetimeValue)
 
-            objLEvents[startTime] = {
-                "startTime": millisecTime, 
-                "act": act, 
-                "subProj": subproj
-            }
+            objLEvents[startTime] = { "startTime": millisecTime, "act": act, "subProj": subproj }
         
             LEvents.push([sqTime(datetimeValue), act, subproj, objLAct[act].ActDesc]);
 
@@ -202,32 +221,32 @@ const manualEventForm = {
                 JQPost(act, subproj, sqTime(datetimeValue));
 
             }
-                
-            resetAll();
-
+            
         } else {
 
             //important to remember that ANY event being updated HAS to be a "Past Event"
-     
+                 
             LEvents[eid]=([sqTime(datetimeValue), act, subproj, objLAct[act].ActDesc]);
 
-            objLEvents[LEvents[eid][0]] = {"startTime": millisecTime, "act": act, "subProj": subproj}
+            objLEvents[LEvents[eid][0]] = {startTime: Number(millisecTime), act: act, subProj: subproj}
 
             if(postsIndicator==="Y"){
 
                 jqUpdateEvent(origTime, sqTime(datetimeValue), act, subproj);
 
             }
-            
-            resetAll();
 
         }
+            
+        objEventsView.showEventList()
 
         $("#pmEvent").empty();
 
         $("#pu").text("");
 
         $("#pu").val("");
+
+        localEventButtonForm.resetLocalBtn()
 
         resetAll();
 
